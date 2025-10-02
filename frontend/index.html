@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vexus - Diseño Elegante</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="Static/css/main.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="Static/images/logo.png">
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-icon">⏳</div>
+            <p>Cargando...</p>
+        </div>
+    </div>
+
+    <!-- Connection Status -->
+    <div id="connectionStatus" class="connection-status">
+        🔴 Desconectado del servidor
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <nav class="container nav">
+            <div class="logo">
+                <img src="Static/images/logo.png" alt="VEXUS">
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menú">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#servicios">Servicios</a></li>
+                <li><a href="#campus">Campus</a></li>
+                <li><a href="#sobre-nosotros">Sobre Nosotros</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+                <li class="login-nav-item">
+                    <button class="login-nav-btn" id="loginNavBtn">
+                        <span class="login-icon">👤</span>
+                        <span class="login-text">Iniciar Sesión</span>
+                    </button>
+                </li>
+                <li class="logout-nav-item" style="display:none;">
+                    <button class="login-nav-btn" id="logoutBtn" style="display:none;">
+                        <span class="login-icon">🔓</span>
+                        <span class="login-text">Cerrar Sesión</span>
+                    </button>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Diseño Elegante</h1>
+                <p class="hero-description">
+                    Creamos experiencias visuales únicas con una estética minimalista y sofisticada. 
+                    Combinamos la elegancia del negro con toques de calidez para crear diseños que destacan.
+                </p>
+                <button class="cta-button">Explorar Proyectos</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services-section" id="servicios">
+        <div class="container">
+            <h2 class="section-title">Nuestros Servicios</h2>
+            <p class="section-subtitle">
+                Ofrecemos soluciones de diseño integral con un enfoque en la calidad y la atención al detalle
+            </p>
+            
+            <div class="cards-grid" id="servicesGrid">
+                <div class="card">
+                    <h3>Cargando servicios...</h3>
+                    <p>Conectando con el servidor...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Campus Section -->
+    <section class="campus-section" id="campus">
+        <div class="container">
+            <h2 class="section-title">Campus Vexus</h2>
+            <p class="section-subtitle">
+                Accede a tu portal personalizado y explora todas las herramientas disponibles
+            </p>
+            
+            <div class="campus-grid" id="campusGrid">
+                <div class="campus-card">
+                    <div class="card-icon">📊</div>
+                    <h3>Cargando...</h3>
+                    <p>Conectando con el servidor...</p>
+                    <button class="campus-btn">Espere...</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="sobre-nosotros">
+        <div class="container">
+            <h2 class="section-title">Sobre Nosotros</h2>
+            <p class="section-subtitle">
+                Conoce la historia detrás de Vexus y nuestro compromiso con la excelencia
+            </p>
+            
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>Nuestra Misión</h3>
+                    <p>
+                        En Vexus, creemos que el diseño es más que estética: es comunicación, funcionalidad y experiencia. 
+                        Nos dedicamos a crear soluciones visuales que no solo impresionan, sino que generan resultados 
+                        tangibles para nuestros clientes.
+                    </p>
+                    
+                    <h3>Nuestro Enfoque</h3>
+                    <p>
+                        Trabajamos con una filosofía minimalista y elegante, donde cada elemento tiene un propósito. 
+                        Combinamos la última tecnología con principios de diseño atemporales para crear experiencias 
+                        digitales que perduran.
+                    </p>
+                    
+                    <h3>Nuestro Equipo</h3>
+                    <p>
+                        Somos un equipo de diseñadores, desarrolladores y estrategas digitales apasionados por crear 
+                        experiencias excepcionales. Con años de experiencia en la industria, entendemos las necesidades 
+                        únicas de cada proyecto.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="contacto">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="#inicio">Inicio</a>
+                    <a href="#servicios">Servicios</a>
+                    <a href="#campus">Campus</a>
+                    <a href="#sobre-nosotros">Sobre Nosotros</a>
+                    <a href="#" onclick="openModal('contactModal')">Contacto</a>
+                </div>
+            </div>
+            <div class="copyright">
+                © 2025 Vexus. Todos los derechos reservados.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('loginModal')">&times;</span>
+            <div class="modal-header">
+                <h2>Iniciar Sesión</h2>
+                <p>Accede a tu cuenta Vexus</p>
+            </div>
+            <form id="loginForm" class="modal-form">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-options">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="remember"> Recordarme
+                    </label>
+                    <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
+                </div>
+                <button type="submit" class="btn-submit">Iniciar Sesión</button>
+                <div class="form-footer">
+                    <p>¿No tienes cuenta? <a href="#" onclick="switchToRegister()">Regístrate aquí</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('registerModal')">&times;</span>
+            <div class="modal-header">
+                <h2>Crear Cuenta</h2>
+                <p>Únete a la comunidad Vexus</p>
+            </div>
+            <form id="registerForm" class="modal-form">
+                <div class="form-group">
+                    <label for="regName">Nombre completo</label>
+                    <input type="text" id="regName" name="name" required minlength="2">
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email</label>
+                    <input type="email" id="regEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Contraseña</label>
+                    <input type="password" id="regPassword" name="password" required minlength="6">
+                    <small class="form-hint">Mínimo 6 caracteres</small>
+                </div>
+                <div class="form-group">
+                    <label for="regConfirmPassword">Confirmar contraseña</label>
+                    <input type="password" id="regConfirmPassword" name="confirmPassword" required>
+                </div>
+                <div class="form-options">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="terms" required> Acepto los términos y condiciones
+                    </label>
+                </div>
+                <button type="submit" class="btn-submit">Crear Cuenta</button>
+                <div class="form-footer">
+                    <p>¿Ya tienes cuenta? <a href="#" onclick="switchToLogin()">Inicia sesión aquí</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('contactModal')">&times;</span>
+            <div class="modal-header">
+                <h2>Contacto</h2>
+                <p>Envíanos un mensaje</p>
+            </div>
+            <form id="contactForm" class="modal-form">
+                <div class="form-group">
+                    <label for="contactName">Nombre</label>
+                    <input type="text" id="contactName" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="contactEmail">Email</label>
+                    <input type="email" id="contactEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="contactSubject">Asunto (opcional)</label>
+                    <input type="text" id="contactSubject" name="subject">
+                </div>
+                <div class="form-group">
+                    <label for="contactMessage">Mensaje</label>
+                    <textarea id="contactMessage" name="message" required rows="5"></textarea>
+                </div>
+                <button type="submit" class="btn-submit">Enviar Mensaje</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script type="module" src="Static/js/main.js"></script>
+</body>
+</html>
