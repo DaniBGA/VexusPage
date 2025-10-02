@@ -81,11 +81,17 @@ export const Navigation = {
             if (loginLi) loginLi.style.display = 'none';
             if (logoutBtn) logoutBtn.style.display = 'flex';
             if (logoutLi) logoutLi.style.display = 'list-item';
+
+            // Agregar clase logged-in al body para quitar el blur del campus
+            document.body.classList.add('logged-in');
         } else {
             if (loginBtn) loginBtn.style.display = 'flex';
             if (loginLi) loginLi.style.display = 'list-item';
             if (logoutBtn) logoutBtn.style.display = 'none';
             if (logoutLi) logoutLi.style.display = 'none';
+
+            // Remover clase logged-in del body
+            document.body.classList.remove('logged-in');
         }
     },
 

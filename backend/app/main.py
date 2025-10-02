@@ -14,15 +14,10 @@ app = FastAPI(
     description="API Backend para la plataforma Vexus"
 )
 
-ALLOWED_ORIGINS = [
-    "http://127.0.0.1:5500",
-    "http://localhost:5500",  # opcional si abrís el frontend así también
-]
-
-# Configurar CORS
+# Configurar CORS (orígenes desde .env)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:5500"],  # o ["*"] para todos
+    allow_origins=settings.ALLOWED_ORIGINS,  # Lee desde .env
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
