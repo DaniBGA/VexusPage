@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorar Proyectos - Vexus</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="../Static/css/main.css">
+    <link rel="stylesheet" href="../Static/css/proyectos.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../Static/images/logo.png">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="container nav">
+            <div class="logo">
+                <img src="../Static/images/logo.png" alt="VEXUS">
+            </div>
+
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menú">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="../index.html#inicio">Inicio</a></li>
+                <li><a href="../index.html#servicios">Servicios</a></li>
+                <li><a href="../index.html#campus">Campus</a></li>
+                <li><a href="../index.html#sobre-nosotros">Sobre Nosotros</a></li>
+                <li><a href="../index.html" onclick="openModal('contactModal'); return false;">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-projects">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Nuestros Proyectos</h1>
+                <p class="hero-description">
+                    Explora nuestro portafolio de diseños elegantes y modernos. Desde e-commerce hasta landing pages personalizadas.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Carousel Section -->
+    <section class="projects-section">
+        <div class="container">
+            <h2 class="section-title">Galería de Diseños</h2>
+            <p class="section-subtitle">Desliza para ver más proyectos</p>
+
+            <div class="carousel-container">
+                <button class="carousel-btn prev" id="prevBtn">
+                    <span>&#10094;</span>
+                </button>
+
+                <div class="carousel-wrapper">
+                    <div class="carousel-track" id="carouselTrack">
+                        <!-- E-Commerce -->
+                        <div class="project-card">
+                            <div class="project-image">
+                                <img src="../Static/images/e_commerce.png" alt="E-Commerce">
+                                <div class="image-overlay"></div>
+                            </div>
+                            <div class="project-info">
+                                <h3>E-Commerce Moderno</h3>
+                                <p>Tienda online con diseño elegante y funcional. Incluye carrito de compras, sistema de pagos y gestión de productos.</p>
+                                <div class="project-tags">
+                                    <span class="tag">E-Commerce</span>
+                                    <span class="tag">Responsive</span>
+                                    <span class="tag">Pagos</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Landing Page -->
+                        <div class="project-card">
+                            <div class="project-image">
+                                <img src="../Static/images/landingPage.png" alt="Landing Page">
+                                <div class="image-overlay"></div>
+                            </div>
+                            <div class="project-info">
+                                <h3>Landing Page Premium</h3>
+                                <p>Página de aterrizaje optimizada para conversión. Diseño minimalista con animaciones sutiles y call-to-actions efectivos.</p>
+                                <div class="project-tags">
+                                    <span class="tag">Landing</span>
+                                    <span class="tag">Conversión</span>
+                                    <span class="tag">Animaciones</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Portfolio -->
+                        <div class="project-card">
+                            <div class="project-image">
+                                <img src="../Static/images/portfolio.png" alt="Portfolio">
+                                <div class="image-overlay"></div>
+                            </div>
+                            <div class="project-info">
+                                <h3>Portfolio Creativo</h3>
+                                <p>Sitio web tipo portfolio para mostrar trabajos creativos. Grid interactivo con efectos hover y galerías lightbox.</p>
+                                <div class="project-tags">
+                                    <span class="tag">Portfolio</span>
+                                    <span class="tag">Galería</span>
+                                    <span class="tag">Interactivo</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Blog -->
+                        <div class="project-card">
+                            <div class="project-image">
+                                <img src="../Static/images/blog.png" alt="Blog">
+                                <div class="image-overlay"></div>
+                            </div>
+                            <div class="project-info">
+                                <h3>Blog Minimalista</h3>
+                                <p>Plataforma de blog con enfoque en legibilidad y diseño limpio. Sistema de categorías y búsqueda integrada.</p>
+                                <div class="project-tags">
+                                    <span class="tag">Blog</span>
+                                    <span class="tag">Contenido</span>
+                                    <span class="tag">SEO</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dashboard -->
+                        <div class="project-card">
+                            <div class="project-image">
+                                <img src="../Static/images/dashboard.png" alt="Dashboard">
+                                <div class="image-overlay"></div>
+                            </div>
+                            <div class="project-info">
+                                <h3>Dashboard Analítico</h3>
+                                <p>Panel de control con visualización de datos en tiempo real. Gráficos interactivos y métricas personalizables.</p>
+                                <div class="project-tags">
+                                    <span class="tag">Dashboard</span>
+                                    <span class="tag">Analytics</span>
+                                    <span class="tag">Data Viz</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Corporate -->
+                        <div class="project-card">
+                            <div class="project-image">
+                                <img src="../Static/images/corporativo.png" alt="Sitio Corporativo">
+                                <div class="image-overlay"></div>
+                            </div>
+                            <div class="project-info">
+                                <h3>Sitio Corporativo</h3>
+                                <p>Página web empresarial profesional. Incluye secciones de servicios, equipo, testimonios y formulario de contacto.</p>
+                                <div class="project-tags">
+                                    <span class="tag">Corporativo</span>
+                                    <span class="tag">Profesional</span>
+                                    <span class="tag">Multipágina</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="carousel-btn next" id="nextBtn">
+                    <span>&#10095;</span>
+                </button>
+            </div>
+
+            <!-- Carousel Indicators -->
+            <div class="carousel-indicators" id="indicators"></div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>¿Listo para tu proyecto?</h2>
+            <p>Trabajemos juntos para crear algo extraordinario</p>
+            <button class="cta-button" onclick="window.location.href='../index.html#contacto'">Contactar Ahora</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="../index.html#inicio">Inicio</a>
+                    <a href="../index.html#servicios">Servicios</a>
+                    <a href="../index.html#campus">Campus</a>
+                    <a href="../index.html#sobre-nosotros">Sobre Nosotros</a>
+                    <a href="../index.html#contacto">Contacto</a>
+                </div>
+            </div>
+            <div class="copyright">
+                © 2025 Vexus. Todos los derechos reservados.
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="../Static/js/proyectos.js"></script>
+</body>
+</html>
