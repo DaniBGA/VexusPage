@@ -31,7 +31,7 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(139, 69, 19, 0.1), transparent);
+    background: linear-gradient(90deg, transparent, var(--card-shine-color), transparent);
     transition: left var(--transition-slow);
 }
 
@@ -42,7 +42,7 @@
 .campus-card:hover {
     transform: translateY(-8px);
     border-color: var(--color-border-primary);
-    box-shadow: 0 20px 40px rgba(139, 69, 19, 0.2);
+    box-shadow: 0 20px 40px var(--color-primary-rgb);
 }
 
 .card-icon {
@@ -88,7 +88,8 @@
 
 .campus-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(139, 69, 19, 0.4);
+    box-shadow: 0 10px 25px var(--color-primary-rgb);
+    filter: brightness(1.1);
 }
 
 /* Blur effect for logged out state */

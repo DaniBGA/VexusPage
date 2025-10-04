@@ -46,30 +46,30 @@ async def register_user(user: UserCreate):
 async def login_user(user_credentials: UserLogin):
     """Iniciar sesión"""
     pool = await db.get_pool()
-    
+
     async with pool.acquire() as connection:
         user = await connection.fetchrow(
             "SELECT * FROM users WHERE email = $1 AND is_active = true",
             user_credentials.email
         )
-        
+
         if not user or not verify_password(user_credentials.password, user['password_hash']):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect email or password",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-        
+
         await connection.execute(
             "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1",
             user['id']
         )
-        
+
         access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
             data={"sub": str(user['id'])}, expires_delta=access_token_expires
         )
-        
+
         session_id = uuid.uuid4()
         expires_at = datetime.utcnow() + access_token_expires
         await connection.execute(
@@ -79,9 +79,19 @@ async def login_user(user_credentials: UserLogin):
             """,
             session_id, user['id'], access_token, expires_at
         )
-        
-        user_data = User(**dict(user))
-        
+
+        # Convertir a dict y verificar que role existe
+        user_dict = dict(user)
+        print(f"DEBUG - User data from DB: {user_dict}")
+
+        # Si role es None, asignar 'user' por defecto
+        if user_dict.get('role') is None:
+            user_dict['role'] = 'user'
+            print(f"DEBUG - Role was None, set to 'user'")
+
+        user_data = User(**user_dict)
+        print(f"DEBUG - User model created: {user_data.model_dump()}")
+
         return {
             "access_token": access_token,
             "token_type": "bearer",

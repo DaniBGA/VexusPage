@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curso - Vexus</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="../Static/css/main.css">
+    <link rel="stylesheet" href="../Static/css/components/course-editor.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../Static/images/logo.png">
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-icon">⏳</div>
+            <p>Cargando curso...</p>
+        </div>
+    </div>
+
+    <div class="course-container">
+        <a href="../index.html" class="back-button">
+            <span>←</span>
+            <span>Volver al Campus</span>
+        </a>
+
+        <div class="course-header">
+            <h1 id="courseTitle">Cargando...</h1>
+            <p id="courseDescription" class="course-description"></p>
+
+            <div class="course-meta">
+                <div class="meta-item">
+                    <span class="meta-icon">📚</span>
+                    <span id="courseDifficulty">-</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-icon">⏱️</span>
+                    <span id="courseDuration">- horas</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-icon">📖</span>
+                    <span id="courseUnitsCount">- unidades</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-header">
+                <h3 class="progress-title">Tu Progreso</h3>
+                <span id="progressText" class="progress-text">0%</span>
+            </div>
+            <div class="progress-bar-container">
+                <div id="progressBar" class="progress-bar" style="width: 0%;"></div>
+            </div>
+        </div>
+
+        <h2 class="course-content-title">
+            📚 Contenido del Curso
+        </h2>
+
+        <div id="unitsContainer" class="units-container">
+            <!-- Las unidades se cargarán aquí -->
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script type="module">
+        import { ThemeCustomizer } from '../Static/js/utils/theme-customizer.js';
+
+        // Aplicar tema guardado al cargar la página
+        ThemeCustomizer.loadSavedTheme();
+        ThemeCustomizer.applyTheme();
+    </script>
+    <script type="module" src="../Static/js/course-view.js"></script>
+</body>
+</html>

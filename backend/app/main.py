@@ -4,9 +4,11 @@ Aplicación principal FastAPI
 from datetime import datetime
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from app.config import settings
 from app.core.database import db
 from app.api.v1.router import api_router
+from pathlib import Path
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -22,6 +24,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Servir archivos estáticos (uploads)
+UPLOAD_DIR = Path("uploads")
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 # Incluir routers
 app.include_router(api_router, prefix=settings.API_V1_PREFIX)

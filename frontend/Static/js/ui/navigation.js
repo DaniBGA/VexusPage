@@ -73,14 +73,26 @@ export const Navigation = {
     updateLoginButton() {
         const loginBtn = document.getElementById('loginNavBtn');
         const logoutBtn = document.getElementById('logoutBtn');
+        const adminBtn = document.getElementById('adminPanelBtn');
         const loginLi = loginBtn ? loginBtn.parentElement : null;
         const logoutLi = logoutBtn ? logoutBtn.parentElement : null;
+        const adminLi = adminBtn ? adminBtn.parentElement : null;
 
         if (AuthService.isAuthenticated()) {
             if (loginBtn) loginBtn.style.display = 'none';
             if (loginLi) loginLi.style.display = 'none';
             if (logoutBtn) logoutBtn.style.display = 'flex';
             if (logoutLi) logoutLi.style.display = 'list-item';
+
+            // Mostrar botón de admin si el usuario es administrador
+            const user = AuthService.getCurrentUser();
+            if (user && user.role === 'admin') {
+                if (adminBtn) adminBtn.style.display = 'flex';
+                if (adminLi) adminLi.style.display = 'list-item';
+            } else {
+                if (adminBtn) adminBtn.style.display = 'none';
+                if (adminLi) adminLi.style.display = 'none';
+            }
 
             // Agregar clase logged-in al body para quitar el blur del campus
             document.body.classList.add('logged-in');
@@ -89,6 +101,8 @@ export const Navigation = {
             if (loginLi) loginLi.style.display = 'list-item';
             if (logoutBtn) logoutBtn.style.display = 'none';
             if (logoutLi) logoutLi.style.display = 'none';
+            if (adminBtn) adminBtn.style.display = 'none';
+            if (adminLi) adminLi.style.display = 'none';
 
             // Remover clase logged-in del body
             document.body.classList.remove('logged-in');

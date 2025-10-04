@@ -21,6 +21,7 @@ class User(UserBase):
     id: UUID4
     avatar: Optional[str] = "👤"
     is_active: bool = True
+    role: str = "user"
     created_at: datetime
     last_login: Optional[datetime] = None
     email_verified: bool = False
@@ -60,6 +61,30 @@ class CourseProgress(BaseModel):
     progress_percentage: int
     started_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
+
+# Course Unit Schemas
+class CourseUnitCreate(BaseModel):
+    title: str
+    description: Optional[str] = None
+    content: str
+    order: int = 0
+
+class CourseUnit(CourseUnitCreate):
+    id: UUID4
+    course_id: UUID4
+    created_at: datetime
+
+# Course Resource Schemas
+class CourseResourceCreate(BaseModel):
+    title: str
+    resource_type: str  # 'document', 'video', 'link'
+    url: str
+    description: Optional[str] = None
+
+class CourseResource(CourseResourceCreate):
+    id: UUID4
+    unit_id: UUID4
+    created_at: datetime
 
 # Project Schemas
 class ProjectCreate(BaseModel):

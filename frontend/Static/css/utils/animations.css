@@ -2,10 +2,10 @@
 
 @keyframes glow {
     from {
-        filter: drop-shadow(0 0 10px rgba(139, 69, 19, 0.3));
+        filter: drop-shadow(0 0 10px var(--glow-color-start));
     }
     to {
-        filter: drop-shadow(0 0 25px rgba(139, 69, 19, 0.6));
+        filter: drop-shadow(0 0 25px var(--glow-color-end));
     }
 }
 
@@ -31,12 +31,131 @@
     }
 }
 
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeInRotate {
+    from {
+        opacity: 0;
+        transform: rotate(-5deg) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: rotate(0deg) translateY(0);
+    }
+}
+
 .fade-in {
     animation: fadeIn 0.6s ease forwards;
 }
 
 .slide-in-right {
     animation: slideInRight 0.6s ease forwards;
+}
+
+.slide-in-left {
+    animation: slideInLeft 0.6s ease forwards;
+}
+
+.slide-in-up {
+    animation: slideInUp 0.8s ease forwards;
+}
+
+.scale-in {
+    animation: scaleIn 0.6s ease forwards;
+}
+
+.fade-in-rotate {
+    animation: fadeInRotate 0.7s ease forwards;
+}
+
+/* Clases de animación por scroll */
+.scroll-animate {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.scroll-animate.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.scroll-animate-left {
+    opacity: 0;
+    transform: translateX(-40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.scroll-animate-left.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.scroll-animate-right {
+    opacity: 0;
+    transform: translateX(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.scroll-animate-right.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.scroll-animate-scale {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.scroll-animate-scale.is-visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Animación de spinner */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
 }
 
 /* Smooth transitions */

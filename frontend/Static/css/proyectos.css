@@ -10,7 +10,7 @@
 .hero-projects .hero-title {
     font-size: clamp(2.5rem, 5vw, 4rem);
     margin-bottom: 1.5rem;
-    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -98,11 +98,11 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(255, 107, 53, 0.6) 0%, rgba(247, 147, 30, 0.5) 100%);
+    background: var(--color-primary);
+    opacity: 0.3;
     mix-blend-mode: multiply;
     pointer-events: none;
     transition: opacity 0.4s ease;
-    opacity: 1;
 }
 
 .project-card:hover .image-overlay {
@@ -118,7 +118,7 @@
     font-size: 2rem;
     margin-bottom: 1rem;
     color: #fff;
-    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -138,17 +138,18 @@
 
 .tag {
     padding: 8px 16px;
-    background: rgba(255, 107, 53, 0.1);
-    border: 1px solid rgba(255, 107, 53, 0.3);
+    background: transparent;
+    border: 1px solid var(--color-primary);
     border-radius: 20px;
-    color: #ff6b35;
+    color: var(--color-primary);
     font-size: 0.9rem;
     transition: all 0.3s ease;
 }
 
 .tag:hover {
-    background: rgba(255, 107, 53, 0.2);
-    border-color: #ff6b35;
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
 }
 
 /* Carousel Buttons */
@@ -156,7 +157,7 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(255, 107, 53, 0.9);
+    background: var(--color-primary);
     border: none;
     color: white;
     width: 50px;
@@ -169,11 +170,13 @@
     font-size: 1.5rem;
     transition: all 0.3s ease;
     z-index: 10;
+    box-shadow: var(--shadow-primary);
 }
 
 .carousel-btn:hover {
-    background: #ff6b35;
+    background: var(--color-primary-dark);
     transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 8px 25px var(--color-primary-rgb);
 }
 
 .carousel-btn.prev {
@@ -202,7 +205,7 @@
 }
 
 .indicator.active {
-    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
     width: 40px;
     border-radius: 6px;
 }
@@ -227,7 +230,7 @@
 }
 
 .cta-button {
-    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
     color: white;
     border: none;
     padding: 16px 48px;
@@ -236,11 +239,13 @@
     cursor: pointer;
     transition: all 0.3s ease;
     font-weight: 600;
+    box-shadow: var(--shadow-primary);
 }
 
 .cta-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4);
+    box-shadow: 0 15px 40px var(--color-primary-rgb);
+    filter: brightness(1.1);
 }
 
 /* Responsive */

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"from app.config import settings; print(f''SECRET_KEY: {settings.SECRET_KEY}''); print(f''ALGORITHM: {settings.ALGORITHM}'')\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

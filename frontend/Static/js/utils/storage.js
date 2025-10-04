@@ -2,7 +2,10 @@
 export const Storage = {
     set(key, value) {
         try {
-            localStorage.setItem(key, JSON.stringify(value));
+            // Si es un string simple (como un token), guardarlo directamente
+            // Si es un objeto, usar JSON.stringify
+            const valueToStore = typeof value === 'string' ? value : JSON.stringify(value);
+            localStorage.setItem(key, valueToStore);
             return true;
         } catch (error) {
             console.error('Storage set error:', error);
@@ -13,7 +16,15 @@ export const Storage = {
     get(key) {
         try {
             const item = localStorage.getItem(key);
-            return item ? JSON.parse(item) : null;
+            if (!item) return null;
+
+            // Intentar parsear como JSON, si falla, devolver el string tal cual
+            try {
+                return JSON.parse(item);
+            } catch {
+                // Si no es JSON válido, es un string simple (como un token)
+                return item;
+            }
         } catch (error) {
             console.error('Storage get error:', error);
             return null;

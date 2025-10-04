@@ -122,3 +122,126 @@
 .login-nav-item {
     margin-top: var(--spacing-md);
 }
+
+/* Theme Customizer */
+.customize-theme-container {
+    position: relative;
+}
+
+.customize-theme-btn {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    color: white;
+    border: none;
+    padding: 0.7rem 1rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 1.3rem;
+    transition: all var(--transition-base);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.customize-theme-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.color-picker-panel {
+    position: absolute;
+    top: calc(100% + 1rem);
+    right: 0;
+    background: var(--color-surface);
+    border: 2px solid var(--color-border-primary);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    min-width: 320px;
+    max-width: 400px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all var(--transition-base);
+    z-index: calc(var(--z-header) + 1);
+}
+
+.color-picker-panel.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.color-picker-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.color-picker-header h3 {
+    color: var(--color-primary);
+    font-family: var(--font-heading);
+    font-size: var(--font-size-lg);
+    margin-bottom: 0.3rem;
+}
+
+.color-picker-header p {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+.color-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+}
+
+.color-option {
+    position: relative;
+    padding: 1rem;
+    border: 2px solid transparent;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    overflow: hidden;
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.color-option:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    border-color: var(--color-text);
+}
+
+.color-option.active {
+    border-color: var(--color-text);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+.color-name {
+    color: white;
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 1;
+}
+
+.check-icon {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity var(--transition-base);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.color-option.active .check-icon {
+    opacity: 1;
+}

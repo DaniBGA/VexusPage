@@ -39,6 +39,12 @@
         margin-top: 0;
     }
 
+    /* Theme Customizer Responsive */
+    .color-picker-panel {
+        left: auto;
+        right: 0;
+    }
+
     .hero-title {
         font-size: 3.5rem;
     }

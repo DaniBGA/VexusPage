@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor de Curso - Vexus</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="../Static/css/main.css">
+    <link rel="stylesheet" href="../Static/css/components/course-editor.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../Static/images/logo.png">
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-icon">⏳</div>
+            <p>Cargando...</p>
+        </div>
+    </div>
+
+    <div class="editor-container">
+        <a href="../index.html" class="back-button">
+            <span>←</span>
+            <span>Volver</span>
+        </a>
+
+        <div class="editor-header">
+            <h1 id="courseTitle">Editor de Curso</h1>
+            <p id="courseDescription" class="editor-header-description"></p>
+        </div>
+
+        <div class="editor-tabs">
+            <button class="editor-tab active" onclick="switchTab('info')">
+                📝 Información del Curso
+            </button>
+            <button class="editor-tab" onclick="switchTab('units')">
+                📚 Unidades
+            </button>
+        </div>
+
+        <!-- Tab: Información del Curso -->
+        <div id="tab-info" class="tab-content active">
+            <div class="unit-card">
+                <h2 class="course-info-title">Información del Curso</h2>
+                <form id="courseInfoForm" class="modal-form">
+                    <div class="form-group">
+                        <label for="courseInfoTitle">Título</label>
+                        <input type="text" id="courseInfoTitle" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="courseInfoDescription">Descripción</label>
+                        <textarea id="courseInfoDescription" name="description" required rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="courseInfoContent">Contenido General</label>
+                        <textarea id="courseInfoContent" name="content" required rows="6"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="courseInfoDifficulty">Nivel de Dificultad</label>
+                        <select id="courseInfoDifficulty" name="difficulty_level" required>
+                            <option value="beginner">Principiante</option>
+                            <option value="intermediate">Intermedio</option>
+                            <option value="advanced">Avanzado</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="courseInfoDuration">Duración (horas)</label>
+                        <input type="number" id="courseInfoDuration" name="duration_hours" required min="1">
+                    </div>
+                    <button type="submit" class="btn-add">💾 Guardar Cambios</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tab: Unidades -->
+        <div id="tab-units" class="tab-content">
+            <button class="btn-add" onclick="showCreateUnitModal()">
+                ➕ Agregar Nueva Unidad
+            </button>
+
+            <div id="unitsContainer" class="units-grid">
+                <!-- Las unidades se cargarán aquí dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Crear/Editar Unidad -->
+    <div id="unitModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeUnitModal()">&times;</span>
+            <div class="modal-header">
+                <h2 id="unitModalTitle">Nueva Unidad</h2>
+                <p>Completa los datos de la unidad</p>
+            </div>
+            <form id="unitForm" class="modal-form">
+                <input type="hidden" id="unitId" name="unitId">
+                <div class="form-group">
+                    <label for="unitTitle">Título de la Unidad</label>
+                    <input type="text" id="unitTitle" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="unitDescription">Descripción</label>
+                    <textarea id="unitDescription" name="description" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="unitContent">Contenido</label>
+                    <textarea id="unitContent" name="content" required rows="8"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="unitOrder">Orden</label>
+                    <input type="number" id="unitOrder" name="order" required min="0" value="0">
+                </div>
+                <button type="submit" class="btn-submit">Guardar Unidad</button>
+            </form>
+
+            <!-- Sección de Recursos -->
+            <div id="resourcesSection" class="resources-section">
+                <h3 class="resource-section-title">Recursos de la Unidad</h3>
+                <button class="btn-add btn-add-margin" onclick="showAddResourceForm()">
+                    ➕ Agregar Recurso
+                </button>
+
+                <div id="resourcesList">
+                    <!-- Los recursos se cargarán aquí -->
+                </div>
+
+                <!-- Formulario para agregar recurso -->
+                <div id="addResourceForm" class="resource-form-container">
+                    <h4 class="resource-form-title">Nuevo Recurso</h4>
+                    <form id="resourceForm">
+                        <div class="form-group">
+                            <label for="resourceTitle">Título</label>
+                            <input type="text" id="resourceTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="resourceType">Tipo</label>
+                            <select id="resourceType" required>
+                                <option value="document">📄 Documento</option>
+                                <option value="video">🎥 Video</option>
+                                <option value="link">🔗 Enlace</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="resourceUrl">URL</label>
+                            <input type="url" id="resourceUrl" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="resourceDescription">Descripción</label>
+                            <textarea id="resourceDescription" rows="2"></textarea>
+                        </div>
+                        <div class="button-group">
+                            <button type="submit" class="btn-submit">Guardar Recurso</button>
+                            <button type="button" class="btn-submit btn-secondary" onclick="hideAddResourceForm()">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script type="module">
+        import { ThemeCustomizer } from '../Static/js/utils/theme-customizer.js';
+
+        // Aplicar tema guardado al cargar la página
+        ThemeCustomizer.loadSavedTheme();
+        ThemeCustomizer.applyTheme();
+    </script>
+    <script type="module" src="../Static/js/course-editor.js"></script>
+</body>
+</html>

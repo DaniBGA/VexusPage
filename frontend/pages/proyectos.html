@@ -206,6 +206,13 @@
     </footer>
 
     <!-- JavaScript -->
+    <script type="module">
+        import { ThemeCustomizer } from '../Static/js/utils/theme-customizer.js';
+
+        // Aplicar tema guardado al cargar la página
+        ThemeCustomizer.loadSavedTheme();
+        ThemeCustomizer.applyTheme();
+    </script>
     <script src="../Static/js/proyectos.js"></script>
 </body>
 </html>

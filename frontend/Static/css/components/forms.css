@@ -17,7 +17,8 @@
 }
 
 .form-group input,
-.form-group textarea {
+.form-group textarea,
+.form-group select {
     width: 100%;
     padding: 12px 15px;
     background: var(--color-background);
@@ -35,9 +36,14 @@
 }
 
 .form-group input:focus,
-.form-group textarea:focus {
+.form-group textarea:focus,
+.form-group select:focus {
     border-color: var(--color-border-primary);
     box-shadow: 0 0 10px rgba(139, 69, 19, 0.3);
+}
+
+.form-group select {
+    cursor: pointer;
 }
 
 .form-hint {
