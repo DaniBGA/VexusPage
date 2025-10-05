@@ -15,33 +15,11 @@ function showNotification(message, type = 'info') {
     if (!container) {
         container = document.createElement('div');
         container.id = 'notificationContainer';
-        container.style.position = 'fixed';
-        container.style.top = '2rem';
-        container.style.right = '2rem';
-        container.style.zIndex = '9999';
-        container.style.display = 'flex';
-        container.style.flexDirection = 'column';
-        container.style.gap = '0.5rem';
         document.body.appendChild(container);
     }
     const notif = document.createElement('div');
+    notif.className = `notification ${type}`;
     notif.textContent = message;
-    notif.style.padding = '1rem 2rem';
-    notif.style.borderRadius = '8px';
-    notif.style.fontWeight = 'bold';
-    notif.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
-    notif.style.color = 'white';
-    if (type === 'error') {
-        notif.style.background = '#dc2626';
-        notif.style.border = '2px solid #b91c1c';
-    } else if (type === 'success') {
-        notif.style.background = 'linear-gradient(135deg, #A0522D 0%, #8B4513 100%)';
-        notif.style.border = '2px solid #A0522D';
-    } else {
-        notif.style.background = 'linear-gradient(135deg, #8B4513 0%, #A0522D 100%)';
-        notif.style.border = '2px solid #8B4513';
-    }
-    notif.style.marginBottom = '0.5rem';
     container.appendChild(notif);
     setTimeout(() => {
         notif.style.opacity = '0';
@@ -638,25 +616,14 @@ class App {
     exposeGlobalFunctions() {
         // Exponer funciones para el HTML
         window.app = this;
-        window.showNotification = showNotification; // Exponer showNotification globalmente
-        window.openModal = function(id) {
-            document.getElementById(id).style.display = 'block';
-        };
-        window.closeModal = function(id) {
-            document.getElementById(id).style.display = 'none';
-        };
-        window.switchToRegister = function() {
-            closeModal('loginModal');
-            openModal('registerModal');
-        };
-        window.switchToLogin = function() {
-            closeModal('registerModal');
-            openModal('loginModal');
-        };
+        window.showNotification = showNotification;
+        window.openModal = (id) => ModalManager.open(id);
+        window.closeModal = (id) => ModalManager.close(id);
+        window.switchToRegister = () => ModalManager.switchModal('loginModal', 'registerModal');
+        window.switchToLogin = () => ModalManager.switchModal('registerModal', 'loginModal');
     }
 }
 
-// Inicializar aplicación
 // Inicializar aplicación
 const app = new App();
 

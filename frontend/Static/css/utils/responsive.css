@@ -6,45 +6,6 @@
         padding: 0 var(--spacing-xl);
     }
 
-    .mobile-menu-btn {
-        display: none;
-    }
-
-    .nav-links {
-        display: flex;
-        position: static;
-        flex-direction: row;
-        background: none;
-        gap: var(--spacing-lg);
-        padding: 0;
-        border: none;
-        width: auto;
-        align-items: center;
-    }
-
-    .nav-links li {
-        margin: 0;
-    }
-
-    .nav-links a {
-        padding: 0;
-        font-size: var(--font-size-base);
-    }
-
-    .nav-links a:hover {
-        transform: translateY(-2px);
-    }
-
-    .login-nav-item {
-        margin-top: 0;
-    }
-
-    /* Theme Customizer Responsive */
-    .color-picker-panel {
-        left: auto;
-        right: 0;
-    }
-
     .hero-title {
         font-size: 3.5rem;
     }
@@ -79,15 +40,6 @@
         min-height: 72px;
     }
 
-    .logo {
-        height: 90px;
-        margin-left: -20px;
-    }
-
-    .logo img {
-        max-height: 70px;
-    }
-
     .hero {
         padding: 120px 0 60px;
     }
@@ -118,7 +70,7 @@
     }
 
     .card:hover {
-        transform: translateY(-10px);
+        transform: translateY(var(--hover-lift-lg));
     }
 
     .section-title {
@@ -163,10 +115,6 @@
 
     .section-title {
         font-size: 3rem;
-    }
-
-    .logo {
-        margin-left: -80px;
     }
 }
 

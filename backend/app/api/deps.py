@@ -2,12 +2,21 @@
 Dependencias reutilizables para endpoints
 """
 import uuid
+from typing import AsyncGenerator
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.core.security import decode_token
 from app.core.database import db
+import asyncpg
 
 security = HTTPBearer()
+
+# ===== Database Connection Dependency =====
+async def get_db_connection() -> AsyncGenerator[asyncpg.Connection, None]:
+    """Obtener conexión a la base de datos"""
+    pool = await db.get_pool()
+    async with pool.acquire() as connection:
+        yield connection
 
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security)
@@ -55,3 +64,13 @@ async def get_current_user(
 
         print(f"DEBUG - Returning user: {user_dict.get('email')} with role: {user_dict.get('role')}")
         return user_dict
+
+# ===== Admin Role Dependency =====
+async def require_admin(current_user: dict = Depends(get_current_user)) -> dict:
+    """Verificar que el usuario actual sea administrador"""
+    if current_user.get('role') != 'admin':
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized. Admin role required."
+        )
+    return current_user

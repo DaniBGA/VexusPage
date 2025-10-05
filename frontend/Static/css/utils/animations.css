@@ -158,15 +158,38 @@
     animation: spin 1s linear infinite;
 }
 
-/* Smooth transitions */
-.transition-all {
-    transition: all var(--transition-base);
+/* Notificaciones */
+#notificationContainer {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
-.transition-fast {
-    transition: all var(--transition-fast);
+.notification {
+    padding: 1rem 2rem;
+    border-radius: var(--radius-md);
+    font-weight: bold;
+    box-shadow: var(--shadow-md);
+    color: white;
+    margin-bottom: 0.5rem;
+    transition: opacity var(--transition-base);
 }
 
-.transition-slow {
-    transition: all var(--transition-slow);
+.notification.error {
+    background: #dc2626;
+    border: 2px solid #b91c1c;
+}
+
+.notification.success {
+    background: linear-gradient(135deg, #A0522D 0%, #8B4513 100%);
+    border: 2px solid #A0522D;
+}
+
+.notification.info {
+    background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+    border: 2px solid #8B4513;
 }

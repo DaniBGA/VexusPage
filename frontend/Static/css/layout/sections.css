@@ -68,13 +68,13 @@
 /* Services Section */
 .services-section {
     padding: var(--spacing-xl) 0;
-    background: #111111;
+    background: var(--color-surface-dark);
 }
 
 /* About Section */
 .about-section {
     padding: var(--spacing-xl) 0;
-    background: #111111;
+    background: var(--color-surface-dark);
 }
 
 .about-content {
@@ -95,7 +95,7 @@
 }
 
 .about-text p {
-    color: #c0c0c0;
+    color: var(--color-text-light);
     line-height: 1.7;
     margin-bottom: var(--spacing-md);
     font-size: var(--font-size-base);

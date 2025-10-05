@@ -19,7 +19,7 @@
 
 .cta-button:hover,
 .btn-primary:hover {
-    transform: translateY(-3px);
+    transform: translateY(var(--hover-lift-sm));
     box-shadow: 0 15px 40px var(--color-primary-rgb);
     filter: brightness(1.1);
 }
@@ -42,7 +42,7 @@
 }
 
 .login-nav-btn:hover {
-    transform: translateY(-2px);
+    transform: translateY(var(--hover-lift-sm));
     box-shadow: 0 5px 15px var(--color-primary-rgb);
     filter: brightness(1.1);
 }
@@ -71,5 +71,5 @@
 .user-profile-btn:hover {
     background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
     color: white;
-    transform: translateY(-2px);
+    transform: translateY(var(--hover-lift-sm));
 }

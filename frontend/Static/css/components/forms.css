@@ -103,8 +103,8 @@
 }
 
 .btn-submit:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(139, 69, 19, 0.4);
+    transform: translateY(var(--hover-lift-sm));
+    box-shadow: 0 10px 25px var(--color-primary-rgb);
 }
 
 .btn-submit:disabled {

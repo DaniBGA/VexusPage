@@ -24,23 +24,8 @@
     overflow: hidden;
 }
 
-.campus-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, var(--card-shine-color), transparent);
-    transition: left var(--transition-slow);
-}
-
-.campus-card:hover::before {
-    left: 100%;
-}
-
 .campus-card:hover {
-    transform: translateY(-8px);
+    transform: translateY(var(--hover-lift-lg));
     border-color: var(--color-border-primary);
     box-shadow: 0 20px 40px var(--color-primary-rgb);
 }
@@ -76,7 +61,7 @@
     color: white;
     padding: 12px 24px;
     border: none;
-    border-radius: 25px;
+    border-radius: var(--radius-round);
     font-size: var(--font-size-sm);
     font-weight: 600;
     cursor: pointer;
@@ -87,7 +72,7 @@
 }
 
 .campus-btn:hover {
-    transform: translateY(-2px);
+    transform: translateY(var(--hover-lift-sm));
     box-shadow: 0 10px 25px var(--color-primary-rgb);
     filter: brightness(1.1);
 }

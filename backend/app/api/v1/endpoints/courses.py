@@ -10,7 +10,7 @@ from app.models.schemas import (
     CourseUnit, CourseUnitCreate,
     CourseResource, CourseResourceCreate
 )
-from app.api.deps import get_current_user
+from app.api.deps import get_current_user, require_admin, get_db_connection
 from app.core.database import db
 import uuid
 import os
@@ -24,6 +24,7 @@ router = APIRouter()
 UPLOAD_DIR = Path("uploads/course_resources")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 ALLOWED_EXTENSIONS = {'.pdf', '.doc', '.docx', '.ppt', '.pptx', '.xls', '.xlsx', '.txt', '.zip', '.mp4', '.mp3', '.jpg', '.jpeg', '.png', '.gif', '.webm', '.avi', '.mov'}
+MAX_FILE_SIZE = 100 * 1024 * 1024  # 100MB
 
 @router.get("/", response_model=List[Course])
 async def get_courses():
@@ -105,16 +106,11 @@ async def update_course_progress(
 @router.post("/admin/create", response_model=Course)
 async def create_course(
     course: CourseCreate,
-    current_user: dict = Depends(get_current_user)
+    admin: dict = Depends(require_admin),
+    connection = Depends(get_db_connection)
 ):
     """Crear un nuevo curso (solo administradores)"""
-    # Verificar que el usuario sea administrador
-    if current_user.get('role') != 'admin':
-        raise HTTPException(status_code=403, detail="Not authorized. Admin role required.")
-
-    pool = await db.get_pool()
-
-    async with pool.acquire() as connection:
+    async with connection.transaction():
         course_id = uuid.uuid4()
         new_course = await connection.fetchrow(
             """
@@ -126,78 +122,65 @@ async def create_course(
             course.difficulty_level, course.duration_hours
         )
 
-        return Course(**dict(new_course))
+    return Course(**dict(new_course))
 
 @router.put("/admin/{course_id}", response_model=Course)
 async def update_course(
     course_id: UUID4,
     course: CourseCreate,
-    current_user: dict = Depends(get_current_user)
+    admin: dict = Depends(require_admin),
+    connection = Depends(get_db_connection)
 ):
     """Actualizar un curso (solo administradores)"""
-    if current_user.get('role') != 'admin':
-        raise HTTPException(status_code=403, detail="Not authorized. Admin role required.")
+    existing_course = await connection.fetchrow(
+        "SELECT id FROM learning_courses WHERE id = $1", course_id
+    )
+    if not existing_course:
+        raise HTTPException(status_code=404, detail="Course not found")
 
-    pool = await db.get_pool()
+    updated_course = await connection.fetchrow(
+        """
+        UPDATE learning_courses
+        SET title = $2, description = $3, content = $4,
+            difficulty_level = $5, duration_hours = $6
+        WHERE id = $1
+        RETURNING *
+        """,
+        course_id, course.title, course.description, course.content,
+        course.difficulty_level, course.duration_hours
+    )
 
-    async with pool.acquire() as connection:
-        existing_course = await connection.fetchrow(
-            "SELECT id FROM learning_courses WHERE id = $1", course_id
-        )
-        if not existing_course:
-            raise HTTPException(status_code=404, detail="Course not found")
-
-        updated_course = await connection.fetchrow(
-            """
-            UPDATE learning_courses
-            SET title = $2, description = $3, content = $4,
-                difficulty_level = $5, duration_hours = $6
-            WHERE id = $1
-            RETURNING *
-            """,
-            course_id, course.title, course.description, course.content,
-            course.difficulty_level, course.duration_hours
-        )
-
-        return Course(**dict(updated_course))
+    return Course(**dict(updated_course))
 
 @router.delete("/admin/{course_id}")
 async def delete_course(
     course_id: UUID4,
-    current_user: dict = Depends(get_current_user)
+    admin: dict = Depends(require_admin),
+    connection = Depends(get_db_connection)
 ):
     """Eliminar un curso (solo administradores)"""
-    if current_user.get('role') != 'admin':
-        raise HTTPException(status_code=403, detail="Not authorized. Admin role required.")
+    course = await connection.fetchrow(
+        "SELECT id FROM learning_courses WHERE id = $1", course_id
+    )
+    if not course:
+        raise HTTPException(status_code=404, detail="Course not found")
 
-    pool = await db.get_pool()
+    await connection.execute(
+        "DELETE FROM learning_courses WHERE id = $1", course_id
+    )
 
-    async with pool.acquire() as connection:
-        course = await connection.fetchrow(
-            "SELECT id FROM learning_courses WHERE id = $1", course_id
-        )
-        if not course:
-            raise HTTPException(status_code=404, detail="Course not found")
-
-        await connection.execute(
-            "DELETE FROM learning_courses WHERE id = $1", course_id
-        )
-
-        return {"message": "Course deleted successfully"}
+    return {"message": "Course deleted successfully"}
 
 @router.get("/admin/all", response_model=List[Course])
-async def get_all_courses_admin(current_user: dict = Depends(get_current_user)):
+async def get_all_courses_admin(
+    admin: dict = Depends(require_admin),
+    connection = Depends(get_db_connection)
+):
     """Obtener todos los cursos incluyendo no publicados (solo administradores)"""
-    if current_user.get('role') != 'admin':
-        raise HTTPException(status_code=403, detail="Not authorized. Admin role required.")
-
-    pool = await db.get_pool()
-
-    async with pool.acquire() as connection:
-        courses = await connection.fetch(
-            "SELECT * FROM learning_courses ORDER BY created_at DESC"
-        )
-        return [Course(**dict(course)) for course in courses]
+    courses = await connection.fetch(
+        "SELECT * FROM learning_courses ORDER BY created_at DESC"
+    )
+    return [Course(**dict(course)) for course in courses]
 
 # ===== COURSE UNITS ENDPOINTS =====
 
@@ -217,79 +200,64 @@ async def get_course_units(course_id: UUID4):
 async def create_course_unit(
     course_id: UUID4,
     unit: CourseUnitCreate,
-    current_user: dict = Depends(get_current_user)
+    admin: dict = Depends(require_admin),
+    connection = Depends(get_db_connection)
 ):
     """Crear una nueva unidad en un curso (solo administradores)"""
-    if current_user.get('role') != 'admin':
-        raise HTTPException(status_code=403, detail="Not authorized. Admin role required.")
+    # Verificar que el curso existe
+    course = await connection.fetchrow(
+        "SELECT id FROM learning_courses WHERE id = $1", course_id
+    )
+    if not course:
+        raise HTTPException(status_code=404, detail="Course not found")
 
-    pool = await db.get_pool()
+    unit_id = uuid.uuid4()
+    new_unit = await connection.fetchrow(
+        """
+        INSERT INTO course_units (id, course_id, title, description, content, "order")
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING *
+        """,
+        unit_id, course_id, unit.title, unit.description, unit.content, unit.order
+    )
 
-    async with pool.acquire() as connection:
-        # Verificar que el curso existe
-        course = await connection.fetchrow(
-            "SELECT id FROM learning_courses WHERE id = $1", course_id
-        )
-        if not course:
-            raise HTTPException(status_code=404, detail="Course not found")
-
-        unit_id = uuid.uuid4()
-        new_unit = await connection.fetchrow(
-            """
-            INSERT INTO course_units (id, course_id, title, description, content, "order")
-            VALUES ($1, $2, $3, $4, $5, $6)
-            RETURNING *
-            """,
-            unit_id, course_id, unit.title, unit.description, unit.content, unit.order
-        )
-
-        return CourseUnit(**dict(new_unit))
+    return CourseUnit(**dict(new_unit))
 
 @router.put("/units/{unit_id}", response_model=CourseUnit)
 async def update_course_unit(
     unit_id: UUID4,
     unit: CourseUnitCreate,
-    current_user: dict = Depends(get_current_user)
+    admin: dict = Depends(require_admin),
+    connection = Depends(get_db_connection)
 ):
     """Actualizar una unidad de curso (solo administradores)"""
-    if current_user.get('role') != 'admin':
-        raise HTTPException(status_code=403, detail="Not authorized. Admin role required.")
+    updated_unit = await connection.fetchrow(
+        """
+        UPDATE course_units
+        SET title = $2, description = $3, content = $4, "order" = $5
+        WHERE id = $1
+        RETURNING *
+        """,
+        unit_id, unit.title, unit.description, unit.content, unit.order
+    )
 
-    pool = await db.get_pool()
+    if not updated_unit:
+        raise HTTPException(status_code=404, detail="Unit not found")
 
-    async with pool.acquire() as connection:
-        updated_unit = await connection.fetchrow(
-            """
-            UPDATE course_units
-            SET title = $2, description = $3, content = $4, "order" = $5
-            WHERE id = $1
-            RETURNING *
-            """,
-            unit_id, unit.title, unit.description, unit.content, unit.order
-        )
-
-        if not updated_unit:
-            raise HTTPException(status_code=404, detail="Unit not found")
-
-        return CourseUnit(**dict(updated_unit))
+    return CourseUnit(**dict(updated_unit))
 
 @router.delete("/units/{unit_id}")
 async def delete_course_unit(
     unit_id: UUID4,
-    current_user: dict = Depends(get_current_user)
+    admin: dict = Depends(require_admin),
+    connection = Depends(get_db_connection)
 ):
     """Eliminar una unidad de curso (solo administradores)"""
-    if current_user.get('role') != 'admin':
-        raise HTTPException(status_code=403, detail="Not authorized. Admin role required.")
+    await connection.execute(
+        "DELETE FROM course_units WHERE id = $1", unit_id
+    )
 
-    pool = await db.get_pool()
-
-    async with pool.acquire() as connection:
-        await connection.execute(
-            "DELETE FROM course_units WHERE id = $1", unit_id
-        )
-
-        return {"message": "Unit deleted successfully"}
+    return {"message": "Unit deleted successfully"}
 
 # ===== COURSE RESOURCES ENDPOINTS =====
 
@@ -309,81 +277,71 @@ async def get_unit_resources(unit_id: UUID4):
 async def create_resource(
     unit_id: UUID4,
     resource: CourseResourceCreate,
-    current_user: dict = Depends(get_current_user)
+    admin: dict = Depends(require_admin),
+    connection = Depends(get_db_connection)
 ):
     """Crear un nuevo recurso en una unidad (solo administradores)"""
-    if current_user.get('role') != 'admin':
-        raise HTTPException(status_code=403, detail="Not authorized. Admin role required.")
+    # Verificar que la unidad existe
+    unit = await connection.fetchrow(
+        "SELECT id FROM course_units WHERE id = $1", unit_id
+    )
+    if not unit:
+        raise HTTPException(status_code=404, detail="Unit not found")
 
-    pool = await db.get_pool()
+    resource_id = uuid.uuid4()
+    new_resource = await connection.fetchrow(
+        """
+        INSERT INTO course_resources (id, unit_id, title, resource_type, url, description)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING *
+        """,
+        resource_id, unit_id, resource.title, resource.resource_type,
+        resource.url, resource.description
+    )
 
-    async with pool.acquire() as connection:
-        # Verificar que la unidad existe
-        unit = await connection.fetchrow(
-            "SELECT id FROM course_units WHERE id = $1", unit_id
-        )
-        if not unit:
-            raise HTTPException(status_code=404, detail="Unit not found")
-
-        resource_id = uuid.uuid4()
-        new_resource = await connection.fetchrow(
-            """
-            INSERT INTO course_resources (id, unit_id, title, resource_type, url, description)
-            VALUES ($1, $2, $3, $4, $5, $6)
-            RETURNING *
-            """,
-            resource_id, unit_id, resource.title, resource.resource_type,
-            resource.url, resource.description
-        )
-
-        return CourseResource(**dict(new_resource))
+    return CourseResource(**dict(new_resource))
 
 @router.delete("/resources/{resource_id}")
 async def delete_resource(
     resource_id: UUID4,
-    current_user: dict = Depends(get_current_user)
+    admin: dict = Depends(require_admin),
+    connection = Depends(get_db_connection)
 ):
     """Eliminar un recurso (solo administradores)"""
-    if current_user.get('role') != 'admin':
-        raise HTTPException(status_code=403, detail="Not authorized. Admin role required.")
+    await connection.execute(
+        "DELETE FROM course_resources WHERE id = $1", resource_id
+    )
 
-    pool = await db.get_pool()
-
-    async with pool.acquire() as connection:
-        await connection.execute(
-            "DELETE FROM course_resources WHERE id = $1", resource_id
-        )
-
-        return {"message": "Resource deleted successfully"}
+    return {"message": "Resource deleted successfully"}
 
 # ===== COURSE ENROLLMENT & VIEWING ENDPOINTS =====
 
 @router.post("/{course_id}/enroll")
 async def enroll_in_course(
     course_id: UUID4,
-    current_user: dict = Depends(get_current_user)
+    current_user: dict = Depends(get_current_user),
+    connection = Depends(get_db_connection)
 ):
     """Inscribir al usuario en un curso"""
-    pool = await db.get_pool()
+    # Verificar que el curso existe y está publicado
+    course = await connection.fetchrow(
+        "SELECT id FROM learning_courses WHERE id = $1 AND is_published = true",
+        course_id
+    )
+    if not course:
+        raise HTTPException(status_code=404, detail="Course not found")
 
-    async with pool.acquire() as connection:
-        # Verificar que el curso existe y está publicado
-        course = await connection.fetchrow(
-            "SELECT id FROM learning_courses WHERE id = $1 AND is_published = true",
-            course_id
-        )
-        if not course:
-            raise HTTPException(status_code=404, detail="Course not found")
+    # Verificar si ya está inscrito
+    existing = await connection.fetchrow(
+        "SELECT id FROM course_enrollments WHERE user_id = $1 AND course_id = $2",
+        current_user['id'], course_id
+    )
 
-        # Verificar si ya está inscrito
-        existing = await connection.fetchrow(
-            "SELECT id FROM course_enrollments WHERE user_id = $1 AND course_id = $2",
-            current_user['id'], course_id
-        )
+    if existing:
+        return {"message": "Already enrolled", "enrollment_id": str(existing['id'])}
 
-        if existing:
-            return {"message": "Already enrolled", "enrollment_id": str(existing['id'])}
-
+    # Usar transacción para asegurar que ambas inserciones se completen
+    async with connection.transaction():
         # Inscribir al usuario
         enrollment_id = uuid.uuid4()
         await connection.execute(
@@ -404,7 +362,7 @@ async def enroll_in_course(
             current_user['id'], course_id
         )
 
-        return {"message": "Enrolled successfully", "enrollment_id": str(enrollment_id)}
+    return {"message": "Enrolled successfully", "enrollment_id": str(enrollment_id)}
 
 @router.get("/{course_id}/view")
 async def get_course_with_units(
@@ -561,11 +519,13 @@ async def mark_unit_complete(
 @router.post("/upload-file")
 async def upload_file(
     file: UploadFile = File(...),
-    current_user: dict = Depends(get_current_user)
+    admin: dict = Depends(require_admin)
 ):
     """Subir archivo para recursos del curso (solo administradores)"""
-    if current_user.get('role') != 'admin':
-        raise HTTPException(status_code=403, detail="Not authorized. Admin role required.")
+
+    # Validar nombre de archivo
+    if not file.filename or file.filename.strip() == "":
+        raise HTTPException(status_code=400, detail="Nombre de archivo inválido")
 
     # Verificar extensión
     file_ext = Path(file.filename).suffix.lower()
@@ -575,16 +535,28 @@ async def upload_file(
             detail=f"Tipo de archivo no permitido. Permitidos: {', '.join(ALLOWED_EXTENSIONS)}"
         )
 
-    # Generar nombre único
+    # Leer archivo y verificar tamaño
+    file_content = await file.read()
+    file_size = len(file_content)
+
+    if file_size > MAX_FILE_SIZE:
+        raise HTTPException(
+            status_code=413,
+            detail=f"Archivo demasiado grande. Máximo: {MAX_FILE_SIZE / (1024*1024)}MB"
+        )
+
+    # Generar nombre único y seguro (prevenir path traversal)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     unique_id = str(uuid.uuid4())[:8]
-    safe_filename = f"{timestamp}_{unique_id}_{file.filename}"
+    # Sanitizar nombre de archivo original
+    safe_original_name = "".join(c for c in file.filename if c.isalnum() or c in '._- ')
+    safe_filename = f"{timestamp}_{unique_id}_{safe_original_name}"
     file_path = UPLOAD_DIR / safe_filename
 
     # Guardar archivo
     try:
         with file_path.open("wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
+            buffer.write(file_content)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al guardar archivo: {str(e)}")
 
