@@ -31,16 +31,9 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
 def decode_token(token: str) -> dict:
     """Decodificar token JWT"""
     try:
-        print(f"DEBUG DECODE - Attempting to decode token")
-        print(f"DEBUG DECODE - SECRET_KEY: {settings.SECRET_KEY[:10]}...")
-        print(f"DEBUG DECODE - ALGORITHM: {settings.ALGORITHM}")
         decoded = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        print(f"DEBUG DECODE - Successfully decoded: {decoded}")
         return decoded
-    except JWTError as e:
-        print(f"DEBUG DECODE - JWT Error: {str(e)}")
-        print(f"DEBUG DECODE - Error type: {type(e).__name__}")
+    except JWTError:
         return None
-    except Exception as e:
-        print(f"DEBUG DECODE - Unexpected error: {str(e)}")
+    except Exception:
         return None

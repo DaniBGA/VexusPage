@@ -43,7 +43,8 @@ async def http_exception_handler(request: Request, exc: HTTPException):
 @app.exception_handler(asyncpg.PostgresError)
 async def postgres_exception_handler(request: Request, exc: asyncpg.PostgresError):
     """Manejo de errores de PostgreSQL"""
-    print(f"Database error: {exc}")
+    if settings.DEBUG:
+        print(f"Database error: {exc}")
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={"detail": "Database error occurred"}
@@ -52,7 +53,8 @@ async def postgres_exception_handler(request: Request, exc: asyncpg.PostgresErro
 @app.exception_handler(Exception)
 async def general_exception_handler(request: Request, exc: Exception):
     """Manejo de excepciones generales"""
-    print(f"Unexpected error: {exc}")
+    if settings.DEBUG:
+        print(f"Unexpected error: {exc}")
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={"detail": "Internal server error"}

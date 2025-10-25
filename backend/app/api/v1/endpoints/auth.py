@@ -82,15 +82,12 @@ async def login_user(user_credentials: UserLogin):
 
         # Convertir a dict y verificar que role existe
         user_dict = dict(user)
-        print(f"DEBUG - User data from DB: {user_dict}")
 
         # Si role es None, asignar 'user' por defecto
         if user_dict.get('role') is None:
             user_dict['role'] = 'user'
-            print(f"DEBUG - Role was None, set to 'user'")
 
         user_data = User(**user_dict)
-        print(f"DEBUG - User model created: {user_data.model_dump()}")
 
         return {
             "access_token": access_token,

@@ -53,8 +53,10 @@ yarn.lock
 *.db
 *.sqlite
 *.sqlite3
-*.sql
-vexus_db.sql
+# NOTA: vexus_db.sql SÍ debe estar en el repo para deployment/inicialización
+# Solo ignorar backups y dumps:
+backup*.sql
+dump*.sql
 
 # === IDEs ===
 # VS Code

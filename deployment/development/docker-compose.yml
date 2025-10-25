@@ -1,0 +1,94 @@
+version: '3.8'
+
+# ====================================
+# DOCKER COMPOSE - DESARROLLO
+# ====================================
+# Uso: docker-compose -f docker-compose.dev.yml up
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:17-alpine
+    container_name: vexus-dev-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: dev123
+      POSTGRES_DB: vexus_db
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ../../vexus_db.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - vexus-dev-network
+
+  # Backend API (con hot reload)
+  backend:
+    build:
+      context: ../../backend
+      dockerfile: Dockerfile
+    container_name: vexus-dev-backend
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql://postgres:dev123@db:5432/vexus_db
+      - SECRET_KEY=dev-secret-key-not-for-production
+      - ALLOWED_ORIGINS=*
+      - ENVIRONMENT=development
+      - DEBUG=True
+      - DB_POOL_MIN_SIZE=2
+      - DB_POOL_MAX_SIZE=10
+    volumes:
+      # Mount código para hot reload
+      - ../../backend/app:/app/app
+      - ../../backend/uploads:/app/uploads
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - vexus-dev-network
+
+  # Frontend (servidor simple de desarrollo)
+  frontend:
+    image: node:20-alpine
+    container_name: vexus-dev-frontend
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ../../frontend:/app
+    ports:
+      - "8080:8080"
+    command: npx http-server -p 8080 -c-1
+    networks:
+      - vexus-dev-network
+
+  # Adminer (GUI para base de datos) - Opcional
+  adminer:
+    image: adminer:latest
+    container_name: vexus-dev-adminer
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+    networks:
+      - vexus-dev-network
+
+volumes:
+  postgres_dev_data:
+    name: vexus-dev-postgres-data
+
+networks:
+  vexus-dev-network:
+    name: vexus-dev-network
+    driver: bridge

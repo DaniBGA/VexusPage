@@ -1,0 +1,125 @@
+# ====================================
+# CI/CD - GitHub Actions
+# ====================================
+# Se ejecuta en cada push y pull request
+
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  # Job 1: Linting y validación
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      run: |
+        cd backend
+        pip install -r requirements.txt
+        pip install black flake8
+
+    - name: Run Black (code formatter check)
+      run: |
+        cd backend
+        black --check app/
+
+    - name: Run Flake8 (linter)
+      run: |
+        cd backend
+        flake8 app/ --max-line-length=100 --ignore=E203,W503
+
+  # Job 2: Security scan
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+
+    - name: Install safety
+      run: pip install safety
+
+    - name: Check for vulnerabilities
+      run: |
+        cd backend
+        safety check -r requirements.txt --json || true
+
+  # Job 3: Tests (cuando los agregues)
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: test123
+          POSTGRES_DB: vexus_test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      run: |
+        cd backend
+        pip install -r requirements.txt
+        pip install pytest pytest-asyncio httpx
+
+    - name: Run tests
+      env:
+        DATABASE_URL: postgresql://postgres:test123@localhost:5432/vexus_test_db
+        SECRET_KEY: test-secret-key
+        DEBUG: True
+      run: |
+        cd backend
+        # pytest tests/ -v  # Descomentar cuando tengas tests
+        echo "No tests configured yet"
+
+  # Job 4: Build Docker images
+  build:
+    name: Build Docker Images
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Build backend image
+      run: |
+        cd backend
+        docker build -t vexus-backend:test -f Dockerfile .
+
+    - name: Build frontend image
+      run: |
+        cd frontend
+        docker build -t vexus-frontend:test -f Dockerfile .
