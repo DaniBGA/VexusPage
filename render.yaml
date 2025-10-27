@@ -1,5 +1,4 @@
 services:
-  # Backend API FastAPI
   - type: web
     name: vexus-backend
     runtime: python
