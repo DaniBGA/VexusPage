@@ -21,8 +21,10 @@ from datetime import datetime
 router = APIRouter()
 
 # Configuración de uploads
+# NOTA: En entornos serverless (Vercel/Lambda), el filesystem es read-only
+# TODO: Migrar uploads a Supabase Storage o S3 para producción serverless
 UPLOAD_DIR = Path("uploads/course_resources")
-UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+# UPLOAD_DIR.mkdir(parents=True, exist_ok=True)  # ❌ Comentado: no funciona en serverless (read-only filesystem)
 ALLOWED_EXTENSIONS = {'.pdf', '.doc', '.docx', '.ppt', '.pptx', '.xls', '.xlsx', '.txt', '.zip', '.mp4', '.mp3', '.jpg', '.jpeg', '.png', '.gif', '.webm', '.avi', '.mov'}
 MAX_FILE_SIZE = 100 * 1024 * 1024  # 100MB
 

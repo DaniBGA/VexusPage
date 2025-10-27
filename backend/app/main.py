@@ -73,9 +73,11 @@ app.add_middleware(
 app.include_router(api_router, prefix=settings.API_V1_PREFIX)
 
 # Servir archivos estáticos (uploads)
+# NOTA: Comentado para entornos serverless (Vercel/Lambda tienen filesystem read-only)
+# En producción, los archivos deben subirse a almacenamiento externo (Supabase Storage, S3, etc.)
 UPLOAD_DIR = Path("uploads")
-UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+# UPLOAD_DIR.mkdir(parents=True, exist_ok=True)  # ❌ No funciona en serverless (read-only filesystem)
+# app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")  # ❌ Tampoco funciona en serverless
 
 # Eventos de inicio y cierre
 @app.on_event("startup")
