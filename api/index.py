@@ -1,25 +1,28 @@
 """
-Entry point para Vercel Serverless
+Entry point para Vercel Serverless Functions
+Compatible con Vercel Python Runtime
 """
 import sys
 import os
+from pathlib import Path
 
-# Agregar backend al path
-backend_path = os.path.join(os.path.dirname(__file__), '..', 'backend')
-sys.path.insert(0, backend_path)
+# Configurar paths
+current_dir = Path(__file__).parent
+backend_dir = current_dir.parent / "backend"
+sys.path.insert(0, str(backend_dir))
 
-# Configurar para serverless ANTES de importar
+# Configurar para serverless
 os.environ['SERVERLESS'] = 'true'
 
-# Importar app
+# Importar FastAPI app
 from app.main import app
 
-# Eliminar eventos de startup/shutdown para serverless
+# Limpiar lifecycle events que no funcionan en serverless
 app.router.on_startup.clear()
 app.router.on_shutdown.clear()
 
-# Importar Mangum y crear handler
+# Importar Mangum para AWS Lambda compatibility (Vercel usa Lambda)
 from mangum import Mangum
 
-# Configuración explícita de Mangum para Vercel
-handler = Mangum(app, lifespan="off", api_gateway_base_path="/")
+# Crear handler - el nombre DEBE ser 'handler' para Vercel
+handler = Mangum(app, lifespan="off")
