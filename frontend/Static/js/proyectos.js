@@ -149,11 +149,8 @@ if (contactForm) {
                 message: document.getElementById('contactMessage').value
             };
 
-            // Enviar a la API
-            // En producción, esto usará el mismo dominio que el frontend
-            const apiUrl = window.location.origin.includes('localhost')
-                ? 'http://localhost:8000/api/v1/contact/'
-                : `${window.location.origin}/api/v1/contact/`;
+            // Enviar a la API local
+            const apiUrl = 'https://grupovexus.com/api/v1/contact/';
 
             const response = await fetch(apiUrl, {
                 method: 'POST',

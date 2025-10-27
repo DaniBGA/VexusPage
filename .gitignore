@@ -7,10 +7,16 @@
 .env
 .env.local
 .env.production
+.env.neatech
 *.pem
 *.key
 credentials.json
 secrets.json
+
+# Archivos de frontend compilados/temporales
+frontend_upload/
+frontend.zip
+frontend_vexus.zip
 
 # === PYTHON ===
 __pycache__/
