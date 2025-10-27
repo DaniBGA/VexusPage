@@ -1,6 +1,6 @@
 """
 Entry point para Vercel Serverless Functions
-Compatible con Vercel Python Runtime
+Wrapper ASGI personalizado sin Mangum
 """
 import sys
 import os
@@ -17,12 +17,14 @@ os.environ['SERVERLESS'] = 'true'
 # Importar FastAPI app
 from app.main import app
 
-# Limpiar lifecycle events que no funcionan en serverless
+# Limpiar lifecycle events
 app.router.on_startup.clear()
 app.router.on_shutdown.clear()
 
-# Importar Mangum para AWS Lambda compatibility (Vercel usa Lambda)
-from mangum import Mangum
-
-# Crear handler - el nombre DEBE ser 'handler' para Vercel
-handler = Mangum(app, lifespan="off")
+# ASGI handler directo para Vercel
+async def handler(scope, receive, send):
+    """
+    ASGI handler que Vercel puede llamar directamente
+    sin necesidad de Mangum
+    """
+    await app(scope, receive, send)
