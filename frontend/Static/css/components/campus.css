@@ -79,13 +79,14 @@
 
 /* Blur effect for logged out state */
 .blur-when-logged-out {
-    pointer-events: none;
     position: relative;
+    /* Removido pointer-events: none para permitir clicks */
 }
 
 .blur-when-logged-out > *:not(.login-overlay) {
     filter: blur(3px);
     opacity: 0.6;
+    pointer-events: none; /* Solo los elementos internos están bloqueados */
 }
 
 .blur-when-logged-out .login-overlay {
@@ -99,6 +100,7 @@
 .logged-in .blur-when-logged-out > *:not(.login-overlay) {
     filter: none;
     opacity: 1;
+    pointer-events: auto; /* Re-habilitar cuando está logged in */
 }
 
 .logged-in .blur-when-logged-out .login-overlay {
@@ -119,6 +121,12 @@
     z-index: 10;
     filter: none !important;
     opacity: 1 !important;
+    cursor: pointer; /* Indicar que es clickeable */
+    transition: background var(--transition-base);
+}
+
+.login-overlay:hover {
+    background: rgba(0, 0, 0, 0.8); /* Efecto hover */
 }
 
 .overlay-content {
@@ -126,6 +134,7 @@
     color: white;
     filter: none !important;
     opacity: 1 !important;
+    pointer-events: none; /* Evitar que el contenido bloquee los clicks en el overlay */
 }
 
 .lock-icon {

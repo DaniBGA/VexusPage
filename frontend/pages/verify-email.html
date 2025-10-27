@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificar Email - Vexus</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="../Static/css/main.css">
+
+    <style>
+        .verify-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+        }
+
+        .verify-box {
+            background: rgba(26, 26, 26, 0.95);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 16px;
+            padding: 60px 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .verify-icon {
+            font-size: 64px;
+            margin-bottom: 30px;
+        }
+
+        .verify-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 32px;
+            color: #d4af37;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .verify-message {
+            color: #c0c0c0;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .verify-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: #d4af37;
+            font-size: 16px;
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(212, 175, 55, 0.2);
+            border-top-color: #d4af37;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .verify-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #d4af37 0%, #c49a2f 100%);
+            color: #0a0a0a;
+            text-decoration: none;
+            padding: 16px 40px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 1px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .verify-button:hover {
+            background: linear-gradient(135deg, #c49a2f 0%, #b38a28 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .success-icon {
+            color: #4caf50;
+        }
+
+        .error-icon {
+            color: #f44336;
+        }
+
+        .warning-icon {
+            color: #ff9800;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, #d4af37, transparent);
+            margin: 30px 0;
+        }
+
+        @media (max-width: 600px) {
+            .verify-box {
+                padding: 40px 30px;
+            }
+
+            .verify-title {
+                font-size: 24px;
+            }
+
+            .verify-message {
+                font-size: 16px;
+            }
+        }
+    </style>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../Static/images/logo.png">
+</head>
+<body>
+    <div class="verify-container">
+        <div class="verify-box" id="verifyBox">
+            <div class="verify-loading" id="loadingState">
+                <div class="spinner"></div>
+                <span>Verificando tu email...</span>
+            </div>
+
+            <div id="successState" style="display: none;">
+                <div class="verify-icon success-icon">✓</div>
+                <h1 class="verify-title">¡Email Verificado!</h1>
+                <p class="verify-message">
+                    Tu email ha sido verificado exitosamente. Ahora puedes iniciar sesión y disfrutar de todos los servicios de Vexus.
+                </p>
+                <div class="divider"></div>
+                <a href="../index.html" class="verify-button">Ir a Inicio de Sesión</a>
+            </div>
+
+            <div id="alreadyVerifiedState" style="display: none;">
+                <div class="verify-icon warning-icon">⚠</div>
+                <h1 class="verify-title">Email Ya Verificado</h1>
+                <p class="verify-message">
+                    Tu email ya ha sido verificado anteriormente. Puedes iniciar sesión normalmente.
+                </p>
+                <div class="divider"></div>
+                <a href="../index.html" class="verify-button">Ir a Inicio de Sesión</a>
+            </div>
+
+            <div id="errorState" style="display: none;">
+                <div class="verify-icon error-icon">✕</div>
+                <h1 class="verify-title">Error de Verificación</h1>
+                <p class="verify-message" id="errorMessage">
+                    No pudimos verificar tu email. El enlace puede haber expirado o ser inválido.
+                </p>
+                <div class="divider"></div>
+                <button class="verify-button" onclick="window.location.href='../index.html'">
+                    Volver al Inicio
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module">
+        import { AuthService } from '../Static/js/api/auth.js';
+
+        async function verifyEmail() {
+            // Obtener el token de la URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+
+            const loadingState = document.getElementById('loadingState');
+            const successState = document.getElementById('successState');
+            const alreadyVerifiedState = document.getElementById('alreadyVerifiedState');
+            const errorState = document.getElementById('errorState');
+            const errorMessage = document.getElementById('errorMessage');
+
+            if (!token) {
+                loadingState.style.display = 'none';
+                errorState.style.display = 'block';
+                errorMessage.textContent = 'No se proporcionó un token de verificación válido.';
+                return;
+            }
+
+            try {
+                const result = await AuthService.verifyEmail(token);
+
+                loadingState.style.display = 'none';
+
+                if (result.success) {
+                    if (result.alreadyVerified) {
+                        alreadyVerifiedState.style.display = 'block';
+                    } else {
+                        successState.style.display = 'block';
+                    }
+                } else {
+                    errorState.style.display = 'block';
+                    errorMessage.textContent = result.message || 'Error al verificar el email.';
+                }
+            } catch (error) {
+                console.error('Error during verification:', error);
+                loadingState.style.display = 'none';
+                errorState.style.display = 'block';
+                errorMessage.textContent = 'Ocurrió un error inesperado. Por favor, intenta nuevamente.';
+            }
+        }
+
+        // Ejecutar la verificación cuando cargue la página
+        document.addEventListener('DOMContentLoaded', verifyEmail);
+    </script>
+</body>
+</html>

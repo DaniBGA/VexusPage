@@ -1,5 +1,42 @@
 /* Media Queries y Responsive */
 
+/* Mobile First - Default styles for mobile */
+@media (max-width: 767px) {
+    .about-content-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+
+    .ecosystem-carousel {
+        order: -1; /* Coloca el carrusel primero en móvil */
+    }
+
+    .carousel-item {
+        width: 150px;
+    }
+
+    .logo-placeholder {
+        width: 100px;
+        height: 100px;
+    }
+
+    .logo-image {
+        width: 100px;
+        height: 100px;
+    }
+
+    /* Flechas más pequeñas en móvil */
+    .carousel-arrow {
+        width: 35px;
+        height: 35px;
+    }
+
+    .carousel-arrow svg {
+        width: 20px;
+        height: 20px;
+    }
+}
+
 /* Tablet - 768px and up */
 @media (min-width: 768px) {
     .container {
@@ -7,14 +44,15 @@
     }
 
     .hero-title {
-        font-size: 3.5rem;
+        font-size: 2rem;
+        min-height: 5.2rem;
+        max-height: 5.2rem;
+        overflow: hidden;
     }
 
     .hero-description {
-        font-size: 1.2rem;
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
+        font-size: 1rem;
+        max-width: 100%;
     }
 
     .cards-grid {
@@ -45,11 +83,15 @@
     }
 
     .hero-title {
-        font-size: 4rem;
+        font-size: 2.3rem;
+        min-height: 6rem;
+        max-height: 6rem;
+        overflow: hidden;
     }
 
     .hero-description {
-        font-size: 1.3rem;
+        font-size: 1rem;
+        max-width: 100%;
     }
 
     .hero-content {
@@ -110,7 +152,14 @@
 /* Large Desktop - 1200px and up */
 @media (min-width: 1200px) {
     .hero-title {
-        font-size: 4.5rem;
+        font-size: 2.8rem;
+        min-height: 7.28rem;
+        max-height: 7.28rem;
+        overflow: hidden;
+    }
+
+    .hero-description {
+        font-size: 1.05rem;
     }
 
     .section-title {

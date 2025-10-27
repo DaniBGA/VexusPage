@@ -521,6 +521,7 @@ async def upload_file(
     file: UploadFile = File(...),
     admin: dict = Depends(require_admin)
 ):
+    
     """Subir archivo para recursos del curso (solo administradores)"""
 
     # Validar nombre de archivo
@@ -563,23 +564,32 @@ async def upload_file(
     # Retornar URL relativa
     file_url = f"/uploads/course_resources/{safe_filename}"
 
+    # Retorna esto (ya lo tienes):
     return {
         "filename": file.filename,
-        "url": file_url,
+        "url": f"/uploads/course_resources/{safe_filename}",  # 👈 Esta URL completa
         "size": file_path.stat().st_size,
         "type": file_ext
     }
 
 @router.get("/download/{filename}")
-async def download_file(filename: str):
-    """Descargar archivo de recurso"""
-    file_path = UPLOAD_DIR / filename
+async def download_file(
+    filename: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Descargar archivo de recurso (requiere login)"""
+    safe_filename = os.path.basename(filename)
+    file_path = UPLOAD_DIR / safe_filename
 
     if not file_path.exists():
         raise HTTPException(status_code=404, detail="Archivo no encontrado")
 
+    # Extraer el nombre original
+    parts = safe_filename.split('_', 2)  # 👈 Cambiado de 3 a 2
+    original_filename = parts[2] if len(parts) >= 3 else safe_filename
+
     return FileResponse(
-        path=file_path,
-        filename=filename,
+        path=str(file_path),  # 👈 Convertir Path a string
+        filename=original_filename,
         media_type='application/octet-stream'
     )

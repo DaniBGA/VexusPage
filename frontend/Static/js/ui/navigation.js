@@ -38,12 +38,18 @@ export const Navigation = {
     setupSmoothScroll() {
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                // Ignorar enlaces vacíos o solo "#"
+                if (!href || href === '#') {
+                    return;
+                }
+
                 e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
+                const target = document.querySelector(href);
                 if (target) {
                     const headerHeight = document.querySelector('header').offsetHeight;
                     const targetPosition = target.offsetTop - headerHeight;
-                    
+
                     window.scrollTo({
                         top: targetPosition,
                         behavior: 'smooth'

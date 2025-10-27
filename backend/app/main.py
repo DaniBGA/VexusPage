@@ -1,7 +1,7 @@
 """
 Aplicación principal FastAPI
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from fastapi import FastAPI, Request, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -69,13 +69,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Incluir routers PRIMERO (antes de static files para que tengan prioridad)
+app.include_router(api_router, prefix=settings.API_V1_PREFIX)
+
 # Servir archivos estáticos (uploads)
 UPLOAD_DIR = Path("uploads")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
-
-# Incluir routers
-app.include_router(api_router, prefix=settings.API_V1_PREFIX)
 
 # Eventos de inicio y cierre
 @app.on_event("startup")
@@ -109,14 +109,14 @@ async def health_check():
         return {
             "status": "healthy",
             "database": "connected",
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
     except Exception as e:
         return {
             "status": "unhealthy",
             "database": "disconnected",
             "error": str(e),
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
 
 # Endpoint raíz
@@ -128,6 +128,15 @@ async def root():
         "description": "Backend API para la plataforma Vexus",
         "docs": "/docs",
         "health": "/health"
+    }
+
+# Endpoint de debug CORS (temporal)
+@app.get("/debug/cors")
+async def debug_cors():
+    return {
+        "allowed_origins": settings.ALLOWED_ORIGINS,
+        "environment": settings.ENVIRONMENT,
+        "debug": settings.DEBUG
     }
 
 if __name__ == "__main__":

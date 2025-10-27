@@ -28,11 +28,21 @@ if (user.role !== 'admin') {
 
 // Funciones de utilidad
 function showLoading() {
-    document.getElementById('loadingOverlay').style.display = 'flex';
+    const overlay = document.getElementById('loadingOverlay');
+    overlay.style.display = 'flex';
+    overlay.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
 }
 
 function hideLoading() {
-    document.getElementById('loadingOverlay').style.display = 'none';
+    const overlay = document.getElementById('loadingOverlay');
+    overlay.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+
+    // Después de la animación de fade, ocultar completamente
+    setTimeout(() => {
+        overlay.style.display = 'none';
+    }, 800);
 }
 
 function getAuthHeaders() {
@@ -266,9 +276,10 @@ function handleFiles(files) {
         pendingResources.push({
             title: file.name,
             resource_type: 'document',
-            url: '', // Aquí deberías subir el archivo y obtener la URL real
+            url: '', // La URL se obtendrá cuando se guarde la unidad
             description: '',
-            isNew: true
+            isNew: true,
+            file: file // Guardar el objeto File para subirlo después
         });
     });
     updateResourcesPreview();
@@ -641,13 +652,43 @@ document.getElementById('unitForm').addEventListener('submit', async (e) => {
         const newResources = pendingResources.filter(r => r.isNew);
 
         for (const resource of newResources) {
+            let resourceUrl = resource.url;
+
+            // Si el recurso tiene un archivo (file), subirlo primero
+            if (resource.file) {
+                try {
+                    const formData = new FormData();
+                    formData.append('file', resource.file);
+
+                    const uploadResponse = await fetch(`${CONFIG.API_BASE_URL}/courses/upload-file`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem(CONFIG.TOKEN_KEY)}`
+                        },
+                        body: formData
+                    });
+
+                    if (!uploadResponse.ok) {
+                        throw new Error('Error al subir archivo');
+                    }
+
+                    const uploadResult = await uploadResponse.json();
+                    resourceUrl = uploadResult.url; // Usar la URL devuelta por el servidor
+                } catch (error) {
+                    console.error('Error al subir archivo:', error);
+                    showNotification(`Error al subir "${resource.title}"`, 'error');
+                    continue; // Saltar este recurso si falla la subida
+                }
+            }
+
+            // Crear el recurso con la URL correcta
             await fetch(`${CONFIG.API_BASE_URL}/courses/units/${unitId}/resources`, {
                 method: 'POST',
                 headers: getAuthHeaders(),
                 body: JSON.stringify({
                     title: resource.title,
                     resource_type: resource.resource_type,
-                    url: resource.url,
+                    url: resourceUrl,
                     description: resource.description
                 })
             });

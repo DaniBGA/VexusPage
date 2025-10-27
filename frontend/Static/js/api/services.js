@@ -50,5 +50,10 @@ export const DataService = {
     // Contact
     async sendContactMessage(message) {
         return await apiClient.post('/contact', message);
+    },
+
+    // Consultancy
+    async sendConsultancyEmail(consultancyData) {
+        return await apiClient.post('/consultancy/email', consultancyData);
     }
 };

@@ -3,17 +3,17 @@ export const ThemeCustomizer = {
     // Paleta de colores secundarios elegantes que respetan la estética
     colorPalette: [
         { name: 'Caramelo Clásico', value: '#8B4513', gradient: 'linear-gradient(135deg, #8B4513 0%, #A0522D 100%)' },
-        { name: 'Ámbar Dorado', value: '#D4A574', gradient: 'linear-gradient(135deg, #D4A574 0%, #C19A6B 100%)' },
-        { name: 'Terracota', value: '#C65D3B', gradient: 'linear-gradient(135deg, #C65D3B 0%, #D2691E 100%)' },
-        { name: 'Bronce Elegante', value: '#CD7F32', gradient: 'linear-gradient(135deg, #CD7F32 0%, #B8860B 100%)' },
-        { name: 'Cobre Oxidado', value: '#B87333', gradient: 'linear-gradient(135deg, #B87333 0%, #C76E47 100%)' },
-        { name: 'Rubí Oscuro', value: '#8B2635', gradient: 'linear-gradient(135deg, #8B2635 0%, #A0354B 100%)' },
-        { name: 'Esmeralda Profundo', value: '#2D6A4F', gradient: 'linear-gradient(135deg, #2D6A4F 0%, #40916C 100%)' },
-        { name: 'Zafiro Imperial', value: '#1E3A5F', gradient: 'linear-gradient(135deg, #1E3A5F 0%, #2E5077 100%)' },
-        { name: 'Amatista Real', value: '#6B2E5F', gradient: 'linear-gradient(135deg, #6B2E5F 0%, #7D3C70 100%)' },
-        { name: 'Oro Rosa', value: '#B76E79', gradient: 'linear-gradient(135deg, #B76E79 0%, #C17D86 100%)' },
-        { name: 'Turquesa Elegante', value: '#2C6E7E', gradient: 'linear-gradient(135deg, #2C6E7E 0%, #3A8394 100%)' },
-        { name: 'Plata Lunar', value: '#6B7280', gradient: 'linear-gradient(135deg, #6B7280 0%, #7D8590 100%)' }
+        { name: 'Rubí Intenso', value: '#C41E3A', gradient: 'linear-gradient(135deg, #C41E3A 0%, #E63946 100%)' },
+        { name: 'Esmeralda Profundo', value: '#1B4D3E', gradient: 'linear-gradient(135deg, #1B4D3E 0%, #2D6A4F 100%)' },
+        { name: 'Zafiro Imperial', value: '#0F4C81', gradient: 'linear-gradient(135deg, #0F4C81 0%, #1E6AA8 100%)' },
+        { name: 'Amatista Elegante', value: '#7B2D8E', gradient: 'linear-gradient(135deg, #7B2D8E 0%, #9B4CAF 100%)' },
+        { name: 'Oro Radiante', value: '#D4AF37', gradient: 'linear-gradient(135deg, #D4AF37 0%, #F4C430 100%)' },
+        { name: 'Turquesa Vibrante', value: '#118AB2', gradient: 'linear-gradient(135deg, #118AB2 0%, #06AED5 100%)' },
+        { name: 'Magenta Eléctrico', value: '#D90368', gradient: 'linear-gradient(135deg, #D90368 0%, #FF006E 100%)' },
+        { name: 'Verde Lima', value: '#6A994E', gradient: 'linear-gradient(135deg, #6A994E 0%, #86BB5B 100%)' },
+        { name: 'Naranja Fuego', value: '#E76F51', gradient: 'linear-gradient(135deg, #E76F51 0%, #F4A261 100%)' },
+        { name: 'Índigo Profundo', value: '#3D405B', gradient: 'linear-gradient(135deg, #3D405B 0%, #4A4E69 100%)' },
+        { name: 'Rosa Coral', value: '#F08080', gradient: 'linear-gradient(135deg, #F08080 0%, #FF9999 100%)' }
     ],
 
     currentTheme: null,

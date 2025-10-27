@@ -261,7 +261,9 @@ CREATE TABLE public.users (
     created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
     last_login timestamp with time zone,
-    email_verified boolean DEFAULT false
+    email_verified boolean DEFAULT false,
+    email_verification_token character varying(255),
+    email_verification_token_expires timestamp with time zone
 );
 
 
@@ -737,6 +739,22 @@ CREATE INDEX idx_users_created_at ON public.users USING btree (created_at);
 --
 
 CREATE INDEX idx_users_email ON public.users USING btree (email);
+
+
+--
+-- TOC entry 4878 (class 1259 OID 16651)
+-- Name: idx_users_email_verified; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_users_email_verified ON public.users USING btree (email_verified);
+
+
+--
+-- TOC entry 4879 (class 1259 OID 16652)
+-- Name: idx_users_email_verification_token; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_users_email_verification_token ON public.users USING btree (email_verification_token) WHERE (email_verification_token IS NOT NULL);
 
 
 --

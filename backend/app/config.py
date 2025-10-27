@@ -46,12 +46,15 @@ class Settings:
             return ["*"]
         return [origin.strip() for origin in origins.split(",")]
 
-    # === EMAIL (para funcionalidad futura) ===
+    # === EMAIL (para verificación de email) ===
     SMTP_HOST: str = os.getenv("SMTP_HOST", "")
     SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
     SMTP_USER: str = os.getenv("SMTP_USER", "")
     SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD", "")
     EMAIL_FROM: str = os.getenv("EMAIL_FROM", "noreply@vexus.com")
+
+    # === FRONTEND ===
+    FRONTEND_URL: str = os.getenv("FRONTEND_URL", "http://localhost:5500")
 
 # Instancia única de configuración
 settings = Settings()

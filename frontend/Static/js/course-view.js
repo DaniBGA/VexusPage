@@ -48,23 +48,44 @@ let courseData = null;
 const urlParams = new URLSearchParams(window.location.search);
 currentCourseId = urlParams.get('id');
 
+console.log('=== VERIFICACIONES INICIALES ===');
+console.log('Course ID from URL:', currentCourseId);
+console.log('Full URL:', window.location.href);
+
 if (!currentCourseId) {
+    console.error('No se encontró ID de curso en la URL');
     showNotification('No se especificó un curso', 'error');
     setTimeout(() => window.location.href = '../index.html', 1500);
+    throw new Error('No course ID');
 }
 
 // Verificar autenticación
-if (!AuthService.isAuthenticated()) {
+const isAuth = AuthService.isAuthenticated();
+console.log('Usuario autenticado:', isAuth);
+
+if (!isAuth) {
+    console.error('Usuario no autenticado');
     showNotification('Debes iniciar sesión para ver los cursos', 'error');
     setTimeout(() => window.location.href = '../index.html', 1500);
+    throw new Error('Not authenticated');
 }
 
 function showLoading() {
-    document.getElementById('loadingOverlay').style.display = 'flex';
+    const overlay = document.getElementById('loadingOverlay');
+    overlay.style.display = 'flex';
+    overlay.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
 }
 
 function hideLoading() {
-    document.getElementById('loadingOverlay').style.display = 'none';
+    const overlay = document.getElementById('loadingOverlay');
+    overlay.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+
+    // Después de la animación de fade, ocultar completamente
+    setTimeout(() => {
+        overlay.style.display = 'none';
+    }, 800);
 }
 
 function getAuthHeaders() {
@@ -77,19 +98,35 @@ function getAuthHeaders() {
 // Cargar curso completo
 async function loadCourse() {
     try {
+        console.log('=== INICIANDO CARGA DE CURSO ===');
+        console.log('Course ID:', currentCourseId);
+        console.log('Token:', localStorage.getItem(CONFIG.TOKEN_KEY) ? 'Existe' : 'No existe');
+
         showLoading();
-        const response = await fetch(`${CONFIG.API_BASE_URL}/courses/${currentCourseId}/view`, {
+
+        const url = `${CONFIG.API_BASE_URL}/courses/${currentCourseId}/view`;
+        console.log('URL:', url);
+
+        const response = await fetch(url, {
             headers: getAuthHeaders()
         });
 
-        if (!response.ok) throw new Error('Error al cargar curso');
+        console.log('Response status:', response.status);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Error response:', errorText);
+            throw new Error(`Error ${response.status}: ${errorText}`);
+        }
 
         courseData = await response.json();
+        console.log('Course data loaded:', courseData);
+
         displayCourse();
     } catch (error) {
         console.error('Error loading course:', error);
-        showNotification('Error al cargar el curso. Verifica que esté publicado y que tengas acceso.', 'error');
-        setTimeout(() => window.location.href = '../index.html', 2000);
+        showNotification(`Error al cargar el curso: ${error.message}`, 'error');
+        setTimeout(() => window.location.href = '../index.html', 3000);
     } finally {
         hideLoading();
     }
@@ -125,6 +162,96 @@ function updateProgress(progress) {
     document.getElementById('progressText').textContent = `${progress}%`;
     document.getElementById('progressBar').style.width = `${progress}%`;
 }
+
+function getResourceUrl(resource) {
+    let resourceUrl = resource.url;
+
+    // Si es un documento del servidor (ruta relativa o sin http)
+    if (resource.resource_type === 'document' && !resourceUrl.startsWith('http')) {
+        // Extraer solo el nombre del archivo
+        const filename = resourceUrl.split('/').pop();
+        // Si hay filename, construir la URL de descarga
+        if (filename) {
+            resourceUrl = `${CONFIG.API_BASE_URL}/courses/download/${filename}`;
+        }
+    }
+
+    return resourceUrl;
+}
+
+// Manejar descarga de recursos
+window.downloadResource = async function(originalUrl, resourceType) {
+    console.log('=== DESCARGA DE RECURSO ===');
+    console.log('URL original:', originalUrl);
+    console.log('Tipo:', resourceType);
+
+    if (resourceType === 'document') {
+        // La URL debe venir como "/uploads/course_resources/filename.pdf"
+        if (!originalUrl || !originalUrl.includes('/')) {
+            showNotification('Error: URL de recurso inválida', 'error');
+            console.error('URL inválida:', originalUrl);
+            return;
+        }
+        
+        const filename = originalUrl.split('/').pop();
+        const downloadUrl = `${CONFIG.API_BASE_URL}/courses/download/${filename}`;
+        
+        console.log('Filename:', filename);
+        console.log('Download URL:', downloadUrl);
+
+        try {
+            showLoading();
+            const token = localStorage.getItem(CONFIG.TOKEN_KEY);
+            
+            if (!token) {
+                showNotification('No estás autenticado', 'error');
+                return;
+            }
+
+            const response = await fetch(downloadUrl, {
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            console.log('Status:', response.status);
+
+            if (!response.ok) {
+                const text = await response.text();
+                console.error('Error:', text);
+                showNotification('Error al descargar el archivo', 'error');
+                return;
+            }
+
+            const blob = await response.blob();
+            const link = document.createElement('a');
+            const objectUrl = URL.createObjectURL(blob);
+            
+            link.href = objectUrl;
+            
+            // Extraer nombre original del filename
+            const parts = filename.split('_');
+            const originalName = parts.length >= 3 ? parts.slice(2).join('_') : filename;
+            link.download = originalName;
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(objectUrl);
+
+            showNotification('📄 Descarga completada', 'success');
+
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification('Error: ' + error.message, 'error');
+        } finally {
+            hideLoading();
+        }
+
+    } else {
+        // Para videos y links externos
+        window.open(originalUrl, '_blank');
+    }
+};
 
 // Mostrar unidades
 function displayUnits(units) {
@@ -164,24 +291,28 @@ function displayUnits(units) {
                         <p class="unit-description">${unit.description}</p>
                     ` : ''}
 
-                    <div class="unit-text">${unit.content}</div>
+                    ${unit.content ? `<div class="unit-text">${unit.content}</div>` : ''}
 
-                    ${unit.resources.length > 0 ? `
+                    ${unit.resources && unit.resources.length > 0 ? `
                         <div class="resources-section">
                             <h4 class="resources-title">
                                 <span>📎</span>
                                 <span>Recursos</span>
                             </h4>
-                            ${unit.resources.map(resource => `
-                                <a href="${resource.url}" target="_blank" class="resource-item">
-                                    <span class="resource-icon">${resourceIcons[resource.resource_type] || '📎'}</span>
-                                    <div class="resource-info">
-                                        <div class="resource-title">${resource.title}</div>
-                                        ${resource.description ? `<div class="resource-url">${resource.description}</div>` : ''}
+                            ${unit.resources.map(resource => {
+                                const isDocument = resource.resource_type === 'document';
+                                const icon = isDocument ? '⬇' : '→';
+                                return `
+                                    <div class="resource-item" onclick="downloadResource('${resource.url}', '${resource.resource_type}')" style="cursor: pointer;">
+                                        <span class="resource-icon">${resourceIcons[resource.resource_type] || '📎'}</span>
+                                        <div class="resource-info">
+                                            <div class="resource-title">${resource.title}</div>
+                                            ${resource.description ? `<div class="resource-url">${resource.description}</div>` : ''}
+                                        </div>
+                                        <span style="color: var(--color-primary);">${icon}</span>
                                     </div>
-                                    <span style="color: var(--color-primary);">→</span>
-                                </a>
-                            `).join('')}
+                                `;
+                            }).join('')}
                         </div>
                     ` : ''}
 

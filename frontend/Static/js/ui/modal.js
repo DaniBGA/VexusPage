@@ -32,8 +32,14 @@ export const ModalManager = {
 
 // Event listeners para cerrar modales al hacer clic fuera
 window.addEventListener('click', (event) => {
-    if (event.target.classList.contains('modal')) {
-        event.target.style.display = 'none';
-        document.body.style.overflow = 'auto';
+    // Solo cerrar si el click es EXACTAMENTE en el modal backdrop,
+    // no en sus hijos (modal-content, forms, etc.)
+    if (event.target.classList.contains('modal') && event.target === event.currentTarget) {
+        // Verificar que no estamos dentro de un formulario o contenido del modal
+        const modalContent = event.target.querySelector('.modal-content');
+        if (modalContent && !modalContent.contains(event.target)) {
+            event.target.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
     }
 });

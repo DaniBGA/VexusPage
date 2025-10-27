@@ -30,6 +30,54 @@
     font-family: var(--font-primary);
 }
 
+/* Password input wrapper */
+.password-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-input-wrapper input {
+    padding-right: 45px; /* Espacio para el botón del ojo */
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+    transition: color var(--transition-base);
+    border-radius: var(--radius-sm);
+}
+
+.toggle-password:hover {
+    color: var(--color-primary);
+    background: rgba(212, 175, 55, 0.1);
+}
+
+.toggle-password:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.toggle-password .eye-icon {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2;
+}
+
+.toggle-password .eye-open,
+.toggle-password .eye-closed {
+    transition: opacity 0.2s ease;
+}
+
 .form-group textarea {
     resize: vertical;
     min-height: 100px;

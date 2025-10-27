@@ -127,7 +127,7 @@ class App {
                     ${section.section_type === 'dashboard' ? 'Acceder' :
                       section.section_type === 'learning' ? 'Comenzar' : 'Explorar'}
                 </button>
-                <div class="login-overlay">
+                <div class="login-overlay" onclick="app.openLoginFromCampus()">
                     <div class="overlay-content">
                         <span class="lock-icon">${Icons.lock}</span>
                         <p>Inicia sesión para acceder</p>
@@ -135,6 +135,11 @@ class App {
                 </div>
             </div>
         `).join('');
+    }
+
+    openLoginFromCampus() {
+        ModalManager.open('loginModal');
+        showNotification('Por favor, inicia sesión para acceder al Campus', 'info');
     }
 
     initForms() {
@@ -164,6 +169,15 @@ class App {
                 await this.handleContact(e.target);
             });
         }
+
+        // Consultancy Form
+        const consultancyForm = document.getElementById('consultancyForm');
+        if (consultancyForm) {
+            consultancyForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await this.handleConsultancy(e.target);
+            });
+        }
     }
 
     // main.js o donde manejes el login
@@ -171,7 +185,7 @@ class App {
         const email = form.email.value;
         const password = form.password.value;
         const submitBtn = form.querySelector('.btn-submit'); // Botón de submit
-        
+
         submitBtn.disabled = true;
         submitBtn.textContent = 'Iniciando Sesión...';
 
@@ -184,13 +198,67 @@ class App {
                 Navigation.updateLoginButton(); // <-- Esto actualiza el botón
                 // window.location.reload(); // Solo recarga si es necesario
             } else {
-                showNotification(response.message, 'error');
+                // Verificar si el email no está verificado
+                if (response.emailNotVerified) {
+                    showNotification(response.message, 'warning');
+                    // Mostrar opción para reenviar email de verificación
+                    this.showResendVerificationOption(email);
+                } else {
+                    showNotification(response.message, 'error');
+                }
             }
         } catch (error) {
             showNotification('Error inesperado. Inténtalo más tarde.', 'error');
         } finally {
             submitBtn.disabled = false;
             submitBtn.textContent = 'Iniciar Sesión';
+        }
+    }
+
+    showResendVerificationOption(email) {
+        // Crear notificación especial con botón para reenviar verificación
+        let container = document.getElementById('notificationContainer');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'notificationContainer';
+            document.body.appendChild(container);
+        }
+
+        const notif = document.createElement('div');
+        notif.className = 'notification warning verification-notice';
+        notif.innerHTML = `
+            <div style="margin-bottom: 10px;">Tu email no ha sido verificado.</div>
+            <button onclick="app.resendVerificationEmail('${email}')"
+                    style="background: #d4af37; color: #0a0a0a; border: none; padding: 8px 16px;
+                           border-radius: 4px; cursor: pointer; font-weight: 600; margin-top: 8px;">
+                Reenviar Email de Verificación
+            </button>
+        `;
+        container.appendChild(notif);
+
+        setTimeout(() => {
+            notif.style.opacity = '0';
+            setTimeout(() => container.removeChild(notif), 400);
+        }, 8000); // Más tiempo para que el usuario pueda leer y hacer clic
+    }
+
+    async resendVerificationEmail(email) {
+        showLoading();
+        try {
+            const result = await AuthService.resendVerification(email);
+            if (result.success) {
+                if (result.alreadyVerified) {
+                    showNotification('Tu email ya está verificado. Puedes iniciar sesión.', 'info');
+                } else {
+                    showNotification('Email de verificación enviado. Revisa tu bandeja de entrada.', 'success');
+                }
+            } else {
+                showNotification(result.message || 'Error al reenviar el email.', 'error');
+            }
+        } catch (error) {
+            showNotification('Error al reenviar el email. Inténtalo más tarde.', 'error');
+        } finally {
+            hideLoading();
         }
     }
 
@@ -201,21 +269,33 @@ class App {
         const password = form.password.value;
         const confirmPassword = form.confirmPassword.value;
         const submitBtn = form.querySelector('.btn-submit');  // Era .login-submit
-        
+
         if (password !== confirmPassword) {
             showNotification('Las contraseñas no coinciden.', 'error');
             return;
         }
-        
+
         submitBtn.disabled = true;
         submitBtn.textContent = 'Creando Cuenta...';
-        
+
         try {
             const response = await AuthService.register(name, email, password);
-            
+
             if (response.success) {
-                showNotification('¡Cuenta creada exitosamente! Ahora puedes iniciar sesión.', 'success');
-                ModalManager.switchModal('registerModal', 'loginModal');
+                // Mostrar mensaje más detallado sobre la verificación de email
+                const successMessage = response.emailSent
+                    ? '¡Cuenta creada! Por favor verifica tu email antes de iniciar sesión.'
+                    : '¡Cuenta creada! Se enviará un email de verificación a tu correo.';
+
+                showNotification(successMessage, 'success');
+
+                // Mostrar mensaje adicional en el modal
+                this.showEmailVerificationMessage(email);
+
+                // Cambiar al modal de login después de un momento
+                setTimeout(() => {
+                    ModalManager.switchModal('registerModal', 'loginModal');
+                }, 3000);
             } else {
                 showNotification('Error al crear la cuenta: ' + response.message, 'error');
             }
@@ -227,6 +307,31 @@ class App {
         }
     }
 
+    showEmailVerificationMessage(email) {
+        let container = document.getElementById('notificationContainer');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'notificationContainer';
+            document.body.appendChild(container);
+        }
+
+        const notif = document.createElement('div');
+        notif.className = 'notification info verification-notice';
+        notif.innerHTML = `
+            <div style="margin-bottom: 5px; font-weight: 600;">📧 Verifica tu email</div>
+            <div style="font-size: 14px;">
+                Hemos enviado un enlace de verificación a <strong>${email}</strong>.
+                Por favor revisa tu bandeja de entrada y haz clic en el enlace para activar tu cuenta.
+            </div>
+        `;
+        container.appendChild(notif);
+
+        setTimeout(() => {
+            notif.style.opacity = '0';
+            setTimeout(() => container.removeChild(notif), 400);
+        }, 6000);
+    }
+
     async handleContact(form) {
         const message = {
             name: form.name.value,
@@ -234,11 +339,11 @@ class App {
             subject: form.subject.value,
             message: form.message.value
         };
-        
+
         const submitBtn = form.querySelector('.btn-submit');  // Era .login-submit
         submitBtn.disabled = true;
         submitBtn.textContent = 'Enviando...';
-        
+
         try {
             await DataService.sendContactMessage(message);
             showNotification('¡Mensaje enviado exitosamente!', 'success');
@@ -249,6 +354,36 @@ class App {
         } finally {
             submitBtn.disabled = false;
             submitBtn.textContent = 'Enviar Mensaje';
+        }
+    }
+
+    async handleConsultancy(form) {
+        const consultancyData = {
+            name: form.name.value,
+            email: form.email.value,
+            query: form.query.value,
+            to: 'grupovexus@gmail.com',
+            subject: 'Consulta de Consultoría/Desarrollo Web'
+        };
+
+        const submitBtn = form.querySelector('.btn-primary');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg> Enviando...';
+
+        try {
+            // Enviar email a grupovexus@gmail.com
+            await DataService.sendConsultancyEmail(consultancyData);
+
+            showNotification('¡Consulta enviada exitosamente! Te contactaremos pronto.', 'success');
+            ModalManager.close('consultancyModal');
+            form.reset();
+        } catch (error) {
+            console.error('Error al enviar consulta:', error);
+            showNotification('Error al enviar la consulta. Por favor intenta más tarde.', 'error');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
         }
     }
 

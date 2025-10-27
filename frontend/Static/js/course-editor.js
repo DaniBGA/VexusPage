@@ -156,11 +156,21 @@ if (user.role !== 'admin') {
 
 // Funciones de utilidad
 function showLoading() {
-    document.getElementById('loadingOverlay').style.display = 'flex';
+    const overlay = document.getElementById('loadingOverlay');
+    overlay.style.display = 'flex';
+    overlay.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
 }
 
 function hideLoading() {
-    document.getElementById('loadingOverlay').style.display = 'none';
+    const overlay = document.getElementById('loadingOverlay');
+    overlay.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+
+    // Después de la animación de fade, ocultar completamente
+    setTimeout(() => {
+        overlay.style.display = 'none';
+    }, 800);
 }
 
 function getAuthHeaders() {

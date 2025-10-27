@@ -26,6 +26,14 @@
     overflow-y: auto;
 }
 
+/* Modal sin scroll - contenido ajustado */
+.modal-content.modal-no-scroll {
+    max-height: fit-content;
+    overflow: hidden;
+    max-width: 500px;
+    margin-top: 30px;
+}
+
 .modal-close {
     color: var(--color-primary);
     float: right;
@@ -59,4 +67,74 @@
 .modal-header p {
     color: var(--color-text-muted);
     font-size: var(--font-size-sm);
+}
+
+/* Contenedor de botones de acción */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.form-actions button {
+    flex: 1 1 50%;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 1.2rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all var(--transition-base);
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-primary);
+    white-space: nowrap;
+    height: 3rem;
+}
+
+/* Botón primario - Enviar */
+.btn-primary {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    color: var(--color-text);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px var(--color-primary-rgb);
+}
+
+.btn-primary svg {
+    flex-shrink: 0;
+}
+
+/* Botón secundario - Más tarde */
+.btn-secondary {
+    background: var(--color-surface-light);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+}
+
+.btn-secondary:hover {
+    background: var(--color-surface);
+    color: var(--color-text);
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+}
+
+.btn-secondary svg {
+    flex-shrink: 0;
+}
+
+/* Responsive para botones */
+@media (max-width: 768px) {
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions button {
+        width: 100%;
+    }
 }

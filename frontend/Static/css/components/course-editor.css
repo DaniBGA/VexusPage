@@ -245,6 +245,8 @@
     border-radius: 15px;
     overflow: hidden;
     transition: all var(--transition-base);
+    display: flex;
+    flex-direction: column;
 }
 
 .unit-accordion:hover {
@@ -311,6 +313,9 @@
 .unit-body {
     padding: 2rem;
     border-top: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 .unit-description {
@@ -324,6 +329,7 @@
     line-height: 1.8;
     margin-bottom: 2rem;
     white-space: pre-wrap;
+    flex: 1;
 }
 
 /* ========== COURSE INFO ========== */
@@ -397,7 +403,9 @@
     cursor: pointer;
     font-weight: 600;
     transition: all var(--transition-base);
-    margin-top: 1.5rem;
+    margin-top: auto;
+    width: 100%;
+    font-size: 1rem;
 }
 
 .complete-button:hover {
@@ -494,13 +502,10 @@
 }
 
 .resources-section {
-    margin-top: 2rem;
+    margin-top: auto;
+    margin-bottom: 1.5rem;
     padding-top: 2rem;
     border-top: 1px solid var(--color-border);
-    display: none;
-}
-
-.resources-section-visible {
     display: block;
 }
 

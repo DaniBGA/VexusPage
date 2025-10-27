@@ -1,12 +1,24 @@
 // Funciones auxiliares
 export const showLoading = () => {
     const overlay = document.getElementById('loadingOverlay');
-    if (overlay) overlay.style.display = 'flex';
+    if (overlay) {
+        overlay.style.display = 'flex';
+        overlay.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
 };
 
 export const hideLoading = () => {
     const overlay = document.getElementById('loadingOverlay');
-    if (overlay) overlay.style.display = 'none';
+    if (overlay) {
+        overlay.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+
+        // Después de la animación de fade, ocultar completamente
+        setTimeout(() => {
+            overlay.style.display = 'none';
+        }, 800);
+    }
 };
 
 export const showConnectionStatus = (isConnected, message = '') => {
