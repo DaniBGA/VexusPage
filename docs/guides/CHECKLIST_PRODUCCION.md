@@ -37,7 +37,7 @@
 ### 1. 🔒 Seguridad
 
 #### Variables de Entorno
-- [ ] **CRÍTICO**: Cambiar `SECRET_KEY` en `.env.production`
+- [x] **CRÍTICO**: Cambiar `SECRET_KEY` en `.env.production`
   ```bash
   # Generar nueva clave:
   python generate_secret_key.py

@@ -26,7 +26,7 @@ services:
   # Backend API
   backend:
     build:
-      context: ./backend
+      context: ../../backend
       dockerfile: Dockerfile
     container_name: vexus-backend
     restart: unless-stopped
@@ -37,7 +37,7 @@ services:
       - ENVIRONMENT=production
       - DEBUG=False
     volumes:
-      - ./backend/uploads:/app/uploads
+      - ../../backend/uploads:/app/uploads
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     depends_on:
@@ -55,7 +55,7 @@ services:
   # Frontend (Nginx)
   frontend:
     build:
-      context: ./frontend
+      context: ../../frontend
       dockerfile: Dockerfile
     container_name: vexus-frontend
     restart: unless-stopped

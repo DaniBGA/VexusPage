@@ -1,15 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git checkout:*)",
-      "Bash(python:*)",
-      "Bash(.venvScriptspython.exe scripts/create_consultancy_table.py)",
-      "Bash(\".venv/Scripts/python.exe\" scripts/create_consultancy_table.py)",
-      "Bash(netstat:*)",
-      "Bash(findstr:*)",
-      "Bash(\".venv/Scripts/python.exe\":*)",
-      "Bash(\"venv/Scripts/python.exe\" -c \"print(''Python works'')\")",
-      "Bash(\"venv/Scripts/python.exe\" test_contact_email.py)"
+      "Bash(where:*)",
+      "Bash(docker ps:*)",
+      "Bash(dir:*)",
+      "Bash(copy backendrequirements.txt requirements.txt)",
+      "Bash(cp:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
