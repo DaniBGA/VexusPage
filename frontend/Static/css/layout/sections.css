@@ -180,14 +180,14 @@
     right: 10px;
 }
 
-.carousel-track {
+.ecosystem-carousel .carousel-track {
     display: flex;
     animation: scroll 30s linear infinite;
     gap: var(--spacing-md);
     transition: transform 0.5s ease;
 }
 
-.carousel-track:hover {
+.ecosystem-carousel .carousel-track:hover {
     animation-play-state: paused;
 }
 
@@ -200,7 +200,7 @@
     }
 }
 
-.carousel-item {
+.ecosystem-carousel .carousel-item {
     flex: 0 0 auto;
     width: 180px;
 }

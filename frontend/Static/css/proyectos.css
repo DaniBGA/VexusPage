@@ -56,9 +56,10 @@
     border-radius: 20px;
 }
 
-.carousel-track {
+.projects-section .carousel-track {
     display: flex;
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: none !important; /* Prevenir que se aplique la animación del ecosistema */
 }
 
 /* Project Cards */

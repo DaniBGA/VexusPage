@@ -6,7 +6,10 @@
       "Bash(.venvScriptspython.exe scripts/create_consultancy_table.py)",
       "Bash(\".venv/Scripts/python.exe\" scripts/create_consultancy_table.py)",
       "Bash(netstat:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(\".venv/Scripts/python.exe\":*)",
+      "Bash(\"venv/Scripts/python.exe\" -c \"print(''Python works'')\")",
+      "Bash(\"venv/Scripts/python.exe\" test_contact_email.py)"
     ],
     "deny": [],
     "ask": []

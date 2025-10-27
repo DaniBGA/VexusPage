@@ -324,6 +324,207 @@ async def send_verification_email(
         return False
 
 
+async def send_contact_email(
+    client_name: str,
+    client_email: str,
+    message: str,
+    subject: Optional[str] = None
+) -> bool:
+    """
+    Enviar email de contacto general a grupovexus@gmail.com
+
+    Args:
+        client_name: Nombre del cliente
+        client_email: Email del cliente
+        message: Mensaje del cliente
+        subject: Asunto del email (opcional)
+
+    Returns:
+        True si el email se envió correctamente, False en caso contrario
+    """
+    try:
+        # Email destino (el de Vexus)
+        to_email = settings.EMAIL_FROM
+        email_subject = subject if subject else f"Nuevo mensaje de contacto de {client_name}"
+
+        # Crear mensaje
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = email_subject
+        msg['From'] = settings.EMAIL_FROM
+        msg['To'] = to_email
+        msg['Reply-To'] = client_email
+
+        # Contenido HTML
+        html_content = f"""
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>{email_subject}</title>
+            <style>
+                body {{
+                    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                    background: #f5f5f5;
+                    padding: 20px;
+                    margin: 0;
+                }}
+                .email-container {{
+                    max-width: 600px;
+                    margin: 0 auto;
+                    background: white;
+                    border-radius: 12px;
+                    overflow: hidden;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                }}
+                .header {{
+                    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+                    color: white;
+                    padding: 30px;
+                    text-align: center;
+                }}
+                .logo {{
+                    font-size: 32px;
+                    font-weight: 900;
+                    color: #d4af37;
+                    letter-spacing: 3px;
+                    margin-bottom: 10px;
+                }}
+                .subtitle {{
+                    color: #a0a0a0;
+                    font-size: 12px;
+                    letter-spacing: 2px;
+                }}
+                .content {{
+                    padding: 30px;
+                }}
+                h2 {{
+                    color: #0a0a0a;
+                    margin-bottom: 20px;
+                    font-size: 20px;
+                }}
+                .info-row {{
+                    margin: 15px 0;
+                    padding: 15px;
+                    background: #f9f9f9;
+                    border-left: 4px solid #d4af37;
+                    border-radius: 4px;
+                }}
+                .info-label {{
+                    font-weight: 700;
+                    color: #333;
+                    margin-bottom: 5px;
+                }}
+                .info-value {{
+                    color: #666;
+                    line-height: 1.6;
+                }}
+                .message-box {{
+                    background: #fafafa;
+                    padding: 20px;
+                    border-radius: 8px;
+                    border: 1px solid #e0e0e0;
+                    margin: 20px 0;
+                }}
+                .footer {{
+                    background: #f5f5f5;
+                    padding: 20px;
+                    text-align: center;
+                    color: #999;
+                    font-size: 12px;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="email-container">
+                <div class="header">
+                    <div class="logo">VEXUS</div>
+                    <div class="subtitle">NUEVO MENSAJE DE CONTACTO</div>
+                </div>
+
+                <div class="content">
+                    <h2>📬 Nuevo Mensaje de Contacto</h2>
+
+                    <div class="info-row">
+                        <div class="info-label">👤 Nombre:</div>
+                        <div class="info-value">{client_name}</div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-label">📧 Email:</div>
+                        <div class="info-value"><a href="mailto:{client_email}">{client_email}</a></div>
+                    </div>
+
+                    {f'''<div class="info-row">
+                        <div class="info-label">📋 Asunto:</div>
+                        <div class="info-value">{subject}</div>
+                    </div>''' if subject else ''}
+
+                    <div class="message-box">
+                        <div class="info-label" style="margin-bottom: 10px;">💬 Mensaje:</div>
+                        <div class="info-value">{message}</div>
+                    </div>
+
+                    <p style="color: #666; font-size: 14px; margin-top: 20px;">
+                        Puedes responder directamente a este email para contactar al cliente.
+                    </p>
+                </div>
+
+                <div class="footer">
+                    <p><strong>VEXUS</strong> - Sistema de Gestión de Contactos</p>
+                    <p>© 2025 Vexus. Todos los derechos reservados.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+
+        # Texto plano como alternativa
+        text_content = f"""
+        NUEVO MENSAJE DE CONTACTO
+
+        Nombre: {client_name}
+        Email: {client_email}
+        {f'Asunto: {subject}' if subject else ''}
+
+        Mensaje:
+        {message}
+
+        ---
+        Vexus - Sistema de Gestión de Contactos
+        © 2025 Vexus. Todos los derechos reservados.
+        """
+
+        # Adjuntar ambas partes
+        part1 = MIMEText(text_content, 'plain')
+        part2 = MIMEText(html_content, 'html')
+
+        msg.attach(part1)
+        msg.attach(part2)
+
+        # Enviar email si las credenciales SMTP están configuradas
+        if not settings.SMTP_HOST or not settings.SMTP_USER:
+            print(f"⚠️ SMTP no configurado. Email de contacto NO enviado.")
+            print(f"📧 Mensaje de {client_name} ({client_email}):")
+            print(f"📝 {message}")
+            print(f"⚠️ Configura SMTP en el archivo .env para enviar emails reales")
+            # En desarrollo, retornar True para permitir la funcionalidad
+            return True
+
+        # Conectar al servidor SMTP
+        with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as server:
+            server.starttls()
+            server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+            server.send_message(msg)
+
+        print(f"✅ Email de contacto enviado a {to_email}")
+        return True
+
+    except Exception as e:
+        print(f"❌ Error al enviar email de contacto: {str(e)}")
+        return False
+
+
 async def send_consultancy_email(
     to_email: str,
     client_name: str,
