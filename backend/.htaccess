@@ -1,0 +1,19 @@
+# Configuración Apache para FastAPI en Neatech
+
+# Habilitar CGI
+Options +ExecCGI
+AddHandler cgi-script .py
+
+# Reescribir todas las solicitudes /api/* al script Python
+RewriteEngine On
+RewriteBase /
+
+# Redirigir todas las rutas /api/* a la aplicación FastAPI
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^api/(.*)$ /cgi-bin/app.cgi/$1 [QSA,L]
+
+# Headers CORS
+Header always set Access-Control-Allow-Origin "*"
+Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
