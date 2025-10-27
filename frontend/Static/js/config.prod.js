@@ -1,7 +1,7 @@
 // Configuración de producción
-// INSTRUCCIONES: Reemplazar API_BASE_URL con la URL real de tu API en producción
+// Backend en Render.com
 const CONFIG = {
-    API_BASE_URL: window.location.origin + '/api/v1', // Usa el mismo dominio que el frontend
+    API_BASE_URL: 'https://vexuspage.onrender.com/api/v1',
     TOKEN_KEY: 'vexusToken',
     USER_KEY: 'vexusUser',
     REQUEST_TIMEOUT: 30000

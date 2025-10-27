@@ -149,8 +149,8 @@ if (contactForm) {
                 message: document.getElementById('contactMessage').value
             };
 
-            // Enviar a la API local
-            const apiUrl = 'https://grupovexus.com/api/v1/contact/';
+            // Enviar a la API en Render
+            const apiUrl = 'https://vexuspage.onrender.com/api/v1/contact/';
 
             const response = await fetch(apiUrl, {
                 method: 'POST',
