@@ -22,8 +22,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copiar todo el código
 COPY . .
 
+# Hacer ejecutable el script de inicio
+RUN chmod +x start.sh
+
 # Exponer puerto
 EXPOSE 8000
 
 # Comando para iniciar la aplicación
-CMD cd backend && gunicorn app.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:${PORT:-8000} --timeout 120
+CMD ["./start.sh"]
