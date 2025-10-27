@@ -11,21 +11,15 @@ sys.path.insert(0, backend_path)
 # Configurar para serverless ANTES de importar
 os.environ['SERVERLESS'] = 'true'
 
-try:
-    from mangum import Mangum
+# Importar app
+from app.main import app
 
-    # Importar app
-    from app.main import app
+# Eliminar eventos de startup/shutdown para serverless
+app.router.on_startup.clear()
+app.router.on_shutdown.clear()
 
-    # Eliminar eventos de startup/shutdown para serverless
-    app.router.on_startup.clear()
-    app.router.on_shutdown.clear()
+# Importar Mangum y crear handler
+from mangum import Mangum
 
-    # Wrapper para serverless (Vercel usa AWS Lambda)
-    handler = Mangum(app, lifespan="off")
-
-except Exception as e:
-    print(f"❌ Error importing modules: {e}")
-    import traceback
-    traceback.print_exc()
-    raise
+# Configuración explícita de Mangum para Vercel
+handler = Mangum(app, lifespan="off", api_gateway_base_path="/")
