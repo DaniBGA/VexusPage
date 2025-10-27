@@ -1,0 +1,35 @@
+services:
+  # Backend API FastAPI
+  - type: web
+    name: vexus-backend
+    runtime: python
+    region: oregon
+    plan: free
+    branch: main
+    rootDir: backend
+    buildCommand: pip install -r ../requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        value: https://grupovexus.com,https://www.grupovexus.com,http://localhost:3000
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: FRONTEND_URL
+        value: https://grupovexus.com
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: False
+    healthCheckPath: /health
