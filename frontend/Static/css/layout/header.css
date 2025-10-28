@@ -349,6 +349,8 @@
     padding: 1.5rem;
     min-width: 300px;
     max-width: 90vw;
+    max-height: calc(100vh - 150px);
+    overflow-y: auto;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     opacity: 0;
     visibility: hidden;
@@ -435,6 +437,80 @@
 
 .color-option.active .check-icon {
     opacity: 1;
+}
+
+/* Estilos específicos para mobile */
+@media (max-width: 767px) {
+    .color-picker-panel {
+        position: fixed;
+        top: 80px;
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%) translateY(-10px);
+        min-width: 90vw;
+        max-width: 90vw;
+        max-height: calc(100vh - 100px);
+        padding: 1.25rem;
+    }
+
+    .color-picker-panel.active {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    .color-picker-header {
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+    }
+
+    .color-picker-header h3 {
+        font-size: 1.1rem;
+    }
+
+    .color-picker-header p {
+        font-size: 0.85rem;
+    }
+
+    .color-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.6rem;
+        max-height: calc(100vh - 220px);
+        overflow-y: auto;
+        padding-right: 0.25rem;
+    }
+
+    .color-option {
+        padding: 0.85rem;
+        min-height: 55px;
+    }
+
+    .color-name {
+        font-size: 0.8rem;
+    }
+
+    .check-icon {
+        top: 0.4rem;
+        right: 0.4rem;
+    }
+
+    .check-icon svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    /* Custom scrollbar para mobile */
+    .color-grid::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .color-grid::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 2px;
+    }
+
+    .color-grid::-webkit-scrollbar-thumb {
+        background: var(--color-primary);
+        border-radius: 2px;
+    }
 }
 
 /* =====================================================
