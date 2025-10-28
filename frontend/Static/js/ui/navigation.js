@@ -116,7 +116,7 @@ export const Navigation = {
     },
 
     showUserMenu(user) {
-        if (confirm(`¡Hola ${user.name}! ¿Deseas cerrar sesión?`)) {
+        if (confirm(`¡Hola ${user.full_name}! ¿Deseas cerrar sesión?`)) {
             AuthService.logout();
         }
     }

@@ -7,24 +7,27 @@ from pydantic import BaseModel, EmailStr, UUID4
 
 # User Schemas
 class UserBase(BaseModel):
-    name: str
+    full_name: str
     email: EmailStr
 
-class UserCreate(UserBase):
+class UserCreate(BaseModel):
+    name: str  # Acepta 'name' del frontend
+    email: EmailStr
     password: str
 
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
-class User(UserBase):
+class User(BaseModel):
     id: UUID4
+    full_name: str
+    email: EmailStr
     avatar: Optional[str] = "👤"
     is_active: bool = True
     role: str = "user"
     created_at: datetime
-    last_login: Optional[datetime] = None
-    email_verified: bool = False
+    is_verified: bool = False
 
 class Token(BaseModel):
     access_token: str
@@ -36,7 +39,7 @@ class ServiceCreate(BaseModel):
     name: str
     description: str
     category: str
-    icon: Optional[str] = None
+    icon_name: Optional[str] = None
 
 class Service(ServiceCreate):
     id: UUID4
@@ -79,7 +82,7 @@ class CourseResourceCreate(BaseModel):
     title: str
     resource_type: str  # 'document', 'video', 'link'
     url: str
-    description: Optional[str] = None
+    file_path: Optional[str] = None
 
 class CourseResource(CourseResourceCreate):
     id: UUID4
@@ -90,15 +93,14 @@ class CourseResource(CourseResourceCreate):
 class ProjectCreate(BaseModel):
     name: str
     description: Optional[str] = None
-    service_id: Optional[UUID4] = None
-    budget: Optional[float] = None
-    start_date: Optional[datetime] = None
-    end_date: Optional[datetime] = None
+    status: str = "active"
+    repository_url: Optional[str] = None
+    demo_url: Optional[str] = None
+    technologies: Optional[list] = None
 
 class Project(ProjectCreate):
     id: UUID4
     user_id: UUID4
-    status: str = "pending"
     created_at: datetime
 
 # Contact Schema
