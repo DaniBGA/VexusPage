@@ -33,10 +33,10 @@ async def create_service(
         service_id = uuid.uuid4()
         await connection.execute(
             """
-            INSERT INTO services (id, name, description, category, icon)
+            INSERT INTO services (id, name, description, category, icon_name)
             VALUES ($1, $2, $3, $4, $5)
             """,
-            service_id, service.name, service.description, service.category, service.icon
+            service_id, service.name, service.description, service.category, service.icon_name
         )
         
         created_service = await connection.fetchrow(

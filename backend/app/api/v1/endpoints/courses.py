@@ -293,12 +293,12 @@ async def create_resource(
     resource_id = uuid.uuid4()
     new_resource = await connection.fetchrow(
         """
-        INSERT INTO course_resources (id, unit_id, title, resource_type, url, description)
+        INSERT INTO course_resources (id, unit_id, title, resource_type, url, file_path)
         VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING *
         """,
         resource_id, unit_id, resource.title, resource.resource_type,
-        resource.url, resource.description
+        resource.url, resource.file_path
     )
 
     return CourseResource(**dict(new_resource))

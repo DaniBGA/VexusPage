@@ -104,10 +104,11 @@ async def login_user(user_credentials: UserLogin):
                 }
             )
 
-        await connection.execute(
-            "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1",
-            user['id']
-        )
+        # Nota: last_login no existe en el schema, removido
+        # await connection.execute(
+        #     "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1",
+        #     user['id']
+        # )
 
         access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
@@ -118,7 +119,7 @@ async def login_user(user_credentials: UserLogin):
         # Usar SQL para calcular la fecha de expiración directamente en la BD
         await connection.execute(
             f"""
-            INSERT INTO user_sessions (id, user_id, token, expires_at)
+            INSERT INTO user_sessions (id, user_id, session_token, expires_at)
             VALUES ($1, $2, $3, CURRENT_TIMESTAMP + INTERVAL '{settings.ACCESS_TOKEN_EXPIRE_MINUTES} minutes')
             """,
             session_id, user['id'], access_token
@@ -149,7 +150,7 @@ async def logout_user(
 
     async with pool.acquire() as connection:
         await connection.execute(
-            "DELETE FROM user_sessions WHERE user_id = $1 AND token = $2",
+            "DELETE FROM user_sessions WHERE user_id = $1 AND session_token = $2",
             current_user['id'], credentials.credentials
         )
 
@@ -172,9 +173,9 @@ async def verify_email(token: str):
         # Buscar usuario con el token
         user = await connection.fetchrow(
             """
-            SELECT id, email, email_verified, email_verification_token_expires
+            SELECT id, email, is_verified, verification_token_expires
             FROM users
-            WHERE email_verification_token = $1
+            WHERE verification_token = $1
             """,
             token
         )
@@ -186,14 +187,14 @@ async def verify_email(token: str):
             )
 
         # Verificar si el email ya fue verificado
-        if user['email_verified']:
+        if user['is_verified']:
             return {
                 "message": "Email already verified",
                 "already_verified": True
             }
 
         # Verificar si el token expiró
-        if user['email_verification_token_expires'] < datetime.now(timezone.utc):
+        if user['verification_token_expires'] < datetime.now(timezone.utc):
             raise HTTPException(
                 status_code=400,
                 detail="Verification token has expired. Please request a new verification email."
@@ -203,9 +204,9 @@ async def verify_email(token: str):
         await connection.execute(
             """
             UPDATE users
-            SET email_verified = true,
-                email_verification_token = NULL,
-                email_verification_token_expires = NULL
+            SET is_verified = true,
+                verification_token = NULL,
+                verification_token_expires = NULL
             WHERE id = $1
             """,
             user['id']
@@ -232,7 +233,7 @@ async def resend_verification_email(request: ResendVerificationRequest):
     async with pool.acquire() as connection:
         # Buscar usuario por email
         user = await connection.fetchrow(
-            "SELECT id, name, email, email_verified FROM users WHERE email = $1",
+            "SELECT id, full_name, email, is_verified FROM users WHERE email = $1",
             request.email
         )
 
@@ -243,7 +244,7 @@ async def resend_verification_email(request: ResendVerificationRequest):
             )
 
         # Si ya está verificado
-        if user['email_verified']:
+        if user['is_verified']:
             return {
                 "message": "Email already verified",
                 "already_verified": True
@@ -257,8 +258,8 @@ async def resend_verification_email(request: ResendVerificationRequest):
         await connection.execute(
             """
             UPDATE users
-            SET email_verification_token = $1,
-                email_verification_token_expires = $2
+            SET verification_token = $1,
+                verification_token_expires = $2
             WHERE id = $3
             """,
             verification_token, token_expires, user['id']
@@ -267,7 +268,7 @@ async def resend_verification_email(request: ResendVerificationRequest):
         # Enviar email
         email_sent = await send_verification_email(
             to_email=user['email'],
-            user_name=user['name'],
+            user_name=user['full_name'],
             verification_token=verification_token
         )
 

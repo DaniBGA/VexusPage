@@ -29,7 +29,7 @@ async def send_consultancy(consultancy: ConsultancyRequest, request: Request):
 
             await connection.execute(
                 """
-                INSERT INTO consultancy_requests (id, name, email, query, ip_address)
+                INSERT INTO consultancy_requests (id, name, email, description, ip_address)
                 VALUES ($1, $2, $3, $4, $5)
                 """,
                 consultancy_id, consultancy.name, consultancy.email, consultancy.query, client_ip
