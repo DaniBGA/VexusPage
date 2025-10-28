@@ -21,44 +21,60 @@ app = FastAPI(
 
 # ===== EXCEPTION HANDLERS =====
 
+def add_cors_headers(response: JSONResponse, request: Request) -> JSONResponse:
+    """Agregar headers CORS a las respuestas de error"""
+    origin = request.headers.get("origin")
+    if origin in settings.ALLOWED_ORIGINS or "*" in settings.ALLOWED_ORIGINS:
+        response.headers["Access-Control-Allow-Origin"] = origin if origin else "*"
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        response.headers["Access-Control-Allow-Methods"] = "*"
+        response.headers["Access-Control-Allow-Headers"] = "*"
+    return response
+
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     """Manejo de errores de validación de Pydantic"""
-    return JSONResponse(
+    response = JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         content={
             "detail": exc.errors(),
             "body": exc.body
         }
     )
+    return add_cors_headers(response, request)
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
     """Manejo de HTTPException"""
-    return JSONResponse(
+    response = JSONResponse(
         status_code=exc.status_code,
         content={"detail": exc.detail}
     )
+    return add_cors_headers(response, request)
 
 @app.exception_handler(asyncpg.PostgresError)
 async def postgres_exception_handler(request: Request, exc: asyncpg.PostgresError):
     """Manejo de errores de PostgreSQL"""
     if settings.DEBUG:
         print(f"Database error: {exc}")
-    return JSONResponse(
+    response = JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={"detail": "Database error occurred"}
     )
+    return add_cors_headers(response, request)
 
 @app.exception_handler(Exception)
 async def general_exception_handler(request: Request, exc: Exception):
     """Manejo de excepciones generales"""
     if settings.DEBUG:
         print(f"Unexpected error: {exc}")
-    return JSONResponse(
+        import traceback
+        traceback.print_exc()
+    response = JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={"detail": "Internal server error"}
     )
+    return add_cors_headers(response, request)
 
 # Configurar CORS (orígenes desde .env)
 app.add_middleware(
