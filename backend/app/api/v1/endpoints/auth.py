@@ -48,14 +48,14 @@ async def register_user(user: UserCreate):
         await connection.execute(
             """
             INSERT INTO users (
-                id, name, email, password_hash,
-                email_verified, email_verification_token,
-                email_verification_token_expires
+                id, full_name, email, hashed_password,
+                is_verified, verification_token,
+                verification_token_expires, is_active
             )
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
             """,
             user_id, user.name, user.email, hashed_password,
-            False, verification_token, token_expires
+            False, verification_token, token_expires, True
         )
 
         # Enviar email de verificación
@@ -86,7 +86,7 @@ async def login_user(user_credentials: UserLogin):
             user_credentials.email
         )
 
-        if not user or not verify_password(user_credentials.password, user['password_hash']):
+        if not user or not verify_password(user_credentials.password, user['hashed_password']):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect email or password",
@@ -94,7 +94,7 @@ async def login_user(user_credentials: UserLogin):
             )
 
         # Verificar si el email está verificado
-        if not user['email_verified']:
+        if not user['is_verified']:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Email not verified. Please check your email and verify your account before logging in.",
