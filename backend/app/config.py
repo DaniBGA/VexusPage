@@ -46,6 +46,11 @@ class Settings:
             return ["*"]
         return [origin.strip() for origin in origins.split(",")]
 
+    # === DATABASE CONNECT ===
+    # Timeout (seconds) used when creating the asyncpg pool. Increase if your DB
+    # may take longer to accept connections (cold starts, network latency).
+    DB_CONNECT_TIMEOUT: int = int(os.getenv("DB_CONNECT_TIMEOUT", "10"))
+
     # === EMAIL (para verificación de email) ===
     SMTP_HOST: str = os.getenv("SMTP_HOST", "")
     SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
