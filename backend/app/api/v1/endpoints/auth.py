@@ -27,11 +27,18 @@ async def register_user(user: UserCreate):
     """Registrar nuevo usuario y enviar email de verificación"""
     pool = await db.get_pool()
 
+    # Log registration attempt (only email, avoid logging passwords)
+    try:
+        print(f"🔔 Registration attempt for email: {user.email}")
+    except Exception:
+        pass
+
     async with pool.acquire() as connection:
         existing_user = await connection.fetchrow(
             "SELECT id FROM users WHERE email = $1", user.email
         )
         if existing_user:
+            print(f"⚠️ Registration failed: email already registered -> {user.email}")
             raise HTTPException(
                 status_code=400,
                 detail="Email already registered"
