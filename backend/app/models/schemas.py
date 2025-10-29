@@ -3,7 +3,7 @@ Esquemas Pydantic para validación de datos
 """
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, EmailStr, UUID4
+from pydantic import BaseModel, EmailStr, UUID4, Field, field_validator
 
 # User Schemas
 class UserBase(BaseModel):
@@ -11,9 +11,23 @@ class UserBase(BaseModel):
     email: EmailStr
 
 class UserCreate(BaseModel):
-    name: str  # Acepta 'name' del frontend
+    name: str = Field(..., min_length=2, max_length=100)
     email: EmailStr
-    password: str
+    password: str = Field(..., min_length=8, max_length=72)
+
+    @field_validator('password')
+    @classmethod
+    def validate_password(cls, v: str) -> str:
+        """Validar que la contraseña cumpla requisitos mínimos"""
+        if len(v) < 8:
+            raise ValueError('Password must be at least 8 characters long')
+        if len(v.encode('utf-8')) > 72:
+            raise ValueError('Password is too long (max 72 bytes)')
+        if not any(c.isdigit() for c in v):
+            raise ValueError('Password must contain at least one number')
+        if not any(c.isalpha() for c in v):
+            raise ValueError('Password must contain at least one letter')
+        return v
 
 class UserLogin(BaseModel):
     email: EmailStr
