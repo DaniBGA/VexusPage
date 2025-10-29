@@ -8,7 +8,10 @@
       "Bash(cp:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(curl:*)",
+      "Bash(nslookup:*)",
+      "Bash(ls -la \"e:\\Vexus\\VexusPage\\backend\\app\\models\"\" 2>&1 || ls -la \"e:/Vexus/VexusPage/backend/app/models/ \")"
     ],
     "deny": [],
     "ask": []
