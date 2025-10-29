@@ -1,0 +1,235 @@
+/* Animaciones */
+
+@keyframes glow {
+    from {
+        filter: drop-shadow(0 0 10px var(--glow-color-start));
+    }
+    to {
+        filter: drop-shadow(0 0 25px var(--glow-color-end));
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeInRotate {
+    from {
+        opacity: 0;
+        transform: rotate(-5deg) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: rotate(0deg) translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.6s ease forwards;
+}
+
+.slide-in-right {
+    animation: slideInRight 0.6s ease forwards;
+}
+
+.slide-in-left {
+    animation: slideInLeft 0.6s ease forwards;
+}
+
+.slide-in-up {
+    animation: slideInUp 0.8s ease forwards;
+}
+
+.scale-in {
+    animation: scaleIn 0.6s ease forwards;
+}
+
+.fade-in-rotate {
+    animation: fadeInRotate 0.7s ease forwards;
+}
+
+/* Clases de animación por scroll */
+.scroll-animate {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.scroll-animate.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.scroll-animate-left {
+    opacity: 0;
+    transform: translateX(-40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.scroll-animate-left.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.scroll-animate-right {
+    opacity: 0;
+    transform: translateX(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.scroll-animate-right.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.scroll-animate-scale {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.scroll-animate-scale.is-visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Animación de spinner */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+/* Notificaciones */
+#notificationContainer {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.notification {
+    padding: 1rem 2rem;
+    border-radius: var(--radius-md);
+    font-weight: bold;
+    box-shadow: var(--shadow-md);
+    color: white;
+    margin-bottom: 0.5rem;
+    transition: opacity var(--transition-base);
+}
+
+.notification.error {
+    background: #dc2626;
+    border: 2px solid #b91c1c;
+}
+
+.notification.success {
+    background: linear-gradient(135deg, #A0522D 0%, #8B4513 100%);
+    border: 2px solid #A0522D;
+}
+
+.notification.info {
+    background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+    border: 2px solid #8B4513;
+}
+
+/* Animación Typewriter */
+@keyframes blink {
+    0%, 49% {
+        opacity: 1;
+    }
+    50%, 100% {
+        opacity: 0;
+    }
+}
+
+.typewriter-cursor {
+    display: inline-block;
+    margin-left: 4px;
+    animation: blink 0.8s infinite;
+    background: linear-gradient(135deg, #ffffff 0%, #A0522D 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 900;
+    font-size: 1em;
+    line-height: 2;
+    /* Forzar que el color sea visible */
+    color: #A0522D !important;
+}
+
+/* Alternativa: usar un bloque sólido en lugar de texto transparente */
+.hero-title .typewriter-cursor {
+    background: none !important;
+    -webkit-text-fill-color: var(--color-primary-dark) !important;
+    color: var(--color-primary-dark) !important;
+    transform: scaleX(0.35);
+    transform-origin: center;
+    font-weight: 400;
+}
+
+#typewriter-text {
+    display: inline-block;
+    min-height: 1em;
+}
