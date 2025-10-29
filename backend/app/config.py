@@ -25,7 +25,7 @@ class Settings:
     # === DATABASE ===
     DATABASE_URL: str = os.getenv(
         "DATABASE_URL",
-        "postgresql://postgres:password@localhost:5432/vexus_db"
+        "postgresql://postgres.fjfucvwpstrujpqsvuvr:KxvKgM8iUnJJBVgE@aws-1-sa-east-1.pooler.supabase.com:5432/postgres?sslmode=require"
     )
     DB_POOL_MIN_SIZE: int = int(os.getenv("DB_POOL_MIN_SIZE", "5"))
     DB_POOL_MAX_SIZE: int = int(os.getenv("DB_POOL_MAX_SIZE", "20"))

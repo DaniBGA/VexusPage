@@ -83,6 +83,21 @@ print(f"   Allowed Origins: {settings.ALLOWED_ORIGINS}")
 print(f"   Environment: {settings.ENVIRONMENT}")
 print(f"   Debug Mode: {settings.DEBUG}")
 
+# Mostrar información enmascarada sobre la conexión a la base de datos
+try:
+    from urllib.parse import urlparse
+    db_url = settings.DATABASE_URL
+    if db_url:
+        parsed = urlparse(db_url)
+        db_host = parsed.hostname or 'unknown'
+        db_port = parsed.port or 5432
+        print(f"🔎 DB host: {db_host}:{db_port} (credentials masked)")
+    else:
+        print("🔎 DB host: none (DATABASE_URL not set)")
+except Exception:
+    # Nunca detener el arranque por un fallo de logging
+    print("🔎 DB host: unable to parse DATABASE_URL")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.ALLOWED_ORIGINS,  # Lee desde .env
@@ -167,5 +182,6 @@ async def debug_cors():
 
 if __name__ == "__main__":
     import uvicorn
+    import os
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
