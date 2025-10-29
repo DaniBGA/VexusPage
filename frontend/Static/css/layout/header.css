@@ -443,14 +443,16 @@
 @media (max-width: 767px) {
     .color-picker-panel {
         position: fixed;
-        top: 80px;
+        top: auto;
+        bottom: 20px;
         left: 50%;
         right: auto;
-        transform: translateX(-50%) translateY(-10px);
-        min-width: 90vw;
-        max-width: 90vw;
-        max-height: calc(100vh - 100px);
+        transform: translateX(-50%) translateY(10px);
+        width: calc(100vw - 40px);
+        max-width: 400px;
+        max-height: 80vh;
         padding: 1.25rem;
+        margin: 0 auto;
     }
 
     .color-picker-panel.active {
@@ -472,10 +474,11 @@
 
     .color-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 0.6rem;
-        max-height: calc(100vh - 220px);
+        gap: 0.8rem;
+        max-height: calc(80vh - 120px);
         overflow-y: auto;
-        padding-right: 0.25rem;
+        padding: 0.5rem 0.5rem 0.5rem 0;
+        margin: -0.5rem -0.5rem 0 -0.5rem;
     }
 
     .color-option {
