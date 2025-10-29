@@ -195,7 +195,8 @@ async def startup_event():
                 parsed = urlparse(dsn)
                 host = parsed.hostname
                 port = parsed.port or 5432
-                if host:
+                if host and 'sslmode=require' not in dsn.lower():
+                    # Skip TCP check for SSL connections as they may block non-SSL attempts
                     if settings.DEBUG:
                         print(f"🔌 Checking TCP connectivity to DB {host}:{port} before pool create")
                     # Intento una conexión TCP simple con timeout corto

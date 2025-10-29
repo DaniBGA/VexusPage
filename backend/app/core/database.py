@@ -28,11 +28,13 @@ class Database:
 
                 # asyncpg.create_pool accepts a timeout parameter which applies to
                 # establishing each new connection.
+                # SSL is required for Supabase connections
                 self.pool = await asyncpg.create_pool(
                     settings.DATABASE_URL,
                     min_size=settings.DB_POOL_MIN_SIZE,
                     max_size=settings.DB_POOL_MAX_SIZE,
                     timeout=settings.DB_CONNECT_TIMEOUT,
+                    ssl='require'  # Ensure SSL is always enabled
                 )
 
                 if settings.DEBUG:

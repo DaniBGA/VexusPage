@@ -1,7 +1,7 @@
 -- Backup usuarios existentes
 CREATE TEMP TABLE users_backup AS 
-SELECT id, email, hashed_password as password_hash, full_name as name, 
-       is_active, is_verified as email_verified, created_at, updated_at
+SELECT id, email, password_hash, name, 
+       is_active, email_verified, created_at, updated_at
 FROM users;
 
 -- Borrar esquema actual (en orden para evitar errores de FK)
