@@ -35,7 +35,25 @@ export class APIClient {
             }
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                // Try to extract a helpful error message from the response body
+                let errorText = response.statusText;
+                try {
+                    const contentType = response.headers.get('content-type') || '';
+                    if (contentType.includes('application/json')) {
+                        const errJson = await response.json();
+                        errorText = errJson.detail || errJson.message || JSON.stringify(errJson);
+                    } else {
+                        errorText = await response.text();
+                    }
+                } catch (e) {
+                    // ignore parsing errors and keep statusText
+                }
+
+                const err = new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+                // Attach useful metadata for callers
+                err.status = response.status;
+                err.body = errorText;
+                throw err;
             }
 
             return await response.json();
