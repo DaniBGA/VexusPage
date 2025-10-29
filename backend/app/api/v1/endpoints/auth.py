@@ -254,7 +254,7 @@ async def resend_verification_email(request: ResendVerificationRequest):
     async with pool.acquire() as connection:
         # Buscar usuario por email
         user = await connection.fetchrow(
-            "SELECT id, full_name, email, is_verified FROM users WHERE email = $1",
+            "SELECT id, name, email, is_verified FROM users WHERE email = $1",
             request.email
         )
 
@@ -289,7 +289,7 @@ async def resend_verification_email(request: ResendVerificationRequest):
         # Enviar email
         email_sent = await send_verification_email(
             to_email=user['email'],
-            user_name=user['full_name'],
+            user_name=user['name'],
             verification_token=verification_token
         )
 
