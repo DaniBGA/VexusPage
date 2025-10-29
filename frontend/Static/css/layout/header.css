@@ -443,58 +443,83 @@
 @media (max-width: 767px) {
     .color-picker-panel {
         position: fixed;
-        top: 80px;
+        top: 50%;
         left: 50%;
-        right: auto;
-        transform: translateX(-50%) translateY(-10px);
-        min-width: 90vw;
-        max-width: 90vw;
-        max-height: calc(100vh - 100px);
-        padding: 1.25rem;
+        transform: translate(-40%, -50%) translateY(-10px);
+        width: calc(100% - 32px);
+        max-width: 320px;
+        height: auto;
+        max-height: 80vh;
+        padding: 1.5rem;
+        margin: 0 auto;
+        background: var(--color-surface);
+        border: 2px solid var(--color-border-primary);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     }
 
     .color-picker-panel.active {
-        transform: translateX(-50%) translateY(0);
+        transform: translate(-40%, 10%) translateY(0);
     }
 
     .color-picker-header {
-        margin-bottom: 1rem;
-        padding-bottom: 0.75rem;
+        margin-bottom: 1.25rem;
+        padding-bottom: 1rem;
+        text-align: center;
     }
 
     .color-picker-header h3 {
-        font-size: 1.1rem;
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
     }
 
     .color-picker-header p {
-        font-size: 0.85rem;
+        font-size: 0.9rem;
     }
 
     .color-grid {
+        display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 0.6rem;
-        max-height: calc(100vh - 220px);
+        gap: 1rem;
+        max-height: calc(80vh - 150px);
         overflow-y: auto;
-        padding-right: 0.25rem;
+        padding: 0.5rem;
+        margin: -0.5rem;
     }
 
     .color-option {
-        padding: 0.85rem;
-        min-height: 55px;
+        padding: 1rem;
+        min-height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        background-size: 200% 200%;
+        background-position: center;
+        border: 2px solid transparent;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .color-option:active {
+        transform: scale(0.95);
     }
 
     .color-name {
-        font-size: 0.8rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        line-height: 1.2;
     }
 
     .check-icon {
-        top: 0.4rem;
-        right: 0.4rem;
+        top: 0.5rem;
+        right: 0.5rem;
     }
 
     .check-icon svg {
-        width: 14px;
-        height: 14px;
+        width: 16px;
+        height: 16px;
+        filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5));
     }
 
     /* Custom scrollbar para mobile */
