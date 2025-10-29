@@ -29,7 +29,7 @@ async def send_consultancy(consultancy: ConsultancyRequest, request: Request):
 
             await connection.execute(
                 """
-                INSERT INTO consultancy_requests (id, name, email, query, ip_address)
+                INSERT INTO consultancy_requests (id, name, email, description, ip_address)
                 VALUES ($1, $2, $3, $4, $5)
                 """,
                 consultancy_id, consultancy.name, consultancy.email, consultancy.query, client_ip
@@ -45,7 +45,9 @@ async def send_consultancy(consultancy: ConsultancyRequest, request: Request):
         )
 
         if not email_sent:
-            raise HTTPException(status_code=500, detail="Error al enviar el email")
+            # Si el servicio de email falla, considerarlo Service Unavailable (503)
+            print(f"⚠️ Consultancy email NOT sent, service unavailable for {consultancy.email}")
+            raise HTTPException(status_code=503, detail="Email service temporarily unavailable")
 
         return {
             "message": "Consulta enviada exitosamente",

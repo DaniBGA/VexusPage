@@ -3,27 +3,44 @@ Esquemas Pydantic para validación de datos
 """
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, EmailStr, UUID4
+from pydantic import BaseModel, EmailStr, UUID4, Field, field_validator
 
 # User Schemas
 class UserBase(BaseModel):
     name: str
     email: EmailStr
 
-class UserCreate(UserBase):
-    password: str
+class UserCreate(BaseModel):
+    name: str = Field(..., min_length=2, max_length=100)
+    email: EmailStr
+    password: str = Field(..., min_length=8, max_length=72)
+
+    @field_validator('password')
+    @classmethod
+    def validate_password(cls, v: str) -> str:
+        """Validar que la contraseña cumpla requisitos mínimos"""
+        if len(v) < 8:
+            raise ValueError('Password must be at least 8 characters long')
+        if len(v.encode('utf-8')) > 72:
+            raise ValueError('Password is too long (max 72 bytes)')
+        if not any(c.isdigit() for c in v):
+            raise ValueError('Password must contain at least one number')
+        if not any(c.isalpha() for c in v):
+            raise ValueError('Password must contain at least one letter')
+        return v
 
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
-class User(UserBase):
+class User(BaseModel):
     id: UUID4
+    name: str
+    email: EmailStr
     avatar: Optional[str] = "👤"
     is_active: bool = True
     role: str = "user"
     created_at: datetime
-    last_login: Optional[datetime] = None
     email_verified: bool = False
 
 class Token(BaseModel):
@@ -36,7 +53,7 @@ class ServiceCreate(BaseModel):
     name: str
     description: str
     category: str
-    icon: Optional[str] = None
+    icon_name: Optional[str] = None
 
 class Service(ServiceCreate):
     id: UUID4
@@ -79,7 +96,7 @@ class CourseResourceCreate(BaseModel):
     title: str
     resource_type: str  # 'document', 'video', 'link'
     url: str
-    description: Optional[str] = None
+    file_path: Optional[str] = None
 
 class CourseResource(CourseResourceCreate):
     id: UUID4
@@ -90,15 +107,14 @@ class CourseResource(CourseResourceCreate):
 class ProjectCreate(BaseModel):
     name: str
     description: Optional[str] = None
-    service_id: Optional[UUID4] = None
-    budget: Optional[float] = None
-    start_date: Optional[datetime] = None
-    end_date: Optional[datetime] = None
+    status: str = "active"
+    repository_url: Optional[str] = None
+    demo_url: Optional[str] = None
+    technologies: Optional[list] = None
 
 class Project(ProjectCreate):
     id: UUID4
     user_id: UUID4
-    status: str = "pending"
     created_at: datetime
 
 # Contact Schema

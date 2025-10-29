@@ -3,20 +3,25 @@ Utilidades de seguridad y autenticación
 """
 from datetime import datetime, timedelta, timezone
 from typing import Optional
-from passlib.context import CryptContext
+import bcrypt
 import jwt
 from jwt.exceptions import InvalidTokenError as JWTError
 from app.config import settings
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verificar contraseña"""
-    return pwd_context.verify(plain_password, hashed_password)
+    # Truncar a 72 bytes para evitar error de bcrypt
+    password_bytes = plain_password.encode('utf-8')[:72]
+    hashed_bytes = hashed_password.encode('utf-8') if isinstance(hashed_password, str) else hashed_password
+    return bcrypt.checkpw(password_bytes, hashed_bytes)
 
 def get_password_hash(password: str) -> str:
     """Hashear contraseña"""
-    return pwd_context.hash(password)
+    # Truncar a 72 bytes para evitar error de bcrypt
+    password_bytes = password.encode('utf-8')[:72]
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(password_bytes, salt)
+    return hashed.decode('utf-8')
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     """Crear token JWT"""

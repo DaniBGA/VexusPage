@@ -14,7 +14,7 @@ services:
       - key: SECRET_KEY
         sync: false
       - key: ALLOWED_ORIGINS
-        value: https://grupovexus.com,https://www.grupovexus.com,http://localhost:3000
+        value: https://grupovexus.com,https://www.grupovexus.com,http://grupovexus.com,http://www.grupovexus.com,http://localhost:3000
       - key: SMTP_HOST
         value: smtp.gmail.com
       - key: SMTP_PORT

@@ -83,6 +83,9 @@ prod-build:
 		echo "ERROR: Archivo $(ENV_PROD) no encontrado!"; \
 		exit 1; \
 	fi
+	@echo "Ejecutando fingerprinting de frontend..."
+	pwsh ./frontend/add-fingerprints.ps1 -Version "$$(date +%Y%m%d%H%M%S)"
+	@echo "Fingerprinting completado ✅"
 	cd $(PROD_PATH) && docker-compose --env-file ../../$(ENV_PROD) up -d --build
 
 # ===== GESTIÓN =====
@@ -166,3 +169,4 @@ run-back:
 run-front:
 	@echo "Ejecutando frontend localmente..."
 	cd frontend && npx http-server -p 8080
+

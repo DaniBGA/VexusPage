@@ -25,7 +25,7 @@ class Settings:
     # === DATABASE ===
     DATABASE_URL: str = os.getenv(
         "DATABASE_URL",
-        "postgresql://postgres:password@localhost:5432/vexus_db"
+        "postgresql://postgres.fjfucvwpstrujpqsvuvr:KxvKgM8iUnJJBVgE@aws-1-sa-east-1.pooler.supabase.com:5432/postgres?sslmode=require"
     )
     DB_POOL_MIN_SIZE: int = int(os.getenv("DB_POOL_MIN_SIZE", "5"))
     DB_POOL_MAX_SIZE: int = int(os.getenv("DB_POOL_MAX_SIZE", "20"))
@@ -45,6 +45,11 @@ class Settings:
         if origins == "*":
             return ["*"]
         return [origin.strip() for origin in origins.split(",")]
+
+    # === DATABASE CONNECT ===
+    # Timeout (seconds) used when creating the asyncpg pool. Increase if your DB
+    # may take longer to accept connections (cold starts, network latency).
+    DB_CONNECT_TIMEOUT: int = int(os.getenv("DB_CONNECT_TIMEOUT", "10"))
 
     # === EMAIL (para verificación de email) ===
     SMTP_HOST: str = os.getenv("SMTP_HOST", "")
