@@ -148,7 +148,42 @@ async def startup_event():
         # No bloquear el arranque por la validación; db.connect mostrará errores si hay problemas
         pass
 
-    await db.connect()
+    # Intentar conectar a la base de datos pero NO fallar el arranque si no está disponible.
+    # Esto evita que todos los workers mueran si el pooler remoto rechaza conexiones
+    # temporalmente (por ejemplo límites de conexión del pooler). Las rutas que
+    # dependen de la BD seguirán devolviendo 503 gracias a los handlers añadidos.
+    try:
+        # Intento rápido de conexión TCP al host:port para diagnóstico (más claro que
+        # sólo confiar en asyncpg error stack traces cuando hay refusals)
+        try:
+            from urllib.parse import urlparse
+            import asyncio
+
+            dsn = settings.DATABASE_URL
+            if dsn:
+                parsed = urlparse(dsn)
+                host = parsed.hostname
+                port = parsed.port or 5432
+                if host:
+                    if settings.DEBUG:
+                        print(f"🔌 Checking TCP connectivity to DB {host}:{port} before pool create")
+                    # Intento una conexión TCP simple con timeout corto
+                    try:
+                        await asyncio.wait_for(asyncio.open_connection(host, port), timeout=3.0)
+                        if settings.DEBUG:
+                            print(f"🔌 TCP connection to {host}:{port} succeeded")
+                    except Exception as tcp_exc:
+                        print(f"⚠️ TCP connectivity check failed for {host}:{port}: {tcp_exc}")
+
+        except Exception:
+            # No bloquear el arranque por fallos en la comprobación de conectividad
+            pass
+
+        await db.connect()
+    except Exception as e:
+        # Registrar el error pero permitir que la app siga arrancando. Las rutas
+        # que necesiten BD deben manejar el error y devolver 503.
+        print(f"❌ DB connect failed during startup: {e}")
 
 @app.on_event("shutdown")
 async def shutdown_event():
