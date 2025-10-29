@@ -67,11 +67,12 @@ async def register_user(user: UserCreate, request: Request):
         await connection.execute(
             """
             INSERT INTO users (
-                id, full_name, email, hashed_password,
-                is_verified, verification_token,
-                verification_token_expires, is_active
+                id, name, email, hashed_password,
+                email_verified, verification_token,
+                verification_token_expires, is_active,
+                created_at, updated_at
             )
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
             """,
             user_id, user.name, user.email, hashed_password,
             False, verification_token, token_expires, True
@@ -113,7 +114,7 @@ async def login_user(user_credentials: UserLogin):
             )
 
         # Verificar si el email está verificado
-        if not user['is_verified']:
+        if not user['email_verified']:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Email not verified. Please check your email and verify your account before logging in.",
@@ -206,7 +207,7 @@ async def verify_email(token: str):
             )
 
         # Verificar si el email ya fue verificado
-        if user['is_verified']:
+        if user['email_verified']:
             return {
                 "message": "Email already verified",
                 "already_verified": True
@@ -223,9 +224,10 @@ async def verify_email(token: str):
         await connection.execute(
             """
             UPDATE users
-            SET is_verified = true,
+            SET email_verified = true,
                 verification_token = NULL,
-                verification_token_expires = NULL
+                verification_token_expires = NULL,
+                updated_at = CURRENT_TIMESTAMP
             WHERE id = $1
             """,
             user['id']

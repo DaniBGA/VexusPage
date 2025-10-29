@@ -7,7 +7,7 @@ from pydantic import BaseModel, EmailStr, UUID4, Field, field_validator
 
 # User Schemas
 class UserBase(BaseModel):
-    full_name: str
+    name: str
     email: EmailStr
 
 class UserCreate(BaseModel):
@@ -35,13 +35,13 @@ class UserLogin(BaseModel):
 
 class User(BaseModel):
     id: UUID4
-    full_name: str
+    name: str
     email: EmailStr
     avatar: Optional[str] = "👤"
     is_active: bool = True
     role: str = "user"
     created_at: datetime
-    is_verified: bool = False
+    email_verified: bool = False
 
 class Token(BaseModel):
     access_token: str
