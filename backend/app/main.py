@@ -58,8 +58,20 @@ async def postgres_exception_handler(request: Request, exc: asyncpg.PostgresErro
     if settings.DEBUG:
         print(f"Database error: {exc}")
     response = JSONResponse(
-        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        content={"detail": "Database error occurred"}
+        status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+        content={"detail": "Database temporarily unavailable"}
+    )
+    return add_cors_headers(response, request)
+
+
+@app.exception_handler(ConnectionRefusedError)
+async def connection_refused_handler(request: Request, exc: ConnectionRefusedError):
+    """Manejo de errores de conexión TCP (p. ej. DB no accesible)"""
+    if settings.DEBUG:
+        print(f"Connection refused: {exc}")
+    response = JSONResponse(
+        status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+        content={"detail": "Service temporarily unavailable (connection refused)"}
     )
     return add_cors_headers(response, request)
 
