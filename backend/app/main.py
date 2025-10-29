@@ -133,6 +133,21 @@ UPLOAD_DIR = Path("uploads")
 # Eventos de inicio y cierre
 @app.on_event("startup")
 async def startup_event():
+    # Validar la configuración de la cadena de conexión antes de intentar conectar
+    try:
+        from urllib.parse import urlparse
+        dsn = settings.DATABASE_URL
+        if not dsn:
+            print("❌ DATABASE_URL no está configurada. Revisa tus variables de entorno.")
+        else:
+            parsed = urlparse(dsn)
+            scheme = (parsed.scheme or '').lower()
+            if scheme not in ('postgresql', 'postgres'):
+                print(f"❌ DATABASE_URL inválida. Se esperaba esquema 'postgresql' o 'postgres', se obtuvo '{scheme}'")
+    except Exception:
+        # No bloquear el arranque por la validación; db.connect mostrará errores si hay problemas
+        pass
+
     await db.connect()
 
 @app.on_event("shutdown")

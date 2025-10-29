@@ -45,7 +45,9 @@ async def send_consultancy(consultancy: ConsultancyRequest, request: Request):
         )
 
         if not email_sent:
-            raise HTTPException(status_code=500, detail="Error al enviar el email")
+            # Si el servicio de email falla, considerarlo Service Unavailable (503)
+            print(f"⚠️ Consultancy email NOT sent, service unavailable for {consultancy.email}")
+            raise HTTPException(status_code=503, detail="Email service temporarily unavailable")
 
         return {
             "message": "Consulta enviada exitosamente",

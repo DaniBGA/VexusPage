@@ -3,7 +3,7 @@ Endpoints de autenticación
 """
 import uuid
 from datetime import timedelta, datetime, timezone
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status, Depends, Request, Response
 from fastapi.security import HTTPAuthorizationCredentials
 from pydantic import BaseModel
 from app.models.schemas import UserCreate, UserLogin, Token, User
@@ -22,14 +22,26 @@ router = APIRouter()
 class ResendVerificationRequest(BaseModel):
     email: str
 
+@router.options("/register")
+async def register_options(request: Request):
+    """Log preflight Origin header for debugging CORS issues."""
+    try:
+        origin = request.headers.get("origin")
+        print(f"↔️ Preflight OPTIONS /register origin={origin}")
+    except Exception:
+        pass
+    return Response(status_code=204)
+
+
 @router.post("/register", response_model=dict)
-async def register_user(user: UserCreate):
+async def register_user(user: UserCreate, request: Request):
     """Registrar nuevo usuario y enviar email de verificación"""
     pool = await db.get_pool()
 
     # Log registration attempt (only email, avoid logging passwords)
     try:
-        print(f"🔔 Registration attempt for email: {user.email}")
+        origin = request.headers.get("origin")
+        print(f"🔔 Registration attempt for email: {user.email} method={request.method} origin={origin}")
     except Exception:
         pass
 
