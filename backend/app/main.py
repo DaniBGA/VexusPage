@@ -22,13 +22,31 @@ app = FastAPI(
 # ===== EXCEPTION HANDLERS =====
 
 def add_cors_headers(response: JSONResponse, request: Request) -> JSONResponse:
-    """Agregar headers CORS a las respuestas de error"""
+    """
+    Agregar headers CORS a las respuestas de error usando la misma configuración que el middleware.
+    Esto asegura que los errores (400, 401, 403, etc.) tengan las mismas cabeceras CORS que las 
+    respuestas exitosas.
+    """
+    # Usar la misma lógica que CORSMiddleware para determinar si el origin está permitido
     origin = request.headers.get("origin")
-    if origin in settings.ALLOWED_ORIGINS or "*" in settings.ALLOWED_ORIGINS:
-        response.headers["Access-Control-Allow-Origin"] = origin if origin else "*"
+    origin_allowed = (
+        "*" in settings.ALLOWED_ORIGINS or 
+        origin in settings.ALLOWED_ORIGINS
+    )
+    
+    if origin_allowed:
+        # Aplicar la misma configuración que el middleware global
+        response.headers["Access-Control-Allow-Origin"] = origin or "*"
         response.headers["Access-Control-Allow-Credentials"] = "true"
-        response.headers["Access-Control-Allow-Methods"] = "*"
-        response.headers["Access-Control-Allow-Headers"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "content-type,authorization"
+        response.headers["Vary"] = "Origin"
+    
+    if settings.DEBUG and not origin_allowed and origin:
+        # En debug, loguear origins no permitidos para ayudar a diagnosticar
+        print(f"⚠️ Origin no permitido: {origin}")
+        print(f"   Origins permitidos: {settings.ALLOWED_ORIGINS}")
+    
     return response
 
 @app.exception_handler(RequestValidationError)
@@ -45,10 +63,12 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
-    """Manejo de HTTPException"""
+    """Manejo de HTTPException incluyendo errores 400 de validación"""
+    # Asegurar que todas las cabeceras necesarias están presentes, especialmente
+    # para errores 400 que pueden venir de validaciones de negocio
     response = JSONResponse(
         status_code=exc.status_code,
-        content={"detail": exc.detail}
+        content={"detail": exc.detail, "code": "EMAIL_ALREADY_REGISTERED" if "already registered" in str(exc.detail) else None}
     )
     return add_cors_headers(response, request)
 
@@ -110,9 +130,20 @@ except Exception:
     # Nunca detener el arranque por un fallo de logging
     print("🔎 DB host: unable to parse DATABASE_URL")
 
-app.add_middleware(
-    CORSMiddleware,
+# Crear una instancia de CORSMiddleware con nuestra configuración
+cors_middleware = CORSMiddleware(
+    app=app,
     allow_origins=settings.ALLOWED_ORIGINS,  # Lee desde .env
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allow_headers=["*"],
+    expose_headers=["*"],
+    max_age=3600,
+)
+
+# Asignar el middleware y guardar una referencia para usarlo en los handlers de error
+app.add_middleware(CORSMiddleware,
+    allow_origins=settings.ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],

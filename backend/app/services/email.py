@@ -303,10 +303,23 @@ async def send_verification_email(
         msg.attach(part2)
 
         # Enviar email si las credenciales SMTP están configuradas
-        if not settings.SMTP_HOST or not settings.SMTP_USER:
-            print(f"⚠️ SMTP no configurado. Email de verificación NO enviado.")
-            print(f"📧 Para {to_email}: {verification_link}")
-            print(f"⚠️ Configura SMTP_HOST, SMTP_USER y SMTP_PASSWORD en el archivo .env")
+        smtp_issues = []
+        if not settings.SMTP_HOST:
+            smtp_issues.append("SMTP_HOST")
+        if not settings.SMTP_USER:
+            smtp_issues.append("SMTP_USER")
+        if not settings.SMTP_PASSWORD:
+            smtp_issues.append("SMTP_PASSWORD")
+        
+        if smtp_issues:
+            missing = ", ".join(smtp_issues)
+            print(f"⚠️ SMTP no configurado. Falta configurar: {missing}")
+            print(f"� Valores actuales:")
+            print(f"   SMTP_HOST={settings.SMTP_HOST or '(no configurado)'}")
+            print(f"   SMTP_PORT={settings.SMTP_PORT}")
+            print(f"   SMTP_USER={settings.SMTP_USER or '(no configurado)'}")
+            print(f"   EMAIL_FROM={settings.EMAIL_FROM}")
+            print(f"📧 Email pendiente para {to_email}: {verification_link}")
             # En desarrollo, retornar True para permitir el registro
             return True
 
