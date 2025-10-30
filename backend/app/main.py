@@ -130,17 +130,6 @@ except Exception:
     # Nunca detener el arranque por un fallo de logging
     print("🔎 DB host: unable to parse DATABASE_URL")
 
-# Crear una instancia de CORSMiddleware con nuestra configuración
-cors_middleware = CORSMiddleware(
-    app=app,
-    allow_origins=settings.ALLOWED_ORIGINS,  # Lee desde .env
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-    allow_headers=["*"],
-    expose_headers=["*"],
-    max_age=3600,
-)
-
 # Asignar el middleware y guardar una referencia para usarlo en los handlers de error
 app.add_middleware(CORSMiddleware,
     allow_origins=settings.ALLOWED_ORIGINS,
