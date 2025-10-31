@@ -22,23 +22,11 @@ router = APIRouter()
 class ResendVerificationRequest(BaseModel):
     email: str
 
-@router.options("/register")
-async def register_options(request: Request):
-    """Log preflight Origin header for debugging CORS issues."""
-    try:
-        origin = request.headers.get("origin")
-        print(f"↔️ Preflight OPTIONS /register origin={origin}")
-    except Exception:
-        pass
-    return Response(status_code=204)
-
-
 @router.post("/register", response_model=dict)
 async def register_user(user: UserCreate, request: Request):
     """Registrar nuevo usuario y enviar email de verificación"""
     pool = await db.get_pool()
 
-    # Log registration attempt (only email, avoid logging passwords)
     try:
         origin = request.headers.get("origin")
         print(f"🔔 Registration attempt for email: {user.email} method={request.method} origin={origin}")
@@ -64,30 +52,43 @@ async def register_user(user: UserCreate, request: Request):
         token_expires = get_token_expiration()
 
         # Insertar usuario con token de verificación
-        await connection.execute(
-            """
-            INSERT INTO users (
-                id, name, email, hashed_password,
-                email_verified, verification_token,
-                verification_token_expires, is_active,
-                created_at, updated_at
+        try:
+            await connection.execute(
+                """
+                INSERT INTO users (
+                    id, name, email, hashed_password,
+                    email_verified, verification_token,
+                    verification_token_expires, is_active,
+                    created_at, updated_at
+                )
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+                """,
+                user_id, user.name, user.email, hashed_password,
+                False, verification_token, token_expires, True
             )
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-            """,
-            user_id, user.name, user.email, hashed_password,
-            False, verification_token, token_expires, True
-        )
+            print(f"✅ User created successfully: {user.email}")
+        except Exception as e:
+            print(f"❌ Error creating user: {e}")
+            raise HTTPException(status_code=500, detail="Error creating user")
 
-        # Enviar email de verificación
-        email_sent = await send_verification_email(
-            to_email=user.email,
-            user_name=user.name,
-            verification_token=verification_token
-        )
-
-        if not email_sent:
-            # Log el error pero no falla el registro
-            print(f"⚠️ No se pudo enviar el email de verificación a {user.email}")
+        # Enviar email de verificación - CON TIMEOUT Y MANEJO DE ERRORES
+        email_sent = False
+        try:
+            # Agregar timeout para evitar que el worker se cuelgue
+            import asyncio
+            email_sent = await asyncio.wait_for(
+                send_verification_email(
+                    to_email=user.email,
+                    user_name=user.name,
+                    verification_token=verification_token
+                ),
+                timeout=10.0  # 10 segundos máximo
+            )
+            print(f"✅ Verification email sent to {user.email}: {email_sent}")
+        except asyncio.TimeoutError:
+            print(f"⚠️ Email sending timed out for {user.email}")
+        except Exception as e:
+            print(f"⚠️ Error sending verification email to {user.email}: {e}")
 
         return {
             "message": "User created successfully. Please check your email to verify your account.",
