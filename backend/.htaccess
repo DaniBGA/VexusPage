@@ -1,19 +1,39 @@
-# Configuración Apache para FastAPI en Neatech
+# ==================================
+# NEATECH - Configuración Passenger
+# ==================================
 
-# Habilitar CGI
-Options +ExecCGI
-AddHandler cgi-script .py
+# Habilitar Passenger para Python
+PassengerEnabled on
+PassengerAppType wsgi
+PassengerStartupFile passenger_wsgi.py
 
-# Reescribir todas las solicitudes /api/* al script Python
-RewriteEngine On
-RewriteBase /
+# Ruta al intérprete de Python
+# Neatech usa Python del sistema, NO necesitas venv si no hay SSH
+PassengerPython /usr/bin/python3
 
-# Redirigir todas las rutas /api/* a la aplicación FastAPI
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^api/(.*)$ /cgi-bin/app.cgi/$1 [QSA,L]
+# Configuración de la aplicación
+PassengerAppRoot /home/grupovex/web/grupovexus.com/api
 
-# Headers CORS
+# Performance
+PassengerMinInstances 1
+PassengerMaxPoolSize 6
+
+# Headers CORS (por si acaso)
 Header always set Access-Control-Allow-Origin "*"
-Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS, PATCH"
 Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
+
+# Logs
+PassengerLogLevel 3
+PassengerAppLogFile /home/grupovex/logs/passenger_app.log
+
+# No mostrar archivos Python
+<FilesMatch "\.(py|pyc|pyo)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Permitir passenger_wsgi.py
+<Files "passenger_wsgi.py">
+    Allow from all
+</Files>
