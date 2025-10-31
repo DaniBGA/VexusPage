@@ -1,26 +1,24 @@
 """
-Passenger WSGI para Neatech/cPanel - SIN acceso SSH
-Este archivo permite ejecutar FastAPI automáticamente con Passenger
+Passenger WSGI para Neatech
+Backend en public_html/api/ (sin symlink)
 """
 import sys
 import os
 
-# Añadir el directorio actual al path de Python
-sys.path.insert(0, os.path.dirname(__file__))
+# Añadir el directorio actual al path
+current_dir = os.path.dirname(__file__)
+sys.path.insert(0, current_dir)
 
-# Cargar variables de entorno desde .env
+# Cargar variables de entorno
 from dotenv import load_dotenv
-load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
+load_dotenv(os.path.join(current_dir, '.env'))
 
 # Importar la aplicación FastAPI
 try:
     from app.main import app as application
-    print("✅ FastAPI app loaded successfully")
+    print("✅ FastAPI app loaded successfully from public_html/api/")
 except Exception as e:
     print(f"❌ Error loading FastAPI app: {e}")
+    import traceback
+    traceback.print_exc()
     raise
-
-# Configuración adicional para Passenger
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(application, host="0.0.0.0", port=8000)

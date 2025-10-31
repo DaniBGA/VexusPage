@@ -1,47 +1,25 @@
-# ====================================
-# VEXUS BACKEND - DOCKERFILE
-# ====================================
+# Dockerfile para Render.com
+FROM python:3.11-slim
 
-FROM python:3.12-slim
+# Variables de entorno
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PORT=10000
 
-# Establecer directorio de trabajo
+# Directorio de trabajo
 WORKDIR /app
 
-# Variables de entorno para Python
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1
-
-# Instalar dependencias del sistema necesarias para psycopg2 y asyncpg
-RUN apt-get update && apt-get install -y \
-    gcc \
-    postgresql-client \
-    libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copiar requirements y instalar dependencias de Python
+# Copiar requirements
 COPY requirements.txt .
+
+# Instalar dependencias
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copiar el código de la aplicación
-COPY ./app ./app
+COPY . .
 
-# Crear directorio para uploads
-RUN mkdir -p /app/uploads && chmod 755 /app/uploads
+# Exponer puerto
+EXPOSE $PORT
 
-# Exponer el puerto
-EXPOSE 8000
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:8000/health', timeout=5)" || exit 1
-
-# ====================================
-# Comando de ejecución compatible con Railway
-# ====================================
-# ====================================
-# Comando compatible con Railway
-# ====================================
-
-CMD cd backend && gunicorn app.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:${PORT:-8000} --timeout 120
+# Comando de inicio
+CMD uvicorn app.main:app --host 0.0.0.0 --port $PORT
