@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(\"c:\\Users\\Daniel\\Desktop\\VexusPage\\backend\\.env.neatech\")",
+      "Bash(tree:*)",
+      "Bash(nul)",
+      "Bash(venv)",
+      "Bash(find:*)",
+      "Bash(cat:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
