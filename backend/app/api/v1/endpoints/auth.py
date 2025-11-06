@@ -52,6 +52,9 @@ async def register_user(user: UserCreate, request: Request):
         token_expires = get_token_expiration()
 
         # Insertar usuario con token de verificación
+        # TEMPORAL: Auto-verificar email si el envío falla
+        auto_verify = True  # Cambiar a False cuando el email funcione
+
         try:
             await connection.execute(
                 """
@@ -64,36 +67,46 @@ async def register_user(user: UserCreate, request: Request):
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
                 """,
                 user_id, user.name, user.email, hashed_password,
-                False, verification_token, token_expires, True
+                auto_verify, verification_token, token_expires, True
             )
-            print(f"✅ User created successfully: {user.email}")
+            print(f"✅ User created successfully: {user.email} (auto_verify={auto_verify})")
         except Exception as e:
             print(f"❌ Error creating user: {e}")
             raise HTTPException(status_code=500, detail="Error creating user")
 
         # Enviar email de verificación - CON TIMEOUT Y MANEJO DE ERRORES
         email_sent = False
-        try:
-            # Agregar timeout para evitar que el worker se cuelgue
-            import asyncio
-            email_sent = await asyncio.wait_for(
-                send_verification_email(
-                    to_email=user.email,
-                    user_name=user.name,
-                    verification_token=verification_token
-                ),
-                timeout=10.0  # 10 segundos máximo
-            )
-            print(f"✅ Verification email sent to {user.email}: {email_sent}")
-        except asyncio.TimeoutError:
-            print(f"⚠️ Email sending timed out for {user.email}")
-        except Exception as e:
-            print(f"⚠️ Error sending verification email to {user.email}: {e}")
+
+        # Solo intentar enviar email si auto_verify es False
+        if not auto_verify:
+            try:
+                # Agregar timeout para evitar que el worker se cuelgue
+                import asyncio
+                email_sent = await asyncio.wait_for(
+                    send_verification_email(
+                        to_email=user.email,
+                        user_name=user.name,
+                        verification_token=verification_token
+                    ),
+                    timeout=3.0  # 3 segundos máximo (reducido de 10)
+                )
+                print(f"✅ Verification email sent to {user.email}: {email_sent}")
+            except asyncio.TimeoutError:
+                print(f"⚠️ Email sending timed out for {user.email}")
+            except Exception as e:
+                print(f"⚠️ Error sending verification email to {user.email}: {e}")
+        else:
+            print(f"ℹ️ Email verification skipped (auto_verify=True) for {user.email}")
+
+        # Mensaje personalizado según si el email fue verificado automáticamente
+        message = "User created successfully. You can now log in." if auto_verify else \
+                  "User created successfully. Please check your email to verify your account."
 
         return {
-            "message": "User created successfully. Please check your email to verify your account.",
+            "message": message,
             "user_id": str(user_id),
-            "email_sent": email_sent
+            "email_sent": email_sent,
+            "auto_verified": auto_verify
         }
 
 @router.post("/login", response_model=Token)

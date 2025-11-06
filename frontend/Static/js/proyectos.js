@@ -1,4 +1,6 @@
 // Carousel functionality for Projects Page
+import CONFIG from './config.js';
+
 let currentSlide = 0;
 const projectsTrack = document.getElementById('carouselTrack');
 const prevBtn = document.getElementById('prevBtn');
@@ -149,8 +151,8 @@ if (contactForm) {
                 message: document.getElementById('contactMessage').value
             };
 
-            // Enviar a la API en Render
-            const apiUrl = 'https://vexuspage.onrender.com/api/v1/contact/';
+            // Enviar a la API usando CONFIG
+            const apiUrl = `${CONFIG.API_BASE_URL}/contact/`;
 
             const response = await fetch(apiUrl, {
                 method: 'POST',
