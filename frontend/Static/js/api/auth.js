@@ -45,7 +45,12 @@ export const AuthService = {
         try {
             // Paso 1: Registrar usuario en el backend
             const response = await apiClient.post('/auth/register', { name, email, password });
-            
+
+            console.log('🔍 DEBUG - Response del backend:', response);
+            console.log('🔍 DEBUG - verification_token:', response.verification_token);
+            console.log('🔍 DEBUG - user_name:', response.user_name);
+            console.log('🔍 DEBUG - auto_verified:', response.auto_verified);
+
             // Paso 2: Enviar email de verificación desde el frontend
             let emailSent = false;
             if (response.verification_token && response.user_name && !response.auto_verified) {
@@ -55,14 +60,19 @@ export const AuthService = {
                     response.user_name,
                     response.verification_token
                 );
-                
+
                 if (emailSent) {
                     console.log('✅ Email de verificación enviado exitosamente');
                 } else {
                     console.warn('⚠️ No se pudo enviar el email de verificación');
                 }
+            } else {
+                console.warn('⚠️ No se cumplieron las condiciones para enviar email:');
+                console.warn('  - verification_token:', !!response.verification_token);
+                console.warn('  - user_name:', !!response.user_name);
+                console.warn('  - !auto_verified:', !response.auto_verified);
             }
-            
+
             return {
                 success: true,
                 message: response.message,
