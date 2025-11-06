@@ -136,35 +136,55 @@
         <div id="status" class="status"></div>
     </div>
 
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
     <script type="module">
         // Configuración
         const CONFIG = {
             API_BASE_URL: 'https://vexuspage.onrender.com/api/v1'
         };
 
+        // Configuración de EmailJS
+        const EMAILJS_CONFIG = {
+            SERVICE_ID: 'service_80l1ykf',
+            TEMPLATE_ID: 'template_cwf419b',
+            PUBLIC_KEY: 'k1IUP2nR_rDmKZXcK'
+        };
+
+        // Inicializar EmailJS
+        emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+        console.log('✅ EmailJS inicializado');
+
         // Función para enviar email de verificación
         async function sendVerificationEmail(email, userName, verificationToken) {
-            console.log('📧 Enviando email de verificación...');
+            console.log('📧 Enviando email de verificación con EmailJS...');
             
-            const response = await fetch(`${CONFIG.API_BASE_URL}/email/send-verification`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email: email,
+            try {
+                // Construir el link de verificación
+                const verificationLink = `${window.location.origin}/pages/verify-email.html?token=${verificationToken}`;
+                
+                // Parámetros del template
+                const templateParams = {
                     user_name: userName,
-                    verification_token: verificationToken
-                })
-            });
+                    to_email: email,
+                    verification_link: verificationLink
+                };
 
-            const data = await response.json();
+                console.log('📤 Enviando email a:', email);
+                console.log('🔗 Link de verificación:', verificationLink);
 
-            if (response.ok && data.success) {
-                console.log('✅ Email enviado exitosamente');
+                // Enviar email usando EmailJS
+                const response = await emailjs.send(
+                    EMAILJS_CONFIG.SERVICE_ID,
+                    EMAILJS_CONFIG.TEMPLATE_ID,
+                    templateParams
+                );
+
+                console.log('✅ Email enviado exitosamente:', response);
                 return true;
-            } else {
-                console.error('❌ Error al enviar email:', data.detail || 'Unknown error');
+            } catch (error) {
+                console.error('❌ Error al enviar email con EmailJS:', error);
                 return false;
             }
         }
