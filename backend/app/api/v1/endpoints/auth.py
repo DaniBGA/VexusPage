@@ -52,8 +52,8 @@ async def register_user(user: UserCreate, request: Request):
         token_expires = get_token_expiration()
 
         # Insertar usuario con token de verificación
-        # TEMPORAL: Auto-verificar email si el envío falla
-        auto_verify = True  # Cambiar a False cuando el email funcione
+        # Email verification habilitado - usuarios deben verificar su email
+        auto_verify = False  # Email verification requerida
 
         try:
             await connection.execute(
