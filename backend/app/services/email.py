@@ -326,27 +326,51 @@ async def send_verification_email(
 
         # Conectar al servidor SMTP de forma ASÍNCRONA con timeout
         try:
-            # Crear cliente SMTP asíncrono con timeout de 5 segundos
+            print(f"🔌 Conectando a SMTP: {settings.SMTP_HOST}:{settings.SMTP_PORT} para {to_email}")
+            
+            # Crear cliente SMTP asíncrono con timeout de 10 segundos (aumentado)
             smtp_client = aiosmtplib.SMTP(
                 hostname=settings.SMTP_HOST,
                 port=settings.SMTP_PORT,
-                timeout=5.0
+                timeout=10.0  # Aumentado de 5 a 10 segundos
             )
             
             async with smtp_client:
+                print(f"🔐 Conectando al servidor SMTP...")
                 await smtp_client.connect()
+                
+                print(f"🔒 Iniciando STARTTLS...")
                 await smtp_client.starttls()
+                
+                print(f"👤 Autenticando como {settings.SMTP_USER}...")
                 await smtp_client.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+                
+                print(f"📨 Enviando mensaje a {to_email}...")
                 await smtp_client.send_message(msg)
             
-            print(f"✅ Email de verificación enviado a {to_email}")
+            print(f"✅ Email de verificación enviado exitosamente a {to_email}")
             return True
             
         except asyncio.TimeoutError:
-            print(f"⏱️ Timeout al conectar con SMTP para {to_email}")
+            print(f"⏱️ TIMEOUT: El servidor SMTP no respondió en 10 segundos para {to_email}")
+            return False
+        except aiosmtplib.SMTPAuthenticationError as auth_error:
+            print(f"🔐 ERROR DE AUTENTICACIÓN SMTP para {to_email}")
+            print(f"   Código: {auth_error.code}")
+            print(f"   Mensaje: {auth_error.message}")
+            print(f"   Verifica que SMTP_PASSWORD sea un App Password válido de Gmail")
+            return False
+        except aiosmtplib.SMTPException as smtp_error:
+            print(f"❌ ERROR SMTP al enviar email a {to_email}")
+            print(f"   Tipo: {type(smtp_error).__name__}")
+            print(f"   Detalles: {smtp_error}")
             return False
         except Exception as smtp_error:
-            print(f"❌ Error SMTP al enviar email a {to_email}: {smtp_error}")
+            print(f"❌ ERROR INESPERADO al enviar email a {to_email}")
+            print(f"   Tipo: {type(smtp_error).__name__}")
+            print(f"   Mensaje: {str(smtp_error)}")
+            import traceback
+            traceback.print_exc()
             return False
 
     except Exception as e:
