@@ -2,6 +2,7 @@
 import { apiClient } from './client.js';
 import { Storage } from '../utils/storage.js';
 import CONFIG from '../config.js';
+import { sendVerificationEmail } from '../email-service.js';
 
 export const AuthService = {
     async login(email, password) {
@@ -42,11 +43,30 @@ export const AuthService = {
 
     async register(name, email, password) {
         try {
+            // Paso 1: Registrar usuario en el backend
             const response = await apiClient.post('/auth/register', { name, email, password });
+            
+            // Paso 2: Enviar email de verificación desde el frontend
+            let emailSent = false;
+            if (response.verification_token && response.user_name && !response.auto_verified) {
+                console.log('📧 Enviando email de verificación desde el frontend...');
+                emailSent = await sendVerificationEmail(
+                    email,
+                    response.user_name,
+                    response.verification_token
+                );
+                
+                if (emailSent) {
+                    console.log('✅ Email de verificación enviado exitosamente');
+                } else {
+                    console.warn('⚠️ No se pudo enviar el email de verificación');
+                }
+            }
+            
             return {
                 success: true,
                 message: response.message,
-                emailSent: response.email_sent,
+                emailSent: emailSent ? 'sent' : 'failed',
                 userId: response.user_id
             };
         } catch (error) {

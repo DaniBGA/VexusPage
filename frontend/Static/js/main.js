@@ -282,10 +282,15 @@ class App {
             const response = await AuthService.register(name, email, password);
 
             if (response.success) {
-                // Mostrar mensaje más detallado sobre la verificación de email
-                const successMessage = response.emailSent
-                    ? '¡Cuenta creada! Por favor verifica tu email antes de iniciar sesión.'
-                    : '¡Cuenta creada! Se enviará un email de verificación a tu correo.';
+                // Mostrar mensaje según el estado del email
+                let successMessage;
+                if (response.emailSent === 'sent') {
+                    successMessage = '¡Cuenta creada! 📧 Email de verificación enviado. Por favor revisa tu bandeja de entrada.';
+                } else if (response.emailSent === 'failed') {
+                    successMessage = '¡Cuenta creada! ⚠️ No se pudo enviar el email. Puedes reenviarlo desde tu perfil.';
+                } else {
+                    successMessage = '¡Cuenta creada! Se enviará un email de verificación a tu correo.';
+                }
 
                 showNotification(successMessage, 'success');
 
