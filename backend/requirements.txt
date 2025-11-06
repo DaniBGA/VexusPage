@@ -8,7 +8,7 @@ python-dotenv==1.0.1
 # Base de datos
 asyncpg==0.29.0
 sqlalchemy==2.0.35
-psycopg[binary]==3.2.1
+psycopg[binary]==3.2.12
 
 # Seguridad y autenticación
 PyJWT==2.9.0

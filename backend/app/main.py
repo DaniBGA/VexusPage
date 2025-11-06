@@ -113,14 +113,6 @@ async def general_exception_handler(request: Request, exc: Exception):
     )
     return add_cors_headers(response, request)
 
-# Incluir routers
-# Configurar CORS (orígenes desde .env)
-# Debug: mostrar orígenes permitidos al iniciar
-print(f"🌐 CORS Configuration:")
-print(f"   Allowed Origins: {settings.ALLOWED_ORIGINS}")
-print(f"   Environment: {settings.ENVIRONMENT}")
-print(f"   Debug Mode: {settings.DEBUG}")
-
 # Mostrar información enmascarada sobre la conexión a la base de datos
 try:
     from urllib.parse import urlparse
@@ -135,16 +127,6 @@ try:
 except Exception:
     # Nunca detener el arranque por un fallo de logging
     print("🔎 DB host: unable to parse DATABASE_URL")
-
-# Asignar el middleware y guardar una referencia para usarlo en los handlers de error
-app.add_middleware(CORSMiddleware,
-    allow_origins=settings.ALLOWED_ORIGINS,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-    allow_headers=["*"],
-    expose_headers=["*"],
-    max_age=3600,
-)
 
 # Incluir routers PRIMERO (antes de static files para que tengan prioridad)
 app.include_router(api_router, prefix=settings.API_V1_PREFIX)
