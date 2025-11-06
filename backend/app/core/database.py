@@ -29,12 +29,14 @@ class Database:
                 # asyncpg.create_pool accepts a timeout parameter which applies to
                 # establishing each new connection.
                 # SSL is required for Supabase connections
+                # IMPORTANT: statement_cache_size=0 for Supabase Connection Pooler (pgbouncer)
                 self.pool = await asyncpg.create_pool(
                     settings.DATABASE_URL,
                     min_size=settings.DB_POOL_MIN_SIZE,
                     max_size=settings.DB_POOL_MAX_SIZE,
                     timeout=settings.DB_CONNECT_TIMEOUT,
-                    ssl='require'  # Ensure SSL is always enabled
+                    ssl='require',  # Ensure SSL is always enabled
+                    statement_cache_size=0  # Required for pgbouncer compatibility
                 )
 
                 if settings.DEBUG:
