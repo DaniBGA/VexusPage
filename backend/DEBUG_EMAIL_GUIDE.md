@@ -21,7 +21,7 @@ GET https://tu-backend.onrender.com/api/v1/debug/smtp-status
 
 ### 2. **NUEVO: Test de Email Directo**
 ```bash
-POST https://tu-backend.onrender.com/api/v1/debug/test-email
+POST https://vexuspage.onrender.com/api/v1/debug/test-email
 Content-Type: application/json
 
 {

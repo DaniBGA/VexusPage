@@ -15,7 +15,10 @@ PyJWT==2.9.0
 bcrypt==4.1.2
 email-validator==2.1.0
 
-# Email (SMTP asíncrono)
+# Email (SendGrid API HTTP - funciona en Render Free)
+sendgrid==6.11.0
+
+# Email (SMTP asíncrono - backup)
 aiosmtplib==3.0.2
 
 # WSGI adapter - CRÍTICO para Passenger
