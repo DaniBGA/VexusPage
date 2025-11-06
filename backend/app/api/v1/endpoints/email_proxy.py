@@ -1,10 +1,10 @@
 """
 Endpoint proxy para envío de emails
-Usa el sistema SMTP del backend (funciona con Gmail App Password o SendGrid)
+Usa SendGrid HTTP API (NO SMTP) para evitar bloqueos de Render Free
 """
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, EmailStr
-from app.services.email import send_verification_email, send_contact_email, send_consultancy_email
+from app.services.email_sendgrid import send_verification_email_http, send_contact_email_http
 
 router = APIRouter()
 
@@ -29,7 +29,7 @@ class SendConsultancyEmailRequest(BaseModel):
 async def send_verification_email_proxy(request: SendVerificationEmailRequest):
     """
     Endpoint proxy para enviar email de verificación
-    Usa el servicio SMTP del backend (Gmail o SendGrid)
+    Usa SendGrid HTTP API (no SMTP, evita bloqueos de Render Free)
 
     Args:
         request: Datos del email (email, nombre, token)
@@ -38,17 +38,17 @@ async def send_verification_email_proxy(request: SendVerificationEmailRequest):
         Confirmación de envío
     """
     try:
-        print(f"📧 [Email Proxy] Recibida solicitud de verificación para: {request.email}")
+        print(f"📧 [Email Proxy HTTP] Recibida solicitud de verificación para: {request.email}")
 
-        # Usar el servicio SMTP del backend
-        email_sent = await send_verification_email(
+        # Usar SendGrid HTTP API (no SMTP)
+        email_sent = await send_verification_email_http(
             to_email=request.email,
             user_name=request.user_name,
             verification_token=request.verification_token
         )
 
         if email_sent:
-            print(f"✅ Email enviado exitosamente a: {request.email}")
+            print(f"✅ Email enviado exitosamente via SendGrid HTTP API a: {request.email}")
             return {
                 "success": True,
                 "message": "Verification email sent successfully"
@@ -57,7 +57,7 @@ async def send_verification_email_proxy(request: SendVerificationEmailRequest):
             print(f"❌ No se pudo enviar email a: {request.email}")
             raise HTTPException(
                 status_code=500,
-                detail="Failed to send verification email. Please check SMTP configuration."
+                detail="Failed to send verification email. Please configure SendGrid API Key."
             )
 
     except Exception as e:
@@ -72,13 +72,13 @@ async def send_verification_email_proxy(request: SendVerificationEmailRequest):
 async def send_contact_email_proxy(request: SendContactEmailRequest):
     """
     Endpoint proxy para enviar emails de contacto
-    Usa el servicio SMTP del backend
+    Usa SendGrid HTTP API (no SMTP)
     """
     try:
-        print(f"📧 [Email Proxy] Email de contacto de: {request.name} ({request.email})")
+        print(f"📧 [Email Proxy HTTP] Email de contacto de: {request.name} ({request.email})")
 
-        # Usar el servicio SMTP del backend
-        email_sent = await send_contact_email(
+        # Usar SendGrid HTTP API (no SMTP)
+        email_sent = await send_contact_email_http(
             client_name=request.name,
             client_email=request.email,
             message=request.message,
@@ -86,7 +86,7 @@ async def send_contact_email_proxy(request: SendContactEmailRequest):
         )
 
         if email_sent:
-            print(f"✅ Email de contacto enviado exitosamente")
+            print(f"✅ Email de contacto enviado exitosamente via SendGrid HTTP API")
             return {
                 "success": True,
                 "message": "Contact email sent successfully"
@@ -95,7 +95,7 @@ async def send_contact_email_proxy(request: SendContactEmailRequest):
             print(f"❌ No se pudo enviar email de contacto")
             raise HTTPException(
                 status_code=500,
-                detail="Failed to send contact email. Please check SMTP configuration."
+                detail="Failed to send contact email. Please configure SendGrid API Key."
             )
 
     except Exception as e:
@@ -107,22 +107,21 @@ async def send_contact_email_proxy(request: SendContactEmailRequest):
 async def send_consultancy_email_proxy(request: SendConsultancyEmailRequest):
     """
     Endpoint proxy para enviar emails de consultoría
-    Usa el servicio SMTP del backend
+    Usa SendGrid HTTP API (no SMTP)
     """
     try:
-        print(f"📧 [Email Proxy] Consulta de: {request.name} ({request.email})")
+        print(f"📧 [Email Proxy HTTP] Consulta de: {request.name} ({request.email})")
 
-        # Usar el servicio SMTP del backend
-        email_sent = await send_consultancy_email(
-            to_email="grupovexus@gmail.com",
+        # Usar SendGrid HTTP API para consultoría (reutilizar send_contact_email_http)
+        email_sent = await send_contact_email_http(
             client_name=request.name,
             client_email=request.email,
-            query=request.query,
+            message=request.query,
             subject=f"Consulta de Consultoría de {request.name}"
         )
 
         if email_sent:
-            print(f"✅ Email de consultoría enviado exitosamente")
+            print(f"✅ Email de consultoría enviado exitosamente via SendGrid HTTP API")
             return {
                 "success": True,
                 "message": "Consultancy email sent successfully"
@@ -131,7 +130,7 @@ async def send_consultancy_email_proxy(request: SendConsultancyEmailRequest):
             print(f"❌ No se pudo enviar email de consultoría")
             raise HTTPException(
                 status_code=500,
-                detail="Failed to send consultancy email. Please check SMTP configuration."
+                detail="Failed to send consultancy email. Please configure SendGrid API Key."
             )
 
     except Exception as e:
