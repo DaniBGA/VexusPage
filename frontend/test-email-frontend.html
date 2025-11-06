@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Email desde Frontend</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .status.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            display: block;
+        }
+        .status.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            display: block;
+        }
+        .status.loading {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            display: block;
+        }
+        .code {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin-top: 10px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test: Email desde Frontend</h1>
+        <p class="subtitle">Prueba el flujo completo de registro y envío de email</p>
+        
+        <form id="testForm">
+            <div class="form-group">
+                <label for="name">Nombre:</label>
+                <input type="text" id="name" name="name" value="Usuario de Prueba" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="tu@email.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password" value="Test1234!" required>
+            </div>
+            
+            <button type="submit" id="submitBtn">Probar Registro + Email</button>
+        </form>
+        
+        <div id="status" class="status"></div>
+    </div>
+
+    <script type="module">
+        // Configuración
+        const CONFIG = {
+            API_BASE_URL: 'https://vexuspage.onrender.com/api/v1'
+        };
+
+        // Función para enviar email de verificación
+        async function sendVerificationEmail(email, userName, verificationToken) {
+            console.log('📧 Enviando email de verificación...');
+            
+            const response = await fetch(`${CONFIG.API_BASE_URL}/email/send-verification`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    user_name: userName,
+                    verification_token: verificationToken
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                console.log('✅ Email enviado exitosamente');
+                return true;
+            } else {
+                console.error('❌ Error al enviar email:', data.detail || 'Unknown error');
+                return false;
+            }
+        }
+
+        // Función para registrar usuario
+        async function register(name, email, password) {
+            console.log('📝 Registrando usuario...');
+            
+            const response = await fetch(`${CONFIG.API_BASE_URL}/auth/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, email, password })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.detail || 'Error en el registro');
+            }
+
+            return await response.json();
+        }
+
+        // Mostrar estado
+        function showStatus(message, type = 'loading', details = null) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status ${type}`;
+            statusDiv.innerHTML = message;
+            
+            if (details) {
+                const codeDiv = document.createElement('div');
+                codeDiv.className = 'code';
+                codeDiv.textContent = JSON.stringify(details, null, 2);
+                statusDiv.appendChild(codeDiv);
+            }
+        }
+
+        // Manejar envío del formulario
+        document.getElementById('testForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Procesando...';
+            
+            try {
+                // Paso 1: Registrar usuario
+                showStatus('⏳ Paso 1/2: Registrando usuario...', 'loading');
+                const registerResponse = await register(name, email, password);
+                console.log('✅ Usuario registrado:', registerResponse);
+                
+                // Paso 2: Enviar email
+                showStatus('⏳ Paso 2/2: Enviando email de verificación...', 'loading');
+                
+                if (registerResponse.verification_token && registerResponse.user_name) {
+                    const emailSent = await sendVerificationEmail(
+                        email,
+                        registerResponse.user_name,
+                        registerResponse.verification_token
+                    );
+                    
+                    if (emailSent) {
+                        showStatus(
+                            '✅ ¡Éxito! Usuario registrado y email enviado correctamente.<br><br>' +
+                            '<strong>Ahora revisa tu bandeja de entrada: ' + email + '</strong>',
+                            'success',
+                            registerResponse
+                        );
+                    } else {
+                        showStatus(
+                            '⚠️ Usuario registrado pero el email falló.<br><br>' +
+                            'Revisa los logs de Render para más detalles.',
+                            'error',
+                            registerResponse
+                        );
+                    }
+                } else {
+                    showStatus(
+                        '⚠️ Usuario registrado pero falta información para enviar email.',
+                        'error',
+                        registerResponse
+                    );
+                }
+                
+            } catch (error) {
+                console.error('❌ Error:', error);
+                showStatus(
+                    '❌ Error: ' + error.message + '<br><br>' +
+                    'Verifica que el email no esté ya registrado.',
+                    'error'
+                );
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Probar Registro + Email';
+            }
+        });
+        
+        console.log('🧪 Test de email desde frontend cargado');
+        console.log('API URL:', CONFIG.API_BASE_URL);
+    </script>
+</body>
+</html>
