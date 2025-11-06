@@ -324,35 +324,39 @@ async def send_verification_email(
             # SMTP no configurado - no bloquear el registro
             return False
 
-        # Conectar al servidor SMTP de forma ASÍNCRONA con timeout
+        # Conectar al servidor SMTP de forma ASÍNCRONA con timeout aumentado
         try:
             print(f"🔌 Conectando a SMTP: {settings.SMTP_HOST}:{settings.SMTP_PORT} para {to_email}")
-            
-            # Crear cliente SMTP asíncrono con timeout de 10 segundos (aumentado)
+
+            # Crear cliente SMTP asíncrono con timeout de 30 segundos
+            # Render Free puede ser lento, especialmente en el primer request
             smtp_client = aiosmtplib.SMTP(
                 hostname=settings.SMTP_HOST,
                 port=settings.SMTP_PORT,
-                timeout=10.0  # Aumentado de 5 a 10 segundos
+                timeout=30.0,  # Aumentado a 30 segundos para Render Free
+                use_tls=False  # Usaremos STARTTLS manualmente
             )
-            
+
             async with smtp_client:
                 print(f"🔐 Conectando al servidor SMTP...")
                 await smtp_client.connect()
-                
+
                 print(f"🔒 Iniciando STARTTLS...")
                 await smtp_client.starttls()
-                
+
                 print(f"👤 Autenticando como {settings.SMTP_USER}...")
                 await smtp_client.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
-                
+
                 print(f"📨 Enviando mensaje a {to_email}...")
                 await smtp_client.send_message(msg)
-            
+
             print(f"✅ Email de verificación enviado exitosamente a {to_email}")
             return True
-            
+
         except asyncio.TimeoutError:
-            print(f"⏱️ TIMEOUT: El servidor SMTP no respondió en 10 segundos para {to_email}")
+            print(f"⏱️ TIMEOUT: El servidor SMTP no respondió en 30 segundos para {to_email}")
+            print(f"💡 Esto puede ocurrir en Render Free por cold start o restricciones de red")
+            print(f"💡 Considera usar SendGrid API en lugar de SMTP")
             return False
         except aiosmtplib.SMTPAuthenticationError as auth_error:
             print(f"🔐 ERROR DE AUTENTICACIÓN SMTP para {to_email}")
@@ -569,9 +573,10 @@ async def send_contact_email(
             smtp_client = aiosmtplib.SMTP(
                 hostname=settings.SMTP_HOST,
                 port=settings.SMTP_PORT,
-                timeout=5.0
+                timeout=30.0,  # Aumentado para Render Free
+                use_tls=False
             )
-            
+
             async with smtp_client:
                 await smtp_client.connect()
                 await smtp_client.starttls()
@@ -580,7 +585,10 @@ async def send_contact_email(
 
             print(f"✅ Email de contacto enviado a {to_email}")
             return True
-            
+
+        except asyncio.TimeoutError:
+            print(f"⏱️ TIMEOUT al enviar email de contacto")
+            return False
         except Exception as smtp_error:
             print(f"❌ Error SMTP al enviar email de contacto: {smtp_error}")
             return False
@@ -773,9 +781,10 @@ async def send_consultancy_email(
             smtp_client = aiosmtplib.SMTP(
                 hostname=settings.SMTP_HOST,
                 port=settings.SMTP_PORT,
-                timeout=5.0
+                timeout=30.0,  # Aumentado para Render Free
+                use_tls=False
             )
-            
+
             async with smtp_client:
                 await smtp_client.connect()
                 await smtp_client.starttls()
@@ -784,7 +793,10 @@ async def send_consultancy_email(
 
             print(f"✅ Email de consultoría enviado a {to_email}")
             return True
-            
+
+        except asyncio.TimeoutError:
+            print(f"⏱️ TIMEOUT al enviar email de consultoría")
+            return False
         except Exception as smtp_error:
             print(f"❌ Error SMTP al enviar email de consultoría: {smtp_error}")
             return False
