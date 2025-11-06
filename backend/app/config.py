@@ -44,7 +44,25 @@ class Settings:
         origins = os.getenv("ALLOWED_ORIGINS", "*")
         if origins == "*":
             return ["*"]
-        return [origin.strip() for origin in origins.split(",")]
+        
+        # Parsear orígenes de la variable de entorno
+        origins_list = [origin.strip() for origin in origins.split(",")]
+        
+        # En producción, siempre agregar localhost para testing
+        # (esto permite probar con test-email-frontend.html)
+        localhost_origins = [
+            "http://localhost:8000",
+            "http://localhost:5500",
+            "http://127.0.0.1:8000",
+            "http://127.0.0.1:5500"
+        ]
+        
+        # Agregar localhost si no está ya en la lista
+        for localhost in localhost_origins:
+            if localhost not in origins_list:
+                origins_list.append(localhost)
+        
+        return origins_list
 
     # === DATABASE CONNECT ===
     # Timeout (seconds) used when creating the asyncpg pool. Increase if your DB
