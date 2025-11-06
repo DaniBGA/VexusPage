@@ -142,7 +142,8 @@
     <script type="module">
         // Configuración
         const CONFIG = {
-            API_BASE_URL: 'https://vexuspage.onrender.com/api/v1'
+            API_BASE_URL: 'https://vexuspage.onrender.com/api/v1',
+            FRONTEND_URL: 'https://www.grupovexus.com'  // URL de producción para links de verificación
         };
 
         // Configuración de EmailJS
@@ -161,8 +162,8 @@
             console.log('📧 Enviando email de verificación con EmailJS...');
             
             try {
-                // Construir el link de verificación
-                const verificationLink = `${window.location.origin}/pages/verify-email.html?token=${verificationToken}`;
+                // Construir el link de verificación (siempre apunta a producción)
+                const verificationLink = `${CONFIG.FRONTEND_URL}/pages/verify-email.html?token=${verificationToken}`;
                 
                 // Parámetros del template
                 const templateParams = {

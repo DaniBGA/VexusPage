@@ -36,7 +36,9 @@ export async function sendVerificationEmail(email, userName, verificationToken) 
         }
 
         // Construir el link de verificación
-        const verificationLink = `${window.location.origin}/pages/verify-email.html?token=${verificationToken}`;
+        // Usa CONFIG.FRONTEND_URL en producción o window.location.origin en local
+        const baseUrl = CONFIG.FRONTEND_URL || window.location.origin;
+        const verificationLink = `${baseUrl}/pages/verify-email.html?token=${verificationToken}`;
         
         // Parámetros del template
         const templateParams = {
