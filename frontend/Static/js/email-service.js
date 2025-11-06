@@ -1,25 +1,15 @@
 /**
- * Servicio de Email para el Frontend usando EmailJS
- * Envía emails directamente desde el navegador sin exponer credenciales
+ * Servicio de Email para el Frontend
+ * Usa proxy del backend para evitar problemas de CORS con EmailJS free plan
  */
 
 import CONFIG from './config.js';
 
-// Configuración de EmailJS
-const EMAILJS_CONFIG = {
-    SERVICE_ID: 'service_80l1ykf',
-    TEMPLATE_ID: 'template_cwf419b',
-    PUBLIC_KEY: 'k1IUP2nR_rDmKZXcK'
-};
-
-// Inicializar EmailJS cuando se cargue el módulo
-if (typeof emailjs !== 'undefined') {
-    emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
-    console.log('✅ EmailJS inicializado');
-}
-
 /**
- * Envía email de verificación usando EmailJS
+ * Envía email de verificación usando el proxy del backend
+ * SOLUCIÓN: EmailJS free no permite dominios personalizados,
+ * por eso usamos el backend como proxy
+ *
  * @param {string} email - Email del destinatario
  * @param {string} userName - Nombre del usuario
  * @param {string} verificationToken - Token de verificación
@@ -27,41 +17,35 @@ if (typeof emailjs !== 'undefined') {
  */
 export async function sendVerificationEmail(email, userName, verificationToken) {
     try {
-        console.log('📧 Enviando email de verificación con EmailJS...');
-        
-        // Verificar que EmailJS esté cargado
-        if (typeof emailjs === 'undefined') {
-            console.error('❌ EmailJS no está cargado. Asegúrate de incluir el script.');
+        console.log('📧 Enviando email de verificación vía proxy del backend...');
+        console.log('📤 Destinatario:', email);
+
+        // Llamar al proxy del backend en lugar de EmailJS directamente
+        // El backend llamará a EmailJS desde el servidor (sin problemas de CORS)
+        const response = await fetch(`${CONFIG.API_BASE_URL}/email/send-verification`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: email,
+                user_name: userName,
+                verification_token: verificationToken
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            console.log('✅ Email enviado exitosamente vía proxy');
+            return true;
+        } else {
+            console.error('❌ Error del proxy:', data.detail || data.message);
             return false;
         }
 
-        // Construir el link de verificación
-        // Usa CONFIG.FRONTEND_URL en producción o window.location.origin en local
-        const baseUrl = CONFIG.FRONTEND_URL || window.location.origin;
-        const verificationLink = `${baseUrl}/pages/verify-email.html?token=${verificationToken}`;
-        
-        // Parámetros del template
-        const templateParams = {
-            user_name: userName,
-            to_email: email,
-            verification_link: verificationLink
-        };
-
-        console.log('📤 Enviando email a:', email);
-        console.log('🔗 Link de verificación:', verificationLink);
-
-        // Enviar email usando EmailJS
-        const response = await emailjs.send(
-            EMAILJS_CONFIG.SERVICE_ID,
-            EMAILJS_CONFIG.TEMPLATE_ID,
-            templateParams
-        );
-
-        console.log('✅ Email enviado exitosamente:', response);
-        return true;
-        
     } catch (error) {
-        console.error('❌ Error al enviar email con EmailJS:', error);
+        console.error('❌ Error al enviar email vía proxy:', error);
         return false;
     }
 }
