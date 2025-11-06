@@ -6,7 +6,12 @@
       "Bash(nul)",
       "Bash(venv)",
       "Bash(find:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nFix: Backend registration and frontend API integration\n\nChanges:\n- Fixed hardcoded API URL in proyectos.js to use CONFIG\n- Updated Python to 3.12, asyncpg to 0.30.0, psycopg to 3.2.12\n- Added auto-verification for users (temporary fix for SMTP issues)\n- Reduced email timeout from 10s to 3s for faster response\n- Added comprehensive integration analysis reports\n- Fixed CORS configuration in render.yaml\n\nBackend improvements:\n- Auto-verify email when SMTP is unavailable\n- Better error handling and logging for registration\n- Faster response times during user creation\n\nFrontend improvements:\n- Standardized API URL usage across all files\n- Fixed proyectos.js to use CONFIG.API_BASE_URL\n\n🤖 Generated with Claude Code\nEOF\n)\")",
+      "Bash(git push:*)",
+      "Bash(git commit:*)",
+      "Bash(python -m py_compile:*)"
     ],
     "deny": [],
     "ask": []

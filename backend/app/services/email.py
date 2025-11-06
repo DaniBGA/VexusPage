@@ -1,13 +1,14 @@
 """
 Servicio de envío de emails
 """
-import smtplib
+import aiosmtplib
 import secrets
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 from app.config import settings
+import asyncio
 
 
 def generate_verification_token() -> str:
@@ -314,23 +315,39 @@ async def send_verification_email(
         if smtp_issues:
             missing = ", ".join(smtp_issues)
             print(f"⚠️ SMTP no configurado. Falta configurar: {missing}")
-            print(f"� Valores actuales:")
+            print(f"📊 Valores actuales:")
             print(f"   SMTP_HOST={settings.SMTP_HOST or '(no configurado)'}")
             print(f"   SMTP_PORT={settings.SMTP_PORT}")
             print(f"   SMTP_USER={settings.SMTP_USER or '(no configurado)'}")
             print(f"   EMAIL_FROM={settings.EMAIL_FROM}")
             print(f"📧 Email pendiente para {to_email}: {verification_link}")
-            # En desarrollo, retornar True para permitir el registro
+            # SMTP no configurado - no bloquear el registro
+            return False
+
+        # Conectar al servidor SMTP de forma ASÍNCRONA con timeout
+        try:
+            # Crear cliente SMTP asíncrono con timeout de 5 segundos
+            smtp_client = aiosmtplib.SMTP(
+                hostname=settings.SMTP_HOST,
+                port=settings.SMTP_PORT,
+                timeout=5.0
+            )
+            
+            async with smtp_client:
+                await smtp_client.connect()
+                await smtp_client.starttls()
+                await smtp_client.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+                await smtp_client.send_message(msg)
+            
+            print(f"✅ Email de verificación enviado a {to_email}")
             return True
-
-        # Conectar al servidor SMTP
-        with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as server:
-            server.starttls()
-            server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
-            server.send_message(msg)
-
-        print(f"✅ Email de verificación enviado a {to_email}")
-        return True
+            
+        except asyncio.TimeoutError:
+            print(f"⏱️ Timeout al conectar con SMTP para {to_email}")
+            return False
+        except Exception as smtp_error:
+            print(f"❌ Error SMTP al enviar email a {to_email}: {smtp_error}")
+            return False
 
     except Exception as e:
         print(f"❌ Error al enviar email de verificación: {str(e)}")
@@ -521,17 +538,28 @@ async def send_contact_email(
             print(f"📧 Mensaje de {client_name} ({client_email}):")
             print(f"📝 {message}")
             print(f"⚠️ Configura SMTP en el archivo .env para enviar emails reales")
-            # En desarrollo, retornar True para permitir la funcionalidad
+            return False
+
+        # Conectar al servidor SMTP de forma ASÍNCRONA
+        try:
+            smtp_client = aiosmtplib.SMTP(
+                hostname=settings.SMTP_HOST,
+                port=settings.SMTP_PORT,
+                timeout=5.0
+            )
+            
+            async with smtp_client:
+                await smtp_client.connect()
+                await smtp_client.starttls()
+                await smtp_client.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+                await smtp_client.send_message(msg)
+
+            print(f"✅ Email de contacto enviado a {to_email}")
             return True
-
-        # Conectar al servidor SMTP
-        with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as server:
-            server.starttls()
-            server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
-            server.send_message(msg)
-
-        print(f"✅ Email de contacto enviado a {to_email}")
-        return True
+            
+        except Exception as smtp_error:
+            print(f"❌ Error SMTP al enviar email de contacto: {smtp_error}")
+            return False
 
     except Exception as e:
         print(f"❌ Error al enviar email de contacto: {str(e)}")
@@ -714,17 +742,28 @@ async def send_consultancy_email(
             print(f"📧 Consulta de {client_name} ({client_email}):")
             print(f"📝 {query}")
             print(f"⚠️ Configura SMTP en el archivo .env para enviar emails reales")
-            # En desarrollo, retornar True para permitir la funcionalidad
+            return False
+
+        # Conectar al servidor SMTP de forma ASÍNCRONA
+        try:
+            smtp_client = aiosmtplib.SMTP(
+                hostname=settings.SMTP_HOST,
+                port=settings.SMTP_PORT,
+                timeout=5.0
+            )
+            
+            async with smtp_client:
+                await smtp_client.connect()
+                await smtp_client.starttls()
+                await smtp_client.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+                await smtp_client.send_message(msg)
+
+            print(f"✅ Email de consultoría enviado a {to_email}")
             return True
-
-        # Conectar al servidor SMTP
-        with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as server:
-            server.starttls()
-            server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
-            server.send_message(msg)
-
-        print(f"✅ Email de consultoría enviado a {to_email}")
-        return True
+            
+        except Exception as smtp_error:
+            print(f"❌ Error SMTP al enviar email de consultoría: {smtp_error}")
+            return False
 
     except Exception as e:
         print(f"❌ Error al enviar email de consultoría: {str(e)}")

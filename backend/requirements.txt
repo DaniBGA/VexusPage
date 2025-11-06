@@ -15,6 +15,9 @@ PyJWT==2.9.0
 bcrypt==4.1.2
 email-validator==2.1.0
 
+# Email (SMTP asíncrono)
+aiosmtplib==3.0.2
+
 # WSGI adapter - CRÍTICO para Passenger
 asgiref==3.8.1
 
