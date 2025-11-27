@@ -17,7 +17,7 @@ from app.services.email import (
     send_verification_email
 )
 # SendGrid HTTP API (funciona en Render Free - no bloqueado)
-from app.services.email_sendgrid import send_verification_email_http
+from app.services.email import send_verification_email
 
 router = APIRouter()
 
@@ -76,18 +76,16 @@ async def register_user(user: UserCreate, request: Request, background_tasks: Ba
             print(f"❌ Error creating user: {e}")
             raise HTTPException(status_code=500, detail="Error creating user")
 
-        # 🚀 ENVIAR EMAIL EN BACKGROUND usando SendGrid HTTP API
-        # (SMTP está bloqueado en Render Free, usamos HTTP API)
-        # ⚠️ TEMPORALMENTE DESHABILITADO - Email se enviará desde el frontend
+        # Email de verificación enviado en background
         # Solo intentar enviar email si auto_verify es False
         # if not auto_verify:
         #     background_tasks.add_task(
-        #         send_verification_email_http,  # ← Usando HTTP API en vez de SMTP
+        #         send_verification_email,  # ← Usando Gmail SMTP
         #         to_email=user.email,
         #         user_name=user.name,
         #         verification_token=verification_token
         #     )
-        #     print(f"📧 Email de verificación agregado a cola en background (SendGrid HTTP API) para {user.email}")
+        #     print(f"📧 Email de verificación agregado a cola en background (Gmail SMTP) para {user.email}")
         # else:
         #     print(f"ℹ️ Email verification skipped (auto_verify=True) for {user.email}")
         print(f"ℹ️ Email será enviado desde el frontend para {user.email}")

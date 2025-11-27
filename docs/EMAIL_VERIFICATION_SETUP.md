@@ -2,7 +2,7 @@
 
 ## Descripción General
 
-Este documento explica cómo configurar y usar el sistema de verificación de email en la plataforma Vexus. El sistema requiere que los usuarios verifiquen su dirección de email antes de poder acceder a la plataforma.
+Este documento explica cómo configurar y usar el sistema de verificación de email en la plataforma Vexus utilizando Gmail SMTP con App Password. El sistema requiere que los usuarios verifiquen su dirección de email antes de poder acceder a la plataforma.
 
 ## Características Implementadas
 
@@ -42,39 +42,46 @@ ON users(email_verified);
 
 ### 2. Configurar Variables de Entorno
 
-Edita el archivo `backend/.env` y agrega las siguientes configuraciones de SMTP:
+Edita el archivo `backend/.env` y agrega las siguientes configuraciones de Gmail SMTP:
 
 ```env
-# === EMAIL CONFIGURATION ===
+# === EMAIL CONFIGURATION (Gmail SMTP) ===
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=tu-email@gmail.com
-SMTP_PASSWORD=tu-contraseña-de-aplicacion
+SMTP_PASSWORD=tu-app-password-aqui
 EMAIL_FROM=noreply@vexus.com
 ```
 
-#### Configuración para Gmail
+#### Configuración para Gmail (Recomendado)
 
-Si usas Gmail, necesitas:
+Para usar Gmail necesitas crear una **App Password** (contraseña de aplicación):
 
-1. **Habilitar "Acceso de aplicaciones menos seguras"** (no recomendado) O
-2. **Crear una contraseña de aplicación** (recomendado):
+1. **Habilitar Verificación en Dos Pasos:**
    - Ve a tu cuenta de Google: https://myaccount.google.com/
-   - Seguridad → Verificación en dos pasos (debe estar activada)
-   - Contraseñas de aplicaciones
-   - Selecciona "Correo" y "Otro"
+   - Seguridad → Verificación en dos pasos
+   - Activa la verificación en dos pasos si no lo está
+
+2. **Crear App Password:**
+   - Ve a: https://myaccount.google.com/apppasswords
+   - Selecciona "Correo" y "Otro (nombre personalizado)"
    - Nombra "Vexus" y genera la contraseña
+   - Copia la contraseña generada (16 caracteres)
    - Usa esta contraseña en `SMTP_PASSWORD`
 
-#### Configuración para otros proveedores
+**Nota:** La App Password es diferente a tu contraseña normal de Gmail y es más segura.
+
+#### Configuración para otros proveedores (Alternativas)
 
 **Outlook/Hotmail:**
 ```env
 SMTP_HOST=smtp-mail.outlook.com
 SMTP_PORT=587
+SMTP_USER=tu-email@outlook.com
+SMTP_PASSWORD=tu-contraseña
 ```
 
-**SendGrid:**
+**SendGrid (Alternativa comercial):**
 ```env
 SMTP_HOST=smtp.sendgrid.net
 SMTP_PORT=587
@@ -221,9 +228,9 @@ Login del usuario (requiere email verificado).
 ```
 HTTP Status: 403
 
-## Modo de Desarrollo (Sin SMTP)
+## Modo de Desarrollo (Sin Gmail SMTP)
 
-Si no configuras SMTP, el sistema funcionará de la siguiente manera:
+Si no configuras Gmail SMTP, el sistema funcionará de la siguiente manera:
 
 1. ✅ El usuario puede registrarse
 2. ⚠️ No se envía email real
@@ -261,7 +268,8 @@ Los colores y estilos están alineados con la estética de Vexus:
 1. Verifica las credenciales SMTP en `.env`
 2. Revisa los logs del servidor para errores
 3. Verifica que el puerto SMTP no esté bloqueado por firewall
-4. Para Gmail, asegúrate de usar contraseña de aplicación
+4. Para Gmail, asegúrate de usar App Password (no tu contraseña normal)
+5. Verifica que la verificación en dos pasos esté activa en tu cuenta Gmail
 
 ### Token inválido o expirado
 
@@ -293,7 +301,7 @@ python -m uvicorn app.main:app --reload
 
 Para producción, asegúrate de:
 
-1. ✅ Configurar SMTP con un servicio confiable (SendGrid, Amazon SES, etc.)
+1. ✅ Configurar Gmail SMTP con App Password o un servicio SMTP confiable (SendGrid, Amazon SES, etc.)
 2. ✅ Usar HTTPS para todas las URLs
 3. ✅ Configurar `FRONTEND_URL` correctamente
 4. ✅ Configurar límites de tasa para evitar spam

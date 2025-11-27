@@ -30,11 +30,9 @@ END $$;
 -- DELETE FROM campus_sections;
 
 INSERT INTO campus_sections (id, title, description, icon_name, order_index, is_active) VALUES
-    (uuid_generate_v4(), 'Mis Cursos', 'Accede a todos tus cursos activos y continúa tu aprendizaje', 'book-open', 1, true),
-    (uuid_generate_v4(), 'Proyectos', 'Gestiona tus proyectos y portafolio de desarrollo', 'code', 2, true),
-    (uuid_generate_v4(), 'Herramientas', 'Utiliza nuestras herramientas de desarrollo', 'tool', 3, true),
-    (uuid_generate_v4(), 'Recursos', 'Documentación, guías y material de apoyo', 'book', 4, true),
-    (uuid_generate_v4(), 'Comunidad', 'Conecta con otros estudiantes y mentores', 'users', 5, true)
+    (uuid_generate_v4(), 'Dashboard', 'Panel principal con resumen de tu actividad y progreso', 'layout-dashboard', 1, true),
+    (uuid_generate_v4(), 'Cursos', 'Accede a todos tus cursos activos y continúa tu aprendizaje', 'book-open', 2, true),
+    (uuid_generate_v4(), 'Herramientas', 'Utiliza nuestras herramientas de desarrollo', 'tool', 3, true)
 ON CONFLICT (id) DO NOTHING;
 
 -- ====================================

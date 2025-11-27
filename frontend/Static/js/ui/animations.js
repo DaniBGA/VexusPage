@@ -58,6 +58,114 @@ export const Animations = {
             card.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
             cardsObserver.observe(card);
         });
+
+        // Efecto parallax más avanzado para tarjetas de servicio
+        this.setupServiceCardsParallax();
+    },
+
+    setupServiceCardsParallax() {
+        // Esperar a que el DOM esté completamente cargado
+        const initParallax = () => {
+            const serviceCards = document.querySelectorAll('.service-unit-card');
+            
+            if (serviceCards.length === 0) {
+                console.log('No service cards found for parallax effect');
+                return;
+            }
+
+            console.log(`Initializing parallax for ${serviceCards.length} service cards`);
+
+            const observerOptions = {
+                threshold: 0.05,
+                rootMargin: '0px'
+            };
+
+            const parallaxObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('parallax-active');
+                        console.log('Card activated for parallax:', entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            serviceCards.forEach(card => {
+                parallaxObserver.observe(card);
+            });
+
+            // Agregar efecto parallax al scroll
+            let ticking = false;
+            
+            const updateCardParallax = () => {
+                const activeCards = document.querySelectorAll('.service-unit-card.parallax-active');
+                
+                activeCards.forEach((card, index) => {
+                    const rect = card.getBoundingClientRect();
+                    const windowHeight = window.innerHeight;
+                    const cardCenter = rect.top + rect.height / 2;
+                    const windowCenter = windowHeight / 2;
+                    
+                    // Calcular qué tan lejos está la carta del centro de la pantalla
+                    // Valores: -1 (arriba) a 1 (abajo), 0 = centrado
+                    const distanceFromCenter = (cardCenter - windowCenter) / windowCenter;
+                    
+                    // Solo aplicar parallax cuando la carta está visible
+                    if (rect.top < windowHeight && rect.bottom > 0) {
+                        // Carta izquierda (índice 0) - se mueve desde izquierda
+                        // Carta derecha (índice 1) - se mueve desde derecha
+                        const isLeftCard = index === 0;
+                        
+                        // Cuando distanceFromCenter > 0: carta está abajo del centro
+                        // Cuando distanceFromCenter < 0: carta está arriba del centro
+                        // Cuando distanceFromCenter = 0: carta está centrada
+                        
+                        // Movimiento horizontal: desde los lados hacia el centro
+                        const maxOffset = 150; // píxeles máximos de desplazamiento
+                        let moveX;
+                        
+                        if (isLeftCard) {
+                            // Carta izquierda: empieza desde la izquierda (-150px) y va a 0
+                            moveX = -maxOffset * Math.max(0, distanceFromCenter);
+                        } else {
+                            // Carta derecha: empieza desde la derecha (150px) y va a 0
+                            moveX = maxOffset * Math.max(0, distanceFromCenter);
+                        }
+                        
+                        // Limitar el movimiento
+                        moveX = Math.max(Math.min(moveX, maxOffset), -maxOffset);
+                        
+                        // Calcular opacidad: 0 cuando está en maxOffset, 1 cuando está centrada (0)
+                        // distanceFromCenter va de 1 (abajo) a -1 (arriba)
+                        // Cuando está abajo (distanceFromCenter = 1), opacity = 0
+                        // Cuando está centrado (distanceFromCenter = 0), opacity = 1
+                        const opacity = 1 - Math.max(0, Math.min(1, distanceFromCenter));
+                        
+                        card.style.setProperty('--parallax-x', `${moveX}px`);
+                        card.style.setProperty('--parallax-y', '0px');
+                        card.style.setProperty('--parallax-opacity', opacity);
+                    }
+                });
+                
+                ticking = false;
+            };
+
+            window.addEventListener('scroll', () => {
+                if (!ticking && window.innerWidth >= 768) {
+                    requestAnimationFrame(updateCardParallax);
+                    ticking = true;
+                }
+            });
+
+            // Ejecutar una vez al inicio para posicionar correctamente
+            updateCardParallax();
+        };
+
+        // Si el DOM ya está cargado, inicializar inmediatamente
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initParallax);
+        } else {
+            initParallax();
+        }
     },
 
     setupScrollAnimations() {

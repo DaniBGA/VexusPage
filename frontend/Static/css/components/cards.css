@@ -53,6 +53,59 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    opacity: 0;
+    transform: translateX(-100px);
+    animation: slideInFromLeft 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    will-change: transform;
+}
+
+/* Efecto parallax cuando la carta está activa - con más prioridad */
+.service-unit-card.parallax-active {
+    animation: none !important; /* Detener animación de entrada cuando está activo el parallax */
+    opacity: var(--parallax-opacity, 1) !important;
+    transform: translate(
+        var(--parallax-x, 0),
+        var(--parallax-y, 0)
+    ) !important;
+    transition: transform 0.1s linear, opacity 0.1s linear !important; /* Transición más rápida y suave para el parallax */
+}
+
+/* Animación desde la izquierda para la primera carta */
+.service-unit-card:nth-child(odd) {
+    transform: translateX(-150px);
+    animation: slideInFromLeft 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation-delay: 0.2s;
+}
+
+/* Animación desde la derecha para la segunda carta */
+.service-unit-card:nth-child(even) {
+    transform: translateX(150px);
+    animation: slideInFromRight 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation-delay: 0.4s;
+}
+
+/* Keyframes para animación desde la izquierda */
+@keyframes slideInFromLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-150px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Keyframes para animación desde la derecha */
+@keyframes slideInFromRight {
+    0% {
+        opacity: 0;
+        transform: translateX(150px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .service-unit-card:hover {

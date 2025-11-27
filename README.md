@@ -1,221 +1,259 @@
-# 🚀 Vexus Platform
+# 🚀 Vexus Campus Platform
 
-Plataforma web completa con backend FastAPI, frontend moderno y sistema de gestión de cursos.
+Plataforma educativa completa con backend FastAPI, frontend moderno, sistema de gestión de cursos y herramientas de desarrollo.
 
-**Estado actual:** ✅ Listo para producción en Neatech
+**Estado:** ✅ Listo para producción en AWS Lightsail con Docker
 
 ---
 
-## 📂 ESTRUCTURA DEL PROYECTO
+## 🎯 Inicio Rápido
+
+### Para Desarrollo Local
+```bash
+# Backend
+cd backend
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+
+# Frontend
+cd frontend
+# Abrir index.html en navegador o usar Live Server
+```
+
+### Para Producción (AWS Lightsail)
+
+**📖 Guía completa:** [QUICKSTART.md](QUICKSTART.md)
+
+```bash
+# En tu servidor
+git clone https://github.com/TU_USUARIO/VexusPage.git
+cd VexusPage
+cp .env.production.example .env.production
+nano .env.production  # Configurar variables
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+---
+
+## 📚 Documentación
+
+### Producción (AWS Lightsail + Docker)
+- **[QUICKSTART.md](QUICKSTART.md)** - ⚡ Instalación en 5 minutos
+- **[PRODUCTION_README.md](PRODUCTION_README.md)** - 📖 Guía completa de producción
+- **[DEPLOYMENT_AWS_LIGHTSAIL.md](docs/DEPLOYMENT_AWS_LIGHTSAIL.md)** - 🌐 Despliegue detallado
+- **[DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)** - ✅ Checklist completo
+- **[DEPLOYMENT_SUMMARY.md](DEPLOYMENT_SUMMARY.md)** - 📊 Resumen de archivos
+
+### Alternativa (Neatech cPanel)
+- **[docs/backend/DESPLIEGUE_NEATECH.md](docs/backend/DESPLIEGUE_NEATECH.md)** - Backend en Passenger
+- **[docs/frontend/DESPLIEGUE_FRONTEND_NEATECH.md](docs/frontend/DESPLIEGUE_FRONTEND_NEATECH.md)** - Frontend en Apache
+
+### General
+- **[docs/README.md](docs/README.md)** - Índice de documentación
+- **[docs/RESUMEN_ANALISIS_COMPLETO.md](docs/RESUMEN_ANALISIS_COMPLETO.md)** - Análisis técnico
+
+---
+
+## 🏗️ Arquitectura
+
+```
+┌─────────────────────────────────────────────────┐
+│              CLIENTE (Browser)                   │
+└─────────────────────────────────────────────────┘
+                      ↓ HTTPS
+┌─────────────────────────────────────────────────┐
+│         NGINX (Frontend Container)               │
+│  • Sirve archivos estáticos                      │
+│  • Proxy reverso a /api/*                        │
+│  • SSL/TLS                                       │
+└─────────────────────────────────────────────────┘
+                      ↓ HTTP
+┌─────────────────────────────────────────────────┐
+│        FASTAPI (Backend Container)               │
+│  • API REST                                      │
+│  • Autenticación JWT                             │
+│  • Validación Pydantic                           │
+└─────────────────────────────────────────────────┘
+                      ↓ PostgreSQL
+┌─────────────────────────────────────────────────┐
+│      POSTGRESQL 15 (DB Container)                │
+│  • Datos persistentes                            │
+│  • 15 tablas relacionadas                        │
+└─────────────────────────────────────────────────┘
+```
+
+---
+
+## 📂 Estructura del Proyecto
 
 ```
 VexusPage/
-├── 📚 docs/                            # ⭐ TODA LA DOCUMENTACIÓN
-│   ├── README.md                       # Índice de documentación
-│   ├── backend/                        # Docs del backend
-│   │   ├── DESPLIEGUE_NEATECH.md      # ⭐ Guía principal despliegue
-│   │   ├── ESTRUCTURA_PRIVATE.md      # Backend en /private/
-│   │   └── RESUMEN_ARCHIVOS.md        # Qué subir/no subir
-│   ├── frontend/                       # Docs del frontend
-│   │   └── DESPLIEGUE_FRONTEND_NEATECH.md  # ⭐ Guía despliegue
-│   ├── ANALISIS_INTEGRACION_FRONTEND_BACKEND.md
-│   ├── RESUMEN_ANALISIS_COMPLETO.md
-│   └── ... (más guías)
+├── 📚 docs/                            # Documentación completa
+│   ├── DEPLOYMENT_AWS_LIGHTSAIL.md     # Guía AWS Lightsail
+│   ├── backend/                        # Docs backend
+│   └── frontend/                       # Docs frontend
 │
-├── backend/                            # 🔥 Código backend (FastAPI)
-│   ├── app/                            # Aplicación principal
-│   ├── passenger_wsgi_neatech.py       # Entrada Passenger
-│   ├── .htaccess_neatech               # Config Apache
-│   ├── .env.example.safe               # Template credenciales
-│   ├── deploy_neatech.sql              # Schema PostgreSQL
-│   └── requirements.txt                # Dependencias Python
+├── 🔥 backend/                         # Backend FastAPI
+│   ├── app/
+│   │   ├── api/v1/endpoints/           # 11 endpoints REST
+│   │   ├── core/                       # Config y DB
+│   │   ├── models/                     # Schemas Pydantic
+│   │   └── services/                   # Email, etc.
+│   ├── Dockerfile                      # Docker de producción
+│   ├── requirements.txt                # Dependencias Python
+│   └── gunicorn.conf.py               # Config Gunicorn
 │
-└── frontend/                           # 🎨 Código frontend (Vanilla JS)
-    ├── index.html                      # Página principal
-    ├── pages/                          # Páginas secundarias
-    └── Static/                         # Assets
-        ├── css/                        # Estilos
-        ├── js/                         # JavaScript
-        │   ├── config.js               # Config desarrollo
-        │   └── config.prod.js          # Config producción ✅
-        └── images/                     # Imágenes
-```
+├── 🎨 frontend/                        # Frontend SPA
+│   ├── index.html                      # Landing page
+│   ├── pages/                          # Páginas
+│   ├── Static/                         # Assets
+│   │   ├── css/                        # Estilos
+│   │   ├── js/                         # JavaScript
+│   │   └── images/                     # Imágenes
+│   ├── Dockerfile                      # Docker de producción
+│   └── nginx.prod.conf                 # Config Nginx
+│
+├── 🗄️ deployment/production/
+│   └── init_production_db.sql          # Schema + datos iniciales
+│
+├── 🐳 docker-compose.prod.yml          # Orquestación Docker
+├── 📝 .env.production.example          # Template variables
+├── 🚀 deploy.sh / deploy.ps1           # Scripts de deploy
+├── 📖 PRODUCTION_README.md             # README de producción
+├── ⚡ QUICKSTART.md                    # Quick start
+└── ✅ DEPLOYMENT_CHECKLIST.md          # Checklist
 
 ---
 
-## 🚀 GUÍA DE DESPLIEGUE EN NEATECH
+## 📊 Características
 
-### 📖 Documentación Principal
+### Backend (FastAPI + PostgreSQL)
+- 🔐 **Autenticación JWT** - Sistema completo de registro y login
+- ✉️ **Verificación de email** - Integración con Gmail SMTP
+- 📚 **Sistema de cursos** - 3 cursos iniciales con unidades
+- 🛠️ **Herramientas del campus** - 8 herramientas de desarrollo
+- 📊 **Dashboard personalizado** - Estadísticas y progreso
+- 🎯 **Proyectos de usuarios** - Gestión de portafolio
+- 📬 **Contacto y consultoría** - Formularios integrados
 
-**TODO está documentado en la carpeta `docs/`**
+### Frontend (Nginx + SPA)
+- ⚡ **SPA optimizado** - Single Page Application con routing
+- 🎨 **UI/UX moderno** - Interfaz intuitiva y responsive
+- 📱 **Mobile-first** - Diseñado para todos los dispositivos
+- 🔒 **Seguridad** - Headers de seguridad configurados
+- 💨 **Performance** - Caché agresivo y compresión Gzip
 
-| Guía | Descripción |
-|------|-------------|
-| **[docs/README.md](docs/README.md)** | 📚 Índice de toda la documentación |
-| **[docs/backend/DESPLIEGUE_NEATECH.md](docs/backend/DESPLIEGUE_NEATECH.md)** | ⭐ Cómo desplegar el backend |
-| **[docs/frontend/DESPLIEGUE_FRONTEND_NEATECH.md](docs/frontend/DESPLIEGUE_FRONTEND_NEATECH.md)** | ⭐ Cómo desplegar el frontend |
-| **[docs/backend/ESTRUCTURA_PRIVATE.md](docs/backend/ESTRUCTURA_PRIVATE.md)** | 📂 Backend en carpeta `/private/` |
-| **[docs/RESUMEN_ANALISIS_COMPLETO.md](docs/RESUMEN_ANALISIS_COMPLETO.md)** | 📊 Estado del proyecto |
-
----
-
-### 🎯 Pasos Rápidos
-
-#### 1. Backend (va en `/private/backend/`)
-
-```bash
-# En Neatech:
-1. Ejecutar deploy_neatech.sql en phpPgAdmin
-2. Subir carpeta app/ a /private/backend/
-3. Renombrar passenger_wsgi_neatech.py → passenger_wsgi.py
-4. Crear .env con credenciales reales
-5. Verificar: https://api.grupovexus.com/api/v1/health
-```
-
-📖 **Guía completa:** [docs/backend/DESPLIEGUE_NEATECH.md](docs/backend/DESPLIEGUE_NEATECH.md)
+### Base de Datos (PostgreSQL 15)
+- 🗄️ **15 tablas relacionadas** - Schema completo
+- 📊 **Datos iniciales** - 3 secciones, 3 cursos, 8 herramientas
+- 🔄 **Triggers automáticos** - Actualización de timestamps
+- 🔍 **Índices optimizados** - Consultas rápidas
 
 ---
 
-#### 2. Frontend (va en `/public_html/`)
-
-```bash
-# En Neatech:
-1. Verificar config.prod.js (ya está configurado ✅)
-2. Subir todo a public_html/
-3. Crear .htaccess en public_html/
-4. Verificar: https://grupovexus.com
-```
-
-📖 **Guía completa:** [docs/frontend/DESPLIEGUE_FRONTEND_NEATECH.md](docs/frontend/DESPLIEGUE_FRONTEND_NEATECH.md)
-
----
-
-## 📊 ESTADO DEL PROYECTO
-
-### ✅ Completamente Funcional
-
-| Componente | Estado | Endpoints/Archivos |
-|------------|--------|-------------------|
-| **Backend API** | ✅ Funcional | 33 endpoints REST |
-| **Frontend SPA** | ✅ Funcional | 28 archivos JS, 31 CSS |
-| **Autenticación** | ✅ JWT + Email verification | Login, Register, Logout |
-| **Base de datos** | ✅ PostgreSQL | 13 tablas + triggers |
-| **Integración** | ✅ Compatible | Todos los endpoints verificados |
-| **Documentación** | ✅ Completa | Guías paso a paso |
-
----
-
-## 🛠️ STACK TECNOLÓGICO
+## 🛠️ Stack Tecnológico
 
 **Backend:**
-- Python 3.12 + FastAPI
-- PostgreSQL 13+ (asyncpg)
+- Python 3.11 + FastAPI
+- PostgreSQL 15 (asyncpg)
 - JWT Authentication
 - Bcrypt password hashing
-- SMTP Email (Gmail)
-- Phusion Passenger (Neatech)
+- Gmail SMTP Email
+- Gunicorn + Uvicorn Workers
 
 **Frontend:**
 - Vanilla JavaScript (ES6 Modules)
 - CSS3 con variables
 - Fetch API
-- localStorage
-- Apache + mod_rewrite
+- Nginx Alpine
+
+**DevOps:**
+- Docker + Docker Compose
+- Multi-stage builds
+- Health checks
+- Volume persistence
 
 **Servidor:**
-- Neatech (cPanel)
-- Apache
-- PostgreSQL
-- Python 3.8+
+- AWS Lightsail (Ubuntu 22.04)
+- Let's Encrypt SSL
+- Certbot auto-renewal
 
 ---
 
-## 📝 FUNCIONALIDADES
+## 🚀 Despliegue
 
-### ✅ Implementadas:
-- Sistema de autenticación completo (JWT)
-- Verificación de email obligatoria
-- Gestión de usuarios y perfiles
-- Cursos (listado, detalle, progreso)
-- Panel de administración
-- CRUD de cursos (admin)
-- Formularios de contacto y consultoría
-- Dashboard con estadísticas
-- Sistema de sesiones seguro
-- CORS configurado
-- Manejo de errores y fallbacks
+### Opción 1: AWS Lightsail (Recomendado)
 
-### ⚠️ Pendientes (futuras mejoras):
-- Editor completo de cursos (unidades y recursos)
-- Sistema de inscripción a cursos
-- Upload de archivos (PDFs, videos)
-- Certificados de cursos
-- Notificaciones push
-- Chat de soporte
+```bash
+# 1. Instalar Docker
+curl -fsSL https://get.docker.com | sh
+sudo usermod -aG docker $USER
+
+# 2. Clonar y configurar
+git clone https://github.com/TU_USUARIO/VexusPage.git
+cd VexusPage
+cp .env.production.example .env.production
+nano .env.production
+
+# 3. Desplegar
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+📖 **Guía completa:** [QUICKSTART.md](QUICKSTART.md)
+
+### Opción 2: Neatech cPanel
+
+📖 **Guías:**
+- Backend: [docs/backend/DESPLIEGUE_NEATECH.md](docs/backend/DESPLIEGUE_NEATECH.md)
+- Frontend: [docs/frontend/DESPLIEGUE_FRONTEND_NEATECH.md](docs/frontend/DESPLIEGUE_FRONTEND_NEATECH.md)
 
 ---
 
-## 🔒 SEGURIDAD
+## ✅ Estado del Proyecto
+
+| Componente | Estado | Descripción |
+|------------|--------|-------------|
+| **Backend API** | ✅ Completo | 11 endpoints REST funcionando |
+| **Frontend SPA** | ✅ Completo | 8 páginas + assets optimizados |
+| **Base de Datos** | ✅ Completo | Schema + datos iniciales |
+| **Docker** | ✅ Completo | Orquestación de 3 servicios |
+| **Documentación** | ✅ Completo | Guías paso a paso |
+| **Seguridad** | ✅ Completo | JWT, bcrypt, CORS, SSL |
+| **Testing** | ⚠️ Pendiente | Unit tests por implementar |
+
+---
+
+## 🔒 Seguridad
 
 ### Implementado:
-- ✅ Passwords hasheados con bcrypt
-- ✅ JWT tokens seguros
+- ✅ Passwords hasheados con bcrypt (factor 12)
+- ✅ JWT tokens seguros con expiración
 - ✅ Verificación de email obligatoria
-- ✅ Sesiones almacenadas en BD
-- ✅ CORS configurado
-- ✅ Headers de seguridad
-- ✅ `.env` no en git
-
-### Checklist Pre-Despliegue:
-- [ ] `DEBUG=False` en `.env`
-- [ ] `SECRET_KEY` fuerte y aleatoria
-- [ ] `DATABASE_URL` con password seguro
-- [ ] `ALLOWED_ORIGINS` con tu dominio específico
-- [ ] SMTP credentials correctas
-- [ ] SSL/HTTPS configurado en Neatech
+- ✅ Sesiones en base de datos
+- ✅ CORS configurado correctamente
+- ✅ Headers de seguridad en Nginx
+- ✅ Variables sensibles en .env
+- ✅ Usuario no-root en contenedores
+- ✅ Multi-stage Docker builds
 
 ---
 
-## 🆘 AYUDA Y SOPORTE
+## 📝 Licencia
 
-### Documentación:
-- **Índice completo:** [docs/README.md](docs/README.md)
-- **Despliegue backend:** [docs/backend/DESPLIEGUE_NEATECH.md](docs/backend/DESPLIEGUE_NEATECH.md)
-- **Despliegue frontend:** [docs/frontend/DESPLIEGUE_FRONTEND_NEATECH.md](docs/frontend/DESPLIEGUE_FRONTEND_NEATECH.md)
-- **Análisis completo:** [docs/RESUMEN_ANALISIS_COMPLETO.md](docs/RESUMEN_ANALISIS_COMPLETO.md)
-
-### Problemas comunes:
-- **API no responde:** Verifica que backend esté en `/private/backend/` con `passenger_wsgi.py`
-- **CORS errors:** Revisa `ALLOWED_ORIGINS` en `.env` del backend
-- **Emails no llegan:** Verifica credenciales SMTP en `.env`
-- **DB no conecta:** Verifica `DATABASE_URL` en `.env`
+Este proyecto es propiedad de Vexus.
 
 ---
 
-## 📞 CONTACTO
+## 📞 Contacto
 
 - **Email:** grupovexus@gmail.com
 - **Web:** https://grupovexus.com
 
 ---
 
-## 📝 RESUMEN RÁPIDO
+**¡Listo para producción! 🚀**
 
-**📂 Estructura:**
-- `docs/` - TODA la documentación
-- `backend/` - Código Python (FastAPI)
-- `frontend/` - Código JavaScript (SPA)
-
-**🚀 Para desplegar:**
-1. Lee [docs/README.md](docs/README.md)
-2. Backend → `/private/backend/` en Neatech
-3. Frontend → `/public_html/` en Neatech
-4. Verifica que todo funcione
-
-**✅ Estado: LISTO PARA PRODUCCIÓN**
-
----
-
-**Última actualización:** 2025-10-31
-**Versión:** 1.0.0
-**Licencia:** [Especificar]
+*Última actualización: Noviembre 2025*
+*Versión: 1.0.0*

@@ -1,0 +1,656 @@
+/* ===================================
+   REAL ESTATE PAGE STYLES
+   =================================== */
+
+/* === Importar estilos base si no están cargados === */
+@import url('./base/variables.css');
+
+/* === Variables === */
+:root {
+    /* Usar variables del tema principal */
+    --re-primary: var(--color-primary, #8B4513);
+    --re-secondary: var(--color-primary-dark, #A0522D);
+    --re-dark: var(--color-background, #0a0a0a);
+    --re-darker: var(--color-surface-dark, #050505);
+    --re-light: var(--color-text, #ffffff);
+    --re-gray: rgba(255, 255, 255, 0.1);
+}
+
+/* === Reset === */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--re-dark);
+    color: var(--re-light);
+    overflow-x: hidden;
+}
+
+/* ===================================
+   HERO SECTION WITH PARALLAX
+   =================================== */
+
+.real-estate-hero {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* Parallax Background */
+.parallax-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-image: url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=2070');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1;
+    will-change: transform;
+    transition: transform 0.1s ease-out;
+}
+
+.parallax-background::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(10, 10, 10, 0.7) 0%,
+        rgba(10, 10, 10, 0.5) 50%,
+        rgba(10, 10, 10, 0.9) 100%
+    );
+    z-index: 1;
+}
+
+/* Hero Title */
+.hero-title-container {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 2rem;
+    animation: fadeInUp 1s ease-out;
+}
+
+.hero-main-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(3rem, 12vw, 10rem);
+    font-weight: 900;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--re-primary) 0%, var(--re-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 80px var(--color-primary-rgb);
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+    animation: glow 3s ease-in-out infinite alternate;
+}
+
+.hero-subtitle {
+    font-size: clamp(1.5rem, 4vw, 3rem);
+    font-weight: 300;
+    color: var(--re-light);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+/* Scroll Indicator */
+.scroll-indicator {
+    position: absolute;
+    bottom: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    opacity: 0;
+    animation: fadeIn 1s ease-out 1.5s forwards;
+}
+
+.mouse {
+    width: 30px;
+    height: 50px;
+    border: 2px solid var(--re-primary);
+    border-radius: 15px;
+    position: relative;
+    animation: float 2s ease-in-out infinite;
+}
+
+.wheel {
+    width: 4px;
+    height: 8px;
+    background: var(--re-primary);
+    border-radius: 2px;
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: scroll 1.5s ease-in-out infinite;
+}
+
+.scroll-text {
+    font-size: 0.875rem;
+    color: var(--re-light);
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+}
+
+/* ===================================
+   CONTENT SECTIONS
+   =================================== */
+
+.real-estate-content {
+    position: relative;
+    z-index: 10;
+    background: transparent;
+    padding-top: 10vh;
+}
+
+.content-section {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    position: relative;
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    margin: 0 auto 20vh;
+    max-width: 1400px;
+    border: 1px solid var(--color-border);
+}
+
+/* Primera sección con margen superior */
+.content-section:first-child {
+    margin-top: 10vh;
+}
+
+/* Eliminar margen de la última sección */
+.content-section:last-child {
+    margin-bottom: 10vh;
+}
+
+.section-inner {
+    max-width: 1200px;
+    width: 100%;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.content-section.active .section-inner {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Section Icon */
+.section-icon {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.section-icon svg {
+    stroke: var(--re-primary);
+    filter: drop-shadow(0 0 20px var(--color-primary-rgb));
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Section Title */
+.section-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+    background: linear-gradient(135deg, var(--re-primary) 0%, var(--re-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Section Text */
+.section-text {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    line-height: 1.8;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 800px;
+    margin: 0 auto 3rem;
+}
+
+/* ===================================
+   SERVICE FEATURES
+   =================================== */
+
+.service-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    background: var(--color-surface-light);
+    border-color: var(--re-primary);
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-primary);
+}
+
+.feature-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--re-primary);
+    color: var(--re-dark);
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.feature-item span {
+    font-size: 1.125rem;
+    font-weight: 500;
+}
+
+/* ===================================
+   PROCESS TIMELINE
+   =================================== */
+
+.process-timeline {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.timeline-item {
+    padding: 2rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--re-primary), var(--re-secondary));
+    border-radius: 16px 16px 0 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.timeline-item:hover::before {
+    opacity: 1;
+}
+
+.timeline-item:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-primary);
+    border-color: var(--re-primary);
+}
+
+.timeline-number {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--re-primary);
+    opacity: 0.3;
+    margin-bottom: 1rem;
+}
+
+.timeline-item h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--re-light);
+}
+
+.timeline-item p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* ===================================
+   COMMITMENT VALUES
+   =================================== */
+
+.commitment-values {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.value-card {
+    padding: 2.5rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+}
+
+.value-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, var(--card-shine-color) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.value-card:hover::before {
+    opacity: 1;
+}
+
+.value-card:hover {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-primary);
+    border-color: var(--re-primary);
+}
+
+.value-card h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--re-primary) 0%, var(--re-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+    z-index: 1;
+}
+
+.value-card p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.8);
+    position: relative;
+    z-index: 1;
+}
+
+/* ===================================
+   CONTACT CTA
+   =================================== */
+
+.contact-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem 3rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--re-dark);
+    background: linear-gradient(135deg, var(--re-primary) 0%, var(--re-secondary) 100%);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    margin-top: 2rem;
+}
+
+.contact-cta::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.contact-cta:hover::before {
+    left: 100%;
+}
+
+.contact-cta:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-primary);
+}
+
+.contact-cta svg {
+    transition: transform 0.3s ease;
+}
+
+.contact-cta:hover svg {
+    transform: translateX(5px);
+}
+
+/* ===================================
+   ANIMATIONS
+   =================================== */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes glow {
+    0% {
+        text-shadow: 0 0 20px var(--glow-color-start, var(--color-primary-rgb)),
+                     0 0 40px var(--glow-color-start, var(--color-primary-rgb)),
+                     0 0 60px var(--glow-color-start, var(--color-primary-rgb));
+    }
+    100% {
+        text-shadow: 0 0 30px var(--glow-color-end, var(--color-primary-rgb)),
+                     0 0 60px var(--glow-color-end, var(--color-primary-rgb)),
+                     0 0 90px var(--glow-color-end, var(--color-primary-rgb));
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes scroll {
+    0% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+}
+
+/* ===================================
+   RESPONSIVE DESIGN
+   =================================== */
+
+@media (max-width: 768px) {
+    .hero-main-title {
+        font-size: 3rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.5rem;
+    }
+
+    .real-estate-content {
+        padding-top: 5vh;
+    }
+
+    .content-section {
+        padding: 3rem 1.5rem;
+        margin: 0 1rem 15vh;
+        border-radius: 15px;
+    }
+
+    .content-section:first-child {
+        margin-top: 5vh;
+    }
+
+    .content-section:last-child {
+        margin-bottom: 5vh;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+
+    .section-text {
+        font-size: 1rem;
+    }
+
+    .service-features,
+    .process-timeline,
+    .commitment-values {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-cta {
+        padding: 1.25rem 2rem;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-main-title {
+        font-size: 2.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.25rem;
+    }
+
+    .scroll-indicator {
+        bottom: 2rem;
+    }
+
+    .content-section {
+        margin: 0 0.5rem 12vh;
+        padding: 2.5rem 1.5rem;
+        border-radius: 12px;
+    }
+
+    .content-section:first-child {
+        margin-top: 5vh;
+    }
+
+    .content-section:last-child {
+        margin-bottom: 5vh;
+    }
+
+    .timeline-number {
+        font-size: 2rem;
+    }
+
+    .timeline-item h3 {
+        font-size: 1.25rem;
+    }
+
+    .value-card h3 {
+        font-size: 1.5rem;
+    }
+}
+
+/* ===================================
+   PERFORMANCE OPTIMIZATIONS
+   =================================== */
+
+.parallax-background,
+.section-inner,
+.content-section {
+    will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ===================================
+   THEME CUSTOMIZER OVERRIDES
+   =================================== */
+
+/* Asegurar que el selector de colores funcione en esta página */
+.customize-theme-container {
+    position: relative;
+}
+
+/* Ajustar posición del panel en esta página si es necesario */
+.real-estate-hero ~ * .color-picker-panel {
+    z-index: 10001;
+}

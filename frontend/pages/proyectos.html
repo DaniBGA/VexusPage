@@ -18,18 +18,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- CSS Principal -->
-    <link rel="stylesheet" href="/Static/css/main.css">
-    <link rel="stylesheet" href="/Static/css/proyectos.css">
+    <link rel="stylesheet" href="../Static/css/main.css">
+    <link rel="stylesheet" href="../Static/css/proyectos.css">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/Static/images/logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../Static/images/logo.png?v=1">
+    <link rel="icon" type="image/png" sizes="16x16" href="../Static/images/logo.png?v=1">
+    <link rel="shortcut icon" href="../Static/images/logo.png?v=1">
 </head>
 <body>
     <!-- Header -->
     <header class="header">
         <nav class="container nav">
-            <a href="/" class="logo">
-                <img src="/Static/images/logo.png" alt="VEXUS">
+            <a href="/frontend/index.html" class="logo">
+                <img src="../Static/images/logo.png" alt="VEXUS">
             </a>
 
             <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menú">
@@ -39,11 +41,11 @@
             </button>
 
             <ul class="nav-links" id="navLinks">
-                <li><a href="../index.html#inicio">Inicio</a></li>
-                <li><a href="../index.html#servicios">Servicios</a></li>
-                <li><a href="../index.html#campus">Campus</a></li>
-                <li><a href="../index.html#sobre-nosotros">Sobre Nosotros</a></li>
-                <li><a href="../index.html" onclick="openModal('contactModal'); return false;">Contacto</a></li>
+                <li><a href="/frontend/index.html#inicio">Inicio</a></li>
+                <li><a href="/frontend/index.html#servicios">Servicios</a></li>
+                <li><a href="/frontend/index.html#campus">Campus</a></li>
+                <li><a href="/frontend/index.html#sobre-nosotros">Sobre Nosotros</a></li>
+                <li><a href="/frontend/index.html" onclick="openModal('contactModal'); return false;">Contacto</a></li>
             </ul>
         </nav>
     </header>
@@ -76,7 +78,7 @@
                         <!-- Landing Page -->
                         <div class="project-card">
                             <div class="project-image">
-                                <img src="/Static/images/3.png" alt="Landing Page">
+                                <img src="../Static/images/3.png" alt="Landing Page">
                                 <div class="image-overlay"></div>
                             </div>
                             <div class="project-info">
@@ -93,7 +95,7 @@
                         <!-- Portfolio -->
                         <div class="project-card">
                             <div class="project-image">
-                                <img src="/Static/images/Portafolio.png" alt="Portfolio">
+                                <img src="../Static/images/Portafolio.png" alt="Portfolio">
                                 <div class="image-overlay"></div>
                             </div>
                             <div class="project-info">
@@ -109,7 +111,7 @@
                         <!-- WEB APP -->
                         <div class="project-card">
                             <div class="project-image">
-                                <img src="/Static/images/WebApp.png" alt="Dashboard">
+                                <img src="../Static/images/WebApp.png" alt="Dashboard">
                                 <div class="image-overlay"></div>
                             </div>
                             <div class="project-info">
@@ -126,7 +128,7 @@
                         <!-- Intranet -->
                         <div class="project-card">
                             <div class="project-image">
-                                <img src="/Static/images/Intranet.png" alt="Sitio Corporativo">
+                                <img src="../Static/images/Intranet.png" alt="Sitio Corporativo">
                                 <div class="image-overlay"></div>
                             </div>
                             <div class="project-info">
@@ -196,11 +198,11 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-links">
-                    <a href="../index.html#inicio">Inicio</a>
-                    <a href="../index.html#servicios">Servicios</a>
-                    <a href="../index.html#campus">Campus</a>
-                    <a href="../index.html#sobre-nosotros">Sobre Nosotros</a>
-                    <a href="../index.html#contacto">Contacto</a>
+                    <a href="/frontend/index.html#inicio">Inicio</a>
+                    <a href="/frontend/index.html#servicios">Servicios</a>
+                    <a href="/frontend/index.html#campus">Campus</a>
+                    <a href="/frontend/index.html#sobre-nosotros">Sobre Nosotros</a>
+                    <a href="/frontend/index.html#contacto">Contacto</a>
                 </div>
             </div>
             <div class="copyright">
@@ -217,7 +219,7 @@
         ThemeCustomizer.loadSavedTheme();
         ThemeCustomizer.applyTheme();
     </script>
-    <script src="/Static/js/proyectos.js"></script>
+    <script type="module" src="../Static/js/proyectos.js"></script>
 </body>
 </html>
 
