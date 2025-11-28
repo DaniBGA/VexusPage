@@ -30,9 +30,12 @@ FROM python:3.11-slim
 # Variables de entorno
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PATH=/root/.local/bin:$PATH
+    PATH=/home/vexus/.local/bin:$PATH
 
 WORKDIR /app
+
+# Crear usuario no-root PRIMERO
+RUN useradd -m -u 1000 vexus
 
 # Instalar solo las dependencias runtime necesarias
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -40,14 +43,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copiar dependencias instaladas desde builder
-COPY --from=builder /root/.local /root/.local
+# Copiar dependencias instaladas desde builder al home del usuario vexus
+COPY --from=builder --chown=vexus:vexus /root/.local /home/vexus/.local
 
 # Copiar código de la aplicación
-COPY ./app ./app
+COPY --chown=vexus:vexus ./app ./app
 
-# Crear usuario no-root para ejecutar la aplicación
-RUN useradd -m -u 1000 vexus && chown -R vexus:vexus /app
+# Cambiar al usuario vexus
 USER vexus
 
 # Health check
