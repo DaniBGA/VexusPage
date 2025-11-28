@@ -1,8 +1,8 @@
 // Configuración de producción
-// Backend en Render
+// Backend en AWS Lightsail (mismo servidor, puerto 8000)
 const CONFIG = {
-    API_BASE_URL: 'https://vexuspage.onrender.com/api/v1',
-    FRONTEND_URL: 'https://www.grupovexus.com',  // URL del frontend en producción
+    API_BASE_URL: '/api/v1',  // Proxy a través de Nginx
+    FRONTEND_URL: 'http://grupovexus.com',  // URL del frontend en producción
     TOKEN_KEY: 'vexusToken',
     USER_KEY: 'vexusUser',
     REQUEST_TIMEOUT: 30000,
