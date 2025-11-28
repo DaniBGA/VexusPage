@@ -70,6 +70,10 @@ class Settings:
     DB_CONNECT_TIMEOUT: int = int(os.getenv("DB_CONNECT_TIMEOUT", "10"))
 
     # === EMAIL (para verificación de email) ===
+    # SendGrid (recomendado - más rápido y confiable)
+    SENDGRID_API_KEY: str = os.getenv("SENDGRID_API_KEY", "")
+    
+    # Gmail SMTP (fallback si SendGrid no está configurado)
     SMTP_HOST: str = os.getenv("SMTP_HOST", "")
     SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
     SMTP_USER: str = os.getenv("SMTP_USER", "")

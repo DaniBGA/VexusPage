@@ -3,6 +3,7 @@ Servicio de envío de emails
 """
 import aiosmtplib
 import secrets
+import httpx
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timedelta, timezone
@@ -248,6 +249,66 @@ def get_email_verification_template(user_name: str, verification_link: str) -> s
     """
 
 
+async def send_email_via_sendgrid(
+    to_email: str,
+    subject: str,
+    html_content: str,
+    text_content: str
+) -> bool:
+    """
+    Enviar email usando SendGrid API (mucho más rápido que SMTP)
+    
+    Args:
+        to_email: Email del destinatario
+        subject: Asunto del email
+        html_content: Contenido HTML
+        text_content: Contenido texto plano
+        
+    Returns:
+        True si se envió exitosamente, False en caso contrario
+    """
+    sendgrid_key = getattr(settings, 'SENDGRID_API_KEY', None)
+    
+    if not sendgrid_key:
+        print("⚠️ SendGrid API Key no configurada")
+        return False
+    
+    try:
+        print(f"📧 Enviando email via SendGrid a: {to_email}")
+        
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                "https://api.sendgrid.com/v3/mail/send",
+                headers={
+                    "Authorization": f"Bearer {sendgrid_key}",
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "personalizations": [{
+                        "to": [{"email": to_email}]
+                    }],
+                    "from": {"email": settings.EMAIL_FROM},
+                    "subject": subject,
+                    "content": [
+                        {"type": "text/plain", "value": text_content},
+                        {"type": "text/html", "value": html_content}
+                    ]
+                },
+                timeout=10.0  # SendGrid es súper rápido, 10 segundos es suficiente
+            )
+        
+        if response.status_code == 202:
+            print(f"✅ Email enviado exitosamente via SendGrid a: {to_email}")
+            return True
+        else:
+            print(f"❌ Error SendGrid ({response.status_code}): {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ Error enviando via SendGrid: {str(e)}")
+        return False
+
+
 async def send_verification_email(
     to_email: str,
     user_name: str,
@@ -295,6 +356,20 @@ async def send_verification_email(
 
         © 2025 Vexus. Todos los derechos reservados.
         """
+
+        # Intentar SendGrid primero (mucho más rápido que SMTP)
+        sendgrid_key = getattr(settings, 'SENDGRID_API_KEY', None)
+        if sendgrid_key:
+            print(f"📧 Usando SendGrid para enviar email a: {to_email}")
+            return await send_email_via_sendgrid(
+                to_email=to_email,
+                subject='Verifica tu email - Vexus',
+                html_content=html_content,
+                text_content=text_content
+            )
+
+        # Si SendGrid no está configurado, usar Gmail SMTP como fallback
+        print(f"📧 SendGrid no configurado, usando Gmail SMTP...")
 
         # Adjuntar ambas partes
         part1 = MIMEText(text_content, 'plain')
