@@ -129,18 +129,69 @@ git clone https://github.com/DaniBGA/VexusPage.git
 
 # Entrar al directorio
 cd VexusPage
+
+# Obtener la última versión (por si acaso)
+git pull
 ```
 
-### Paso 4.3: Copiar el Archivo de Configuración
+### Paso 4.3: Configurar Variables de Entorno
+
+**OPCIÓN A: Editar el archivo manualmente (Recomendado)**
 ```bash
-# Copiar el archivo .env.production que ya creé con tus datos
-cp .env.production.example .env.production
+# Abrir editor
+nano .env.production.example
 ```
 
-**⚠️ IMPORTANTE**: El archivo `.env.production` YA tiene tus datos configurados:
-- ✅ Gmail: grupovexus@gmail.com
-- ✅ App Password: xuaevwdoprogdwrl
-- ✅ Dominio: grupovexus.com
+Cambia estos valores:
+```
+SMTP_USER=grupovexus@gmail.com
+SMTP_PASSWORD=xuaevwdoprogdwrl
+EMAIL_FROM=grupovexus@gmail.com
+FRONTEND_URL=https://www.grupovexus.com
+ALLOWED_ORIGINS=https://grupovexus.com,https://www.grupovexus.com
+```
+
+Guarda con: `Ctrl + O`, Enter, `Ctrl + X`
+
+```bash
+# Renombrar el archivo
+mv .env.production.example .env.production
+```
+
+**OPCIÓN B: Crear el archivo completo** (Copia y pega todo esto)
+```bash
+cat > .env.production << 'EOF'
+# Base de Datos
+POSTGRES_DB=vexus_db
+POSTGRES_USER=vexus_admin
+POSTGRES_PASSWORD=VexusDB2025!Secure
+
+# Backend
+PROJECT_NAME="Vexus API"
+VERSION="1.0.0"
+ENVIRONMENT=production
+DEBUG=false
+SECRET_KEY=jP8mK2nL9vR4tY6wQ1xE3sA5dF7gH0jK2mN4pQ6rT8vW
+DB_POOL_MIN_SIZE=5
+DB_POOL_MAX_SIZE=20
+DB_CONNECT_TIMEOUT=10
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+# CORS
+ALLOWED_ORIGINS=https://grupovexus.com,https://www.grupovexus.com
+
+# Email Gmail
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=grupovexus@gmail.com
+SMTP_PASSWORD=xuaevwdoprogdwrl
+EMAIL_FROM=grupovexus@gmail.com
+
+# Frontend
+FRONTEND_URL=https://www.grupovexus.com
+API_URL=https://grupovexus.com/api
+EOF
+```
 
 ---
 
