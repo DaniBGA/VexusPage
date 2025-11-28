@@ -406,20 +406,20 @@ docker exec -it vexus-postgres psql -U vexus_admin -d vexus_db
 
 Marca cada paso cuando lo completes:
 
-- [ ] 1. Crear instancia en Lightsail ($10/mes plan)
-- [ ] 2. Abrir puertos: 80, 443, 8000
-- [ ] 3. Conectar por SSH
-- [ ] 4. Instalar Docker y Docker Compose
-- [ ] 5. Clonar repositorio de GitHub
-- [ ] 6. Copiar archivo .env.production
-- [ ] 7. Ejecutar: `docker-compose up -d --build`
-- [ ] 8. Verificar que funciona en: `http://TU-IP`
-- [ ] 9. Crear IP estática en Lightsail
-- [ ] 10. Configurar DNS en proveedor de dominio
-- [ ] 11. Esperar propagación DNS (5-60 min)
-- [ ] 12. Acceder a: `http://grupovexus.com`
-- [ ] 13. (Opcional) Instalar certificado SSL
-- [ ] 14. Acceder a: `https://grupovexus.com`
+- [x] 1. Crear instancia en Lightsail ($10/mes plan)
+- [x] 2. Abrir puertos: 80, 443, 8000
+- [x] 3. Conectar por SSH
+- [x] 4. Instalar Docker y Docker Compose
+- [x] 5. Clonar repositorio de GitHub
+- [x] 6. Copiar archivo .env.production
+- [x] 7. Ejecutar: `docker-compose up -d --build`
+- [x] 8. Verificar que funciona en: `http://TU-IP`
+- [x] 9. Crear IP estática en Lightsail
+- [x] 10. Configurar DNS en proveedor de dominio
+- [x] 11. Esperar propagación DNS (5-60 min)
+- [x] 12. Acceder a: `http://grupovexus.com`
+- [x] 13. (Opcional) Instalar certificado SSL
+- [x] 14. Acceder a: `https://grupovexus.com`
 
 ---
 
