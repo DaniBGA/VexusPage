@@ -45,8 +45,6 @@ COPY --from=builder /root/.local /root/.local
 
 # Copiar código de la aplicación
 COPY ./app ./app
-COPY ./passenger_wsgi.py .
-COPY ./gunicorn.conf.py .
 
 # Crear usuario no-root para ejecutar la aplicación
 RUN useradd -m -u 1000 vexus && chown -R vexus:vexus /app
