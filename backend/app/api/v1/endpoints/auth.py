@@ -61,7 +61,7 @@ async def register_user(user: UserCreate, request: Request, background_tasks: Ba
             await connection.execute(
                 """
                 INSERT INTO users (
-                    id, name, email, hashed_password,
+                    id, full_name, email, hashed_password,
                     email_verified, verification_token,
                     verification_token_expires, is_active,
                     created_at, updated_at
@@ -262,7 +262,7 @@ async def resend_verification_email(request: ResendVerificationRequest):
     async with pool.acquire() as connection:
         # Buscar usuario por email
         user = await connection.fetchrow(
-            "SELECT id, name, email, email_verified FROM users WHERE email = $1",
+            "SELECT id, full_name, email, email_verified FROM users WHERE email = $1",
             request.email
         )
 
