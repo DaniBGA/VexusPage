@@ -62,7 +62,7 @@ async def register_user(user: UserCreate, request: Request, background_tasks: Ba
                 """
                 INSERT INTO users (
                     id, full_name, email, hashed_password,
-                    email_verified, verification_token,
+                    is_verified, verification_token,
                     verification_token_expires, is_active,
                     created_at, updated_at
                 )
@@ -122,7 +122,7 @@ async def login_user(user_credentials: UserLogin):
             )
 
         # Verificar si el email está verificado
-        if not user['email_verified']:
+        if not user['is_verified']:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Email not verified. Please check your email and verify your account before logging in.",
@@ -201,7 +201,7 @@ async def verify_email(token: str):
         # Buscar usuario con el token
         user = await connection.fetchrow(
             """
-            SELECT id, email, email_verified, verification_token_expires
+            SELECT id, email, is_verified, verification_token_expires
             FROM users
             WHERE verification_token = $1
             """,
@@ -215,7 +215,7 @@ async def verify_email(token: str):
             )
 
         # Verificar si el email ya fue verificado
-        if user['email_verified']:
+        if user['is_verified']:
             return {
                 "message": "Email already verified",
                 "already_verified": True
@@ -232,7 +232,7 @@ async def verify_email(token: str):
         await connection.execute(
             """
             UPDATE users
-            SET email_verified = true,
+            SET is_verified = true,
                 verification_token = NULL,
                 verification_token_expires = NULL,
                 updated_at = CURRENT_TIMESTAMP
@@ -262,7 +262,7 @@ async def resend_verification_email(request: ResendVerificationRequest):
     async with pool.acquire() as connection:
         # Buscar usuario por email
         user = await connection.fetchrow(
-            "SELECT id, full_name, email, email_verified FROM users WHERE email = $1",
+            "SELECT id, full_name, email, is_verified FROM users WHERE email = $1",
             request.email
         )
 
@@ -273,7 +273,7 @@ async def resend_verification_email(request: ResendVerificationRequest):
             )
 
         # Si ya está verificado
-        if user['email_verified']:
+        if user['is_verified']:
             return {
                 "message": "Email already verified",
                 "already_verified": True
@@ -297,7 +297,7 @@ async def resend_verification_email(request: ResendVerificationRequest):
         # Enviar email
         email_sent = await send_verification_email(
             to_email=user['email'],
-            user_name=user['name'],
+            user_name=user['full_name'],
             verification_token=verification_token
         )
 

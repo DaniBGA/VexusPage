@@ -35,13 +35,13 @@ class UserLogin(BaseModel):
 
 class User(BaseModel):
     id: UUID4
-    name: str
+    full_name: str
     email: EmailStr
     avatar: Optional[str] = "👤"
     is_active: bool = True
     role: str = "user"
     created_at: datetime
-    email_verified: bool = False
+    is_verified: bool = False
 
 class Token(BaseModel):
     access_token: str
