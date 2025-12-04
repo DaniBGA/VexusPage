@@ -203,6 +203,7 @@
 .ecosystem-carousel .carousel-item {
     flex: 0 0 auto;
     width: 180px;
+    height: 220px; /* Altura fija para todas las cards */
 }
 
 .logo-card {
@@ -212,10 +213,13 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center; /* Centrar contenido verticalmente */
     gap: var(--spacing-sm);
     border: 1px solid rgba(255, 107, 53, 0.2);
     transition: all 0.3s ease;
     cursor: pointer;
+    height: 100%; /* Ocupar toda la altura del carousel-item */
+    width: 100%; /* Ocupar todo el ancho del carousel-item */
 }
 
 .logo-card:hover {
