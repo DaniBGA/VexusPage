@@ -68,6 +68,7 @@
 
     .carousel-item {
         width: 150px;
+        height: 200px; /* Altura fija en mobile */
     }
 
     .logo-placeholder {
