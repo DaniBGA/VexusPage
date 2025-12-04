@@ -74,11 +74,11 @@ class Settings:
     SENDGRID_API_KEY: str = os.getenv("SENDGRID_API_KEY", "")
     
     # Gmail SMTP (fallback si SendGrid no está configurado)
-    SMTP_HOST: str = os.getenv("SMTP_HOST", "")
+    SMTP_HOST: str = os.getenv("SMTP_HOST", "smtp.gmail.com")
     SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
-    SMTP_USER: str = os.getenv("SMTP_USER", "")
-    SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD", "")
-    EMAIL_FROM: str = os.getenv("EMAIL_FROM", "noreply@vexus.com")
+    SMTP_USER: str = os.getenv("SMTP_USER", "grupovexus@gmail.com")
+    SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD", "tnquxwpqddhxlxaf")
+    EMAIL_FROM: str = os.getenv("EMAIL_FROM", "grupovexus@.com")
 
     # === FRONTEND ===
     FRONTEND_URL: str = os.getenv("FRONTEND_URL", "http://localhost:5500")
