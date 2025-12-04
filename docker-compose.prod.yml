@@ -93,10 +93,11 @@ services:
     networks:
       - vexus-network
     volumes:
-      # Montamos certificados SSL si existen
-      - ./ssl:/etc/nginx/ssl:ro
+      # Montamos certificados SSL de Let's Encrypt
+      - ./ssl/live/grupovexus.com:/etc/letsencrypt/live/grupovexus.com:ro
+      - ./ssl/archive/grupovexus.com:/etc/letsencrypt/archive/grupovexus.com:ro
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80/"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "--no-check-certificate", "https://localhost:443/"]
       interval: 30s
       timeout: 10s
       retries: 3
