@@ -50,7 +50,8 @@ class App {
 
     async testConnection() {
         try {
-            const response = await fetch(`${CONFIG.API_BASE_URL.replace('/api/v1', '')}/health`);
+            const healthUrl = CONFIG.API_BASE_URL.replace('/api/v1', '/health');
+            const response = await fetch(healthUrl);
             if (response.ok) {
                 showConnectionStatus(true);
                 await this.loadInitialData();
