@@ -58,7 +58,6 @@ export class APIClient {
 
             return await response.json();
         } catch (error) {
-            console.error('API Request failed:', error);
             throw error;
         }
     }

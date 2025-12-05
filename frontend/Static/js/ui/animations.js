@@ -69,11 +69,8 @@ export const Animations = {
             const serviceCards = document.querySelectorAll('.service-unit-card');
             
             if (serviceCards.length === 0) {
-                console.log('No service cards found for parallax effect');
                 return;
             }
-
-            console.log(`Initializing parallax for ${serviceCards.length} service cards`);
 
             const observerOptions = {
                 threshold: 0.05,
@@ -84,7 +81,6 @@ export const Animations = {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('parallax-active');
-                        console.log('Card activated for parallax:', entry.target);
                     }
                 });
             }, observerOptions);

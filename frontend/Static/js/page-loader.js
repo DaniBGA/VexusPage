@@ -33,25 +33,16 @@ class PageLoader {
     }
 
     startLoading() {
-        console.log('⏱️ Pantalla de carga iniciada');
         const startTime = Date.now();
 
         // Fase 1: Carga inicial (0-30%) - 0.5 segundos
         this.animateProgress(30, 500, () => {
-            console.log('✨ Fase 1 completada, iniciando Fase 2');
-
             // Fase 2: Recursos principales (30-70%) - 0.7 segundos
             this.animateProgress(70, 700, () => {
-                console.log('✨ Fase 2 completada, iniciando Fase 3');
-
                 // Fase 3: Finalización (70-100%) - 0.6 segundos
                 this.animateProgress(100, 600, () => {
-                    console.log('✨ Fase 3 completada, mostrando 100%');
-
                     // Esperar 200ms para mostrar el 100%
                     setTimeout(() => {
-                        const elapsed = Date.now() - startTime;
-                        console.log(`⏱️ Pantalla de carga completada en ${elapsed}ms (${(elapsed/1000).toFixed(2)}s)`);
                         this.hideLoader();
                     }, 200);
                 });
@@ -79,8 +70,6 @@ class PageLoader {
     }
 
     animateProgress(targetProgress, duration, callback) {
-        console.log(`📊 Animando progreso de ${this.progress.toFixed(0)}% a ${targetProgress}% en ${duration}ms`);
-
         const startProgress = this.progress;
         const progressDiff = targetProgress - startProgress;
         const startTime = performance.now();
@@ -98,12 +87,8 @@ class PageLoader {
             if (progress < 1) {
                 requestAnimationFrame(animate);
             } else {
-                console.log(`✅ Animación completada al ${this.progress.toFixed(0)}%`);
                 if (callback) {
-                    console.log('🎯 Ejecutando callback...');
                     callback();
-                } else {
-                    console.log('⚠️ No hay callback definido');
                 }
             }
         };
@@ -144,8 +129,6 @@ class PageLoader {
     }
 
     hideLoader() {
-        console.log('👋 Ocultando pantalla de carga INMEDIATAMENTE...');
-
         if (this.loadingOverlay) {
             // FORZAR ocultamiento inmediato y agresivo
             this.loadingOverlay.style.cssText = 'opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; transition: opacity 0.5s ease !important;';
@@ -160,11 +143,8 @@ class PageLoader {
                 document.body.style.cssText = '';
                 document.body.classList.add('loaded');
 
-                console.log('✅ Pantalla de carga ELIMINADA del DOM');
                 window.dispatchEvent(new CustomEvent('pageFullyLoaded'));
             }, 500);
-        } else {
-            console.error('❌ ERROR: loadingOverlay no encontrado');
         }
     }
 
@@ -177,22 +157,15 @@ class PageLoader {
 
 // Inicializar el loader cuando el DOM esté completamente listo
 function initPageLoader() {
-    console.log('🚀 Inicializando PageLoader...');
-    console.log('📄 Estado del DOM:', document.readyState);
-
     if (document.getElementById('loadingOverlay')) {
         window.pageLoader = new PageLoader();
-    } else {
-        console.error('❌ No se encontró el elemento loadingOverlay');
     }
 }
 
 // Asegurar que el DOM esté listo antes de inicializar
 if (document.readyState === 'loading') {
-    console.log('⏳ Esperando DOMContentLoaded...');
     document.addEventListener('DOMContentLoaded', initPageLoader);
 } else {
-    console.log('✅ DOM ya está listo');
     initPageLoader();
 }
 
