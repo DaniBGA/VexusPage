@@ -1,5 +1,6 @@
 // Configuración de producción
 // Backend en AWS Lightsail (mismo servidor, puerto 8000)
+// Version: 20251207-4 - HTTPS actualizado
 const CONFIG = {
     API_BASE_URL: 'https://www.grupovexus.com/api/v1',  // URL absoluta con HTTPS para evitar Mixed Content
     FRONTEND_URL: 'https://www.grupovexus.com',  // URL del frontend en producción (HTTPS)

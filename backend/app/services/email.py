@@ -638,6 +638,27 @@ async def send_contact_email(
         © 2025 Vexus. Todos los derechos reservados.
         """
 
+        # Intentar SendGrid primero (mucho más rápido que SMTP)
+        sendgrid_key = getattr(settings, 'SENDGRID_API_KEY', None)
+        if sendgrid_key:
+            print(f"📧 Usando SendGrid para enviar contacto a: {to_email}")
+            return await send_email_via_sendgrid(
+                to_email=to_email,
+                subject=email_subject,
+                html_content=html_content,
+                text_content=text_content
+            )
+
+        # Si SendGrid no está configurado, usar Gmail SMTP como fallback
+        print(f"📧 SendGrid no configurado, usando Gmail SMTP para contacto...")
+
+        # Crear mensaje
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = email_subject
+        msg['From'] = settings.EMAIL_FROM
+        msg['To'] = to_email
+        msg['Reply-To'] = client_email
+
         # Adjuntar ambas partes
         part1 = MIMEText(text_content, 'plain')
         part2 = MIMEText(html_content, 'html')
