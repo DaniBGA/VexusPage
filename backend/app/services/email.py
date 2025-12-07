@@ -11,6 +11,11 @@ from typing import Optional
 from app.config import settings
 import asyncio
 
+# SendGrid SDK oficial
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail, Email, To, Content
+import os
+
 
 def generate_verification_token() -> str:
     """Generar token de verificación único"""
@@ -256,7 +261,7 @@ async def send_email_via_sendgrid(
     text_content: str
 ) -> bool:
     """
-    Enviar email usando SendGrid API (mucho más rápido que SMTP)
+    Enviar email usando SendGrid SDK oficial (mucho más rápido que SMTP)
     
     Args:
         to_email: Email del destinatario
@@ -273,39 +278,44 @@ async def send_email_via_sendgrid(
         print("⚠️ SendGrid API Key no configurada")
         return False
     
+    if not sendgrid_key.strip():
+        print("⚠️ SendGrid API Key está vacía")
+        return False
+    
     try:
-        print(f"📧 Enviando email via SendGrid a: {to_email}")
+        print(f"📧 Enviando email via SendGrid SDK a: {to_email}")
+        print(f"🔑 SendGrid API Key presente: {sendgrid_key[:10]}...{sendgrid_key[-4:]}")
+        print(f"📨 From: {settings.EMAIL_FROM}")
         
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                "https://api.sendgrid.com/v3/mail/send",
-                headers={
-                    "Authorization": f"Bearer {sendgrid_key}",
-                    "Content-Type": "application/json"
-                },
-                json={
-                    "personalizations": [{
-                        "to": [{"email": to_email}]
-                    }],
-                    "from": {"email": settings.EMAIL_FROM},
-                    "subject": subject,
-                    "content": [
-                        {"type": "text/plain", "value": text_content},
-                        {"type": "text/html", "value": html_content}
-                    ]
-                },
-                timeout=10.0  # SendGrid es súper rápido, 10 segundos es suficiente
-            )
+        # Crear mensaje usando el SDK oficial de SendGrid
+        message = Mail(
+            from_email=Email(settings.EMAIL_FROM),
+            to_emails=To(to_email),
+            subject=subject,
+            plain_text_content=Content("text/plain", text_content),
+            html_content=Content("text/html", html_content)
+        )
         
-        if response.status_code == 202:
+        # Enviar usando el cliente de SendGrid
+        sg = SendGridAPIClient(sendgrid_key)
+        response = sg.send(message)
+        
+        print(f"✅ SendGrid Response Status: {response.status_code}")
+        print(f"✅ SendGrid Response Body: {response.body}")
+        print(f"✅ SendGrid Response Headers: {response.headers}")
+        
+        if response.status_code in [200, 201, 202]:
             print(f"✅ Email enviado exitosamente via SendGrid a: {to_email}")
             return True
         else:
-            print(f"❌ Error SendGrid ({response.status_code}): {response.text}")
+            print(f"❌ Error SendGrid ({response.status_code})")
             return False
             
     except Exception as e:
         print(f"❌ Error enviando via SendGrid: {str(e)}")
+        print(f"❌ Tipo de error: {type(e).__name__}")
+        import traceback
+        traceback.print_exc()
         return False
 
 
@@ -694,13 +704,6 @@ async def send_consultancy_email(
         True si el email se envió correctamente, False en caso contrario
     """
     try:
-        # Crear mensaje
-        msg = MIMEMultipart('alternative')
-        msg['Subject'] = subject
-        msg['From'] = settings.EMAIL_FROM
-        msg['To'] = to_email
-        msg['Reply-To'] = client_email
-
         # Contenido HTML
         html_content = f"""
         <!DOCTYPE html>
@@ -835,6 +838,27 @@ async def send_consultancy_email(
         Vexus - Sistema de Gestión de Consultas
         © 2025 Vexus. Todos los derechos reservados.
         """
+
+        # Intentar SendGrid primero (mucho más rápido que SMTP)
+        sendgrid_key = getattr(settings, 'SENDGRID_API_KEY', None)
+        if sendgrid_key:
+            print(f"📧 Usando SendGrid para enviar consultoría a: {to_email}")
+            return await send_email_via_sendgrid(
+                to_email=to_email,
+                subject=subject,
+                html_content=html_content,
+                text_content=text_content
+            )
+
+        # Si SendGrid no está configurado, usar Gmail SMTP como fallback
+        print(f"📧 SendGrid no configurado, usando Gmail SMTP para consultoría...")
+
+        # Crear mensaje
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = subject
+        msg['From'] = settings.EMAIL_FROM
+        msg['To'] = to_email
+        msg['Reply-To'] = client_email
 
         # Adjuntar ambas partes
         part1 = MIMEText(text_content, 'plain')
