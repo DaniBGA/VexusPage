@@ -15,7 +15,8 @@ import asyncio
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
-    description="API Backend para la plataforma Vexus"
+    description="API Backend para la plataforma Vexus",
+    redirect_slashes=False  # CRÍTICO: No hacer redirect 307 por trailing slash
 )
 
 # ===== CONFIGURAR CORS PRIMERO (ANTES DE TODO) =====
