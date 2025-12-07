@@ -1,3 +1,34 @@
+// Import modules first
+import CONFIG from './config.js';
+import { AuthService } from './api/auth.js';
+
+let currentCourseId = null;
+let currentEditingUnitId = null;
+
+// Obtener el ID del curso desde la URL
+const urlParams = new URLSearchParams(window.location.search);
+currentCourseId = urlParams.get('id');
+
+// Verificar autenticación y rol de admin ANTES de cualquier validación
+if (!AuthService.isAuthenticated()) {
+    alert('Debes iniciar sesión para acceder al editor');
+    window.location.href = '../index.html';
+    throw new Error('Not authenticated');
+}
+
+const user = AuthService.getCurrentUser();
+if (user.role !== 'admin') {
+    alert('No tienes permisos para acceder al editor de cursos');
+    window.location.href = '../index.html';
+    throw new Error('Not authorized');
+}
+
+if (!currentCourseId) {
+    alert('No se especificó un curso para editar');
+    window.location.href = '../index.html';
+    throw new Error('No course ID');
+}
+
 // ...existing code...
 // Notificación visual
 function showNotification(message, type = 'info') {
@@ -114,44 +145,6 @@ function showConfirmModal(message) {
         modal.appendChild(box);
         document.body.appendChild(modal);
     });
-}
-if (!currentCourseId) {
-
-    showNotification('No se especificó un curso para editar', 'error');
-}
-if (!AuthService.isAuthenticated()) {
-    showNotification('Debes iniciar sesión para acceder al editor', 'error');
-    window.location.href = '../index.html';
-}
-if (user.role !== 'admin') {
-    showNotification('No tienes permisos para acceder al editor de cursos', 'error');
-    window.location.href = '../index.html';
-}
-import CONFIG from './config.js';
-import { AuthService } from './api/auth.js';
-
-let currentCourseId = null;
-let currentEditingUnitId = null;
-
-// Obtener el ID del curso desde la URL
-const urlParams = new URLSearchParams(window.location.search);
-currentCourseId = urlParams.get('id');
-
-if (!currentCourseId) {
-    showNotification('No se especificó un curso para editar', 'error');
-    window.location.href = '../index.html';
-}
-
-// Verificar autenticación y rol de admin
-if (!AuthService.isAuthenticated()) {
-    showNotification('Debes iniciar sesión para acceder al editor', 'error');
-    window.location.href = '../index.html';
-}
-
-const user = AuthService.getCurrentUser();
-if (user.role !== 'admin') {
-    showNotification('No tienes permisos para acceder al editor de cursos', 'error');
-    window.location.href = '../index.html';
 }
 
 // Funciones de utilidad
