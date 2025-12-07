@@ -39,28 +39,28 @@ services:
       DEBUG: "false"
       
       # Database
-      DATABASE_URL: "postgresql://${POSTGRES_USER:-vexus_admin}:${POSTGRES_PASSWORD:-change_this_password}@postgres:5432/${POSTGRES_DB:-vexus_db}?sslmode=disable"
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-vexus_admin}:${POSTGRES_PASSWORD:-VexusDB2025!Secure}@postgres:5432/${POSTGRES_DB:-vexus_db}?sslmode=disable"
       DB_POOL_MIN_SIZE: "5"
       DB_POOL_MAX_SIZE: "20"
       DB_CONNECT_TIMEOUT: "10"
       
       # Security
-      SECRET_KEY: ${SECRET_KEY:-generate-a-secure-secret-key-here}
+      SECRET_KEY: ${SECRET_KEY:-jP8mK2nL9vR4tY6wQ1xE3sA5dF7gH0jK2mN4pQ6rT8vW}
       ALGORITHM: "HS256"
-      ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+      ACCESS_TOKEN_EXPIRE_MINUTES: "60"
       
       # CORS
-      ALLOWED_ORIGINS: "${FRONTEND_URL:-http://localhost},https://yourdomain.com"
+      ALLOWED_ORIGINS: "${FRONTEND_URL:-https://www.grupovexus.com},https://grupovexus.com,https://www.grupovexus.com,http://grupovexus.com,http://www.grupovexus.com"
       
       # Email (Gmail SMTP)
       SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
       SMTP_PORT: ${SMTP_PORT:-587}
-      SMTP_USER: ${SMTP_USER:-}
-      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
-      EMAIL_FROM: ${EMAIL_FROM:-noreply@vexus.com}
+      SMTP_USER: ${SMTP_USER:-grupovexus@gmail.com}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-xuaevwdoprogdwrl}
+      EMAIL_FROM: ${EMAIL_FROM:-grupovexus@gmail.com}
       
       # Frontend URL for email verification links
-      FRONTEND_URL: ${FRONTEND_URL:-http://localhost}
+      FRONTEND_URL: ${FRONTEND_URL:-https://www.grupovexus.com}
     depends_on:
       postgres:
         condition: service_healthy
