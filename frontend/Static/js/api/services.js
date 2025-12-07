@@ -4,12 +4,12 @@ import { apiClient } from './client.js';
 export const DataService = {
     // Services
     async getServices() {
-        return await apiClient.get('/services');
+        return await apiClient.get('/services/');
     },
 
     // Courses
     async getCourses() {
-        return await apiClient.get('/courses');
+        return await apiClient.get('/courses/');
     },
 
     async getCourse(courseId) {
@@ -26,7 +26,7 @@ export const DataService = {
 
     // Projects
     async getProjects() {
-        return await apiClient.get('/projects');
+        return await apiClient.get('/projects/');
     },
 
     async createProject(project) {
@@ -35,7 +35,7 @@ export const DataService = {
 
     // Tools
     async getTools() {
-        return await apiClient.get('/tools');
+        return await apiClient.get('/tools/');
     },
 
     // Dashboard
@@ -49,11 +49,11 @@ export const DataService = {
 
     // Contact
     async sendContactMessage(message) {
-        return await apiClient.post('/contact', message);
+        return await apiClient.post('/contact/', message);
     },
 
     // Consultancy
     async sendConsultancyEmail(consultancyData) {
-        return await apiClient.post('/consultancy/email', consultancyData);
+        return await apiClient.post('/consultancy/email/', consultancyData);
     }
 };
