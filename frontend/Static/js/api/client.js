@@ -6,6 +6,14 @@ export class APIClient {
     constructor() {
         this.baseURL = CONFIG.API_BASE_URL;
         this.timeout = CONFIG.REQUEST_TIMEOUT;
+        
+        // FORZAR HTTPS si por alguna razón se cargó HTTP
+        if (this.baseURL.startsWith('http://')) {
+            console.warn('⚠️ Convirtiendo HTTP a HTTPS en baseURL');
+            this.baseURL = this.baseURL.replace('http://', 'https://');
+        }
+        
+        console.log('✅ APIClient baseURL:', this.baseURL);
     }
 
     async request(endpoint, options = {}) {
