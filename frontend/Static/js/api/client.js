@@ -12,8 +12,6 @@ export class APIClient {
             console.warn('⚠️ Convirtiendo HTTP a HTTPS en baseURL');
             this.baseURL = this.baseURL.replace('http://', 'https://');
         }
-        
-        console.log('✅ APIClient baseURL:', this.baseURL);
     }
 
     async request(endpoint, options = {}) {
