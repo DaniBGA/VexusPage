@@ -6,6 +6,12 @@ export class APIClient {
     constructor() {
         this.baseURL = CONFIG.API_BASE_URL;
         this.timeout = CONFIG.REQUEST_TIMEOUT;
+        
+        // FORZAR HTTPS si por alguna razón se cargó HTTP
+        if (this.baseURL.startsWith('http://')) {
+            console.warn('⚠️ Convirtiendo HTTP a HTTPS en baseURL');
+            this.baseURL = this.baseURL.replace('http://', 'https://');
+        }
     }
 
     async request(endpoint, options = {}) {
@@ -58,7 +64,6 @@ export class APIClient {
 
             return await response.json();
         } catch (error) {
-            console.error('API Request failed:', error);
             throw error;
         }
     }

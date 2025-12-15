@@ -147,7 +147,7 @@ async def login_user(user_credentials: UserLogin):
         # Usar SQL para calcular la fecha de expiración directamente en la BD
         await connection.execute(
             f"""
-            INSERT INTO user_sessions (id, user_id, token, expires_at)
+            INSERT INTO user_sessions (id, user_id, session_token, expires_at)
             VALUES ($1, $2, $3, CURRENT_TIMESTAMP + INTERVAL '{settings.ACCESS_TOKEN_EXPIRE_MINUTES} minutes')
             """,
             session_id, user['id'], access_token
@@ -178,7 +178,7 @@ async def logout_user(
 
     async with pool.acquire() as connection:
         await connection.execute(
-            "DELETE FROM user_sessions WHERE user_id = $1 AND token = $2",
+            "DELETE FROM user_sessions WHERE user_id = $1 AND session_token = $2",
             current_user['id'], credentials.credentials
         )
 

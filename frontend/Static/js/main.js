@@ -50,7 +50,7 @@ class App {
 
     async testConnection() {
         try {
-            const response = await fetch('/health');
+            const response = await fetch('https://www.grupovexus.com/health');
             if (response.ok) {
                 showConnectionStatus(true);
                 await this.loadInitialData();
@@ -540,16 +540,13 @@ class App {
 
     async showAdminPanel() {
         const user = AuthService.getCurrentUser();
-        console.log('Admin Panel - Current user:', user);
 
         if (!user || user.role !== 'admin') {
-            console.error('Access denied. User role:', user?.role);
             showNotification(`Acceso denegado. Se requiere rol de administrador.\nRol actual: ${user?.role || 'no definido'}`, 'error');
             return;
         }
 
         const token = localStorage.getItem(CONFIG.TOKEN_KEY);
-        console.log('Token exists:', !!token);
 
         if (!token) {
             showNotification('No se encontró el token de autenticación. Por favor, inicia sesión nuevamente.', 'error');
@@ -559,7 +556,6 @@ class App {
 
         try {
             showLoading();
-            console.log('Fetching courses from:', `${CONFIG.API_BASE_URL}/courses/admin/all`);
 
             const response = await fetch(`${CONFIG.API_BASE_URL}/courses/admin/all`, {
                 headers: {
@@ -568,11 +564,7 @@ class App {
                 }
             });
 
-            console.log('Response status:', response.status);
-
             if (response.status === 401) {
-                const errorText = await response.text();
-                console.error('401 Error details:', errorText);
                 showNotification('Sesión expirada o no autorizada. Por favor, verifica que tu usuario tenga rol de administrador en la base de datos.', 'error');
                 AuthService.logout();
                 return;
@@ -580,7 +572,6 @@ class App {
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                console.error('Error response:', errorData);
                 throw new Error(errorData.detail || 'Failed to fetch courses');
             }
 

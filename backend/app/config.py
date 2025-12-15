@@ -24,8 +24,8 @@ class Settings:
 
     # === DATABASE ===
     DATABASE_URL: str = os.getenv(
-    "DATABASE_URL",
-    "postgresql://postgres.fjfucvwpstrujpqsvuvr:KxvKgM8iUnJJBVgE@aws-1-sa-east-1.pooler.supabase.com:6543/grupovex_db?sslmode=require"
+        "DATABASE_URL",
+        "postgresql://vexus_admin:VexusDB2025!Secure@postgres:5432/vexus_db?sslmode=disable"
     )
     DB_POOL_MIN_SIZE: int = int(os.getenv("DB_POOL_MIN_SIZE", "5"))
     DB_POOL_MAX_SIZE: int = int(os.getenv("DB_POOL_MAX_SIZE", "20"))
@@ -41,26 +41,23 @@ class Settings:
     # === CORS ===
     @property
     def ALLOWED_ORIGINS(self) -> List[str]:
-        origins = os.getenv("ALLOWED_ORIGINS", "*")
+        origins = os.getenv("ALLOWED_ORIGINS", "https://www.grupovexus.com,https://grupovexus.com")
         if origins == "*":
             return ["*"]
         
         # Parsear orígenes de la variable de entorno
         origins_list = [origin.strip() for origin in origins.split(",")]
         
-        # En producción, siempre agregar localhost para testing
-        # (esto permite probar con test-email-frontend.html)
-        localhost_origins = [
-            "http://localhost:8000",
-            "http://localhost:5500",
-            "http://127.0.0.1:8000",
-            "http://127.0.0.1:5500"
+        # En producción, siempre agregar el dominio principal
+        production_origins = [
+            "https://www.grupovexus.com",
+            "https://grupovexus.com"
         ]
         
-        # Agregar localhost si no está ya en la lista
-        for localhost in localhost_origins:
-            if localhost not in origins_list:
-                origins_list.append(localhost)
+        # Agregar orígenes de producción si no están ya en la lista
+        for prod_origin in production_origins:
+            if prod_origin not in origins_list:
+                origins_list.append(prod_origin)
         
         return origins_list
 
@@ -76,12 +73,12 @@ class Settings:
     # Gmail SMTP (fallback si SendGrid no está configurado)
     SMTP_HOST: str = os.getenv("SMTP_HOST", "smtp.gmail.com")
     SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
-    SMTP_USER: str = os.getenv("SMTP_USER", "grupovexus@gmail.com")
-    SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD", "sgizixieyfjfquht")
-    EMAIL_FROM: str = os.getenv("EMAIL_FROM", "grupovexus@.com")
+    SMTP_USER: str = os.getenv("SMTP_USER", "")
+    SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD", "")
+    EMAIL_FROM: str = os.getenv("EMAIL_FROM", "noreply@grupovexus.com")
 
     # === FRONTEND ===
-    FRONTEND_URL: str = os.getenv("FRONTEND_URL", "http://localhost:5500")
+    FRONTEND_URL: str = os.getenv("FRONTEND_URL", "https://www.grupovexus.com")
 
 # Instancia única de configuración
 settings = Settings()

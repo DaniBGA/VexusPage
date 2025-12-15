@@ -231,10 +231,4 @@
         window.removeEventListener('scroll', onScroll);
     });
 
-    // Debug info (solo en desarrollo)
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        console.log('Real Estate Page - Parallax System Initialized');
-        console.log('Sections detected:', contentSections.length);
-    }
-
 })();
