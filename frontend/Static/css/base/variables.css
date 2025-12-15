@@ -1,10 +1,10 @@
 /* Variables CSS globales */
 
 :root {
-    /* Colores principales */
-    --color-primary: #8B4513;
-    --color-primary-dark: #A0522D;
-    --color-primary-rgb: rgba(139, 69, 19, 0.3);
+    /* Colores principales - Zafiro Imperial */
+    --color-primary: #1E3A8A;
+    --color-primary-dark: #1E40AF;
+    --color-primary-rgb: rgba(30, 58, 138, 0.3);
     --color-background: #0a0a0a;
     --color-surface: #1a1a1a;
     --color-surface-light: #2a2a2a;
@@ -19,7 +19,7 @@
     
     /* Colores de borde */
     --color-border: #333333;
-    --color-border-primary: #8B4513;
+    --color-border-primary: #1E3A8A;
     
     /* Tipografía */
     --font-primary: 'Space Grotesk', sans-serif;
@@ -54,7 +54,7 @@
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.3);
     --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
-    --shadow-primary: 0 10px 30px rgba(139, 69, 19, 0.3);
+    --shadow-primary: 0 10px 30px rgba(30, 58, 138, 0.3);
     
     /* Transiciones */
     --transition-fast: 0.15s ease;

@@ -185,13 +185,13 @@
 }
 
 .notification.success {
-    background: linear-gradient(135deg, #A0522D 0%, #8B4513 100%);
-    border: 2px solid #A0522D;
+    background: linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%);
+    border: 2px solid #1E40AF;
 }
 
 .notification.info {
-    background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
-    border: 2px solid #8B4513;
+    background: linear-gradient(135deg, #1E3A8A 0%, #1E40AF 100%);
+    border: 2px solid #1E3A8A;
 }
 
 /* Animación Typewriter */
@@ -208,7 +208,7 @@
     display: inline-block;
     margin-left: 4px;
     animation: blink 0.8s infinite;
-    background: linear-gradient(135deg, #ffffff 0%, #A0522D 100%);
+    background: linear-gradient(135deg, #ffffff 0%, #1E40AF 100%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -216,7 +216,7 @@
     font-size: 1em;
     line-height: 2;
     /* Forzar que el color sea visible */
-    color: #A0522D !important;
+    color: #1E40AF !important;
 }
 
 /* Alternativa: usar un bloque sólido en lugar de texto transparente */

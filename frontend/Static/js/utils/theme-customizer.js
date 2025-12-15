@@ -2,10 +2,10 @@
 export const ThemeCustomizer = {
     // Paleta de colores secundarios elegantes que respetan la estética
     colorPalette: [
-        { name: 'Caramelo Clásico', value: '#8B4513', gradient: 'linear-gradient(135deg, #8B4513 0%, #A0522D 100%)' },
+        { name: 'Zafiro Imperial', value: '#1E3A8A', gradient: 'linear-gradient(135deg, #1E3A8A 0%, #1E40AF 100%)' },
         { name: 'Rubí Intenso', value: '#C41E3A', gradient: 'linear-gradient(135deg, #C41E3A 0%, #E63946 100%)' },
         { name: 'Esmeralda Profundo', value: '#1B4D3E', gradient: 'linear-gradient(135deg, #1B4D3E 0%, #2D6A4F 100%)' },
-        { name: 'Zafiro Imperial', value: '#0F4C81', gradient: 'linear-gradient(135deg, #0F4C81 0%, #1E6AA8 100%)' },
+        { name: 'Océano Profundo', value: '#0F4C81', gradient: 'linear-gradient(135deg, #0F4C81 0%, #1E6AA8 100%)' },
         { name: 'Amatista Elegante', value: '#7B2D8E', gradient: 'linear-gradient(135deg, #7B2D8E 0%, #9B4CAF 100%)' },
         { name: 'Oro Radiante', value: '#D4AF37', gradient: 'linear-gradient(135deg, #D4AF37 0%, #F4C430 100%)' },
         { name: 'Turquesa Vibrante', value: '#118AB2', gradient: 'linear-gradient(135deg, #118AB2 0%, #06AED5 100%)' },
@@ -102,15 +102,15 @@ export const ThemeCustomizer = {
             let style = el.getAttribute('style');
             if (!style) return;
 
-            // Reemplazar colores principales (8B4513 y A0522D)
+            // Reemplazar colores principales (1E3A8A y 1E40AF)
             style = style
-                .replace(/#8B4513/gi, colorHex)
-                .replace(/8B4513/g, colorHexNoHash)
-                .replace(/#A0522D/gi, this.adjustBrightness(colorHex, 15));
+                .replace(/#1E3A8A/gi, colorHex)
+                .replace(/1E3A8A/g, colorHexNoHash)
+                .replace(/#1E40AF/gi, this.adjustBrightness(colorHex, 15));
 
             // Actualizar gradientes
             style = style.replace(
-                /linear-gradient\(135deg,\s*#8B4513\s+0%,\s*#A0522D\s+100%\)/gi,
+                /linear-gradient\(135deg,\s*#1E3A8A\s+0%,\s*#1E40AF\s+100%\)/gi,
                 this.currentTheme.gradient
             );
 
@@ -120,10 +120,10 @@ export const ThemeCustomizer = {
         // Actualizar elementos de texto que contengan colores CSS
         const styleElements = document.querySelectorAll('style');
         styleElements.forEach(styleEl => {
-            if (styleEl.textContent && (styleEl.textContent.includes('8B4513') || styleEl.textContent.includes('A0522D'))) {
+            if (styleEl.textContent && (styleEl.textContent.includes('1E3A8A') || styleEl.textContent.includes('1E40AF'))) {
                 styleEl.textContent = styleEl.textContent
-                    .replace(/#8B4513/gi, colorHex)
-                    .replace(/#A0522D/gi, this.adjustBrightness(colorHex, 15));
+                    .replace(/#1E3A8A/gi, colorHex)
+                    .replace(/#1E40AF/gi, this.adjustBrightness(colorHex, 15));
             }
         });
     },

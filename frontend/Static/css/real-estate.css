@@ -8,8 +8,8 @@
 /* === Variables === */
 :root {
     /* Usar variables del tema principal */
-    --re-primary: var(--color-primary, #8B4513);
-    --re-secondary: var(--color-primary-dark, #A0522D);
+    --re-primary: var(--color-primary, #1E3A8A);
+    --re-secondary: var(--color-primary-dark, #1E40AF);
     --re-dark: var(--color-background, #0a0a0a);
     --re-darker: var(--color-surface-dark, #050505);
     --re-light: var(--color-text, #ffffff);

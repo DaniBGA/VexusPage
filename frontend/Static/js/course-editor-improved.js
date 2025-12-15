@@ -79,11 +79,11 @@ function showNotification(message, type = 'info') {
         notif.style.background = '#dc2626';
         notif.style.border = '2px solid #b91c1c';
     } else if (type === 'success') {
-        notif.style.background = 'linear-gradient(135deg, #A0522D 0%, #8B4513 100%)';
-        notif.style.border = '2px solid #A0522D';
+        notif.style.background = 'linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%)';
+        notif.style.border = '2px solid #1E40AF';
     } else {
-        notif.style.background = 'linear-gradient(135deg, #8B4513 0%, #A0522D 100%)';
-        notif.style.border = '2px solid #8B4513';
+        notif.style.background = 'linear-gradient(135deg, #1E3A8A 0%, #1E40AF 100%)';
+        notif.style.border = '2px solid #1E3A8A';
     }
     notif.style.marginBottom = '0.5rem';
     container.appendChild(notif);
@@ -112,7 +112,7 @@ function showConfirmModal(message) {
         modal.style.zIndex = '10000';
 
         const box = document.createElement('div');
-        box.style.background = 'linear-gradient(135deg, #2d1a0b 0%, #8B4513 100%)';
+        box.style.background = 'linear-gradient(135deg, #1E3A8A 0%, #1E40AF 100%)';  
         box.style.color = 'white';
         box.style.padding = '2rem 2.5rem';
         box.style.borderRadius = '16px';
@@ -134,7 +134,7 @@ function showConfirmModal(message) {
 
         const acceptBtn = document.createElement('button');
         acceptBtn.textContent = 'Aceptar';
-        acceptBtn.style.background = 'linear-gradient(135deg, #A0522D 0%, #8B4513 100%)';
+        acceptBtn.style.background = 'linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%)';
         acceptBtn.style.color = 'white';
         acceptBtn.style.fontWeight = 'bold';
         acceptBtn.style.border = 'none';
@@ -152,7 +152,7 @@ function showConfirmModal(message) {
         cancelBtn.style.background = '#2d1a0b';
         cancelBtn.style.color = '#f3e9e0';
         cancelBtn.style.fontWeight = 'bold';
-        cancelBtn.style.border = '1px solid #A0522D';
+        cancelBtn.style.border = '1px solid #1E40AF';
         cancelBtn.style.borderRadius = '8px';
         cancelBtn.style.padding = '0.7rem 2rem';
         cancelBtn.style.fontSize = '1rem';

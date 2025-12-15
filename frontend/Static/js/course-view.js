@@ -27,11 +27,11 @@ function showNotification(message, type = 'info') {
         notif.style.background = '#dc2626';
         notif.style.border = '2px solid #b91c1c';
     } else if (type === 'success') {
-        notif.style.background = 'linear-gradient(135deg, #A0522D 0%, #8B4513 100%)';
-        notif.style.border = '2px solid #A0522D';
+        notif.style.background = 'linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%)';
+        notif.style.border = '2px solid #1E40AF';
     } else {
-        notif.style.background = 'linear-gradient(135deg, #8B4513 0%, #A0522D 100%)';
-        notif.style.border = '2px solid #8B4513';
+        notif.style.background = 'linear-gradient(135deg, #1E3A8A 0%, #1E40AF 100%)';
+        notif.style.border = '2px solid #1E3A8A';
     }
     notif.style.marginBottom = '0.5rem';
     container.appendChild(notif);
