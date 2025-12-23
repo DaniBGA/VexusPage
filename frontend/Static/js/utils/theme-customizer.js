@@ -17,6 +17,7 @@ export const ThemeCustomizer = {
     ],
 
     currentTheme: null,
+    previousTheme: null,
 
     init() {
         this.loadSavedTheme();
@@ -67,6 +68,11 @@ export const ThemeCustomizer = {
     applyTheme() {
         const root = document.documentElement;
 
+        // Guardar el color anterior si existe
+        if (this.currentTheme && !this.previousTheme) {
+            this.previousTheme = { ...this.currentTheme };
+        }
+
         // Calcular una variante más oscura del color
         const darkerValue = this.adjustBrightness(this.currentTheme.value, -15);
 
@@ -95,24 +101,53 @@ export const ThemeCustomizer = {
         // Actualizar todos los colores hardcodeados al color actual del tema
         const colorHex = this.currentTheme.value;
         const colorHexNoHash = colorHex.substring(1);
+        
+        // Colores a buscar y reemplazar
+        const colorsToReplace = [
+            { old: '#1E3A8A', oldNoHash: '1E3A8A', oldDark: '#1E40AF' }
+        ];
+        
+        // Si hay un tema anterior, también buscar ese color
+        if (this.previousTheme && this.previousTheme.value !== this.currentTheme.value) {
+            const prevHex = this.previousTheme.value;
+            const prevHexNoHash = prevHex.substring(1);
+            const prevDark = this.adjustBrightness(prevHex, 15);
+            colorsToReplace.push({
+                old: prevHex,
+                oldNoHash: prevHexNoHash,
+                oldDark: prevDark
+            });
+        }
 
-        // Buscar todos los elementos con estilos inline
+        // Buscar todos los elementos con estilos inline, excluyendo los botones del panel de colores
         const allElements = document.querySelectorAll('[style]');
         allElements.forEach(el => {
+            // No modificar los botones del panel de selección de colores
+            if (el.classList.contains('color-option') || el.closest('.color-picker-panel')) {
+                return;
+            }
+            
             let style = el.getAttribute('style');
             if (!style) return;
 
-            // Reemplazar colores principales (1E3A8A y 1E40AF)
-            style = style
-                .replace(/#1E3A8A/gi, colorHex)
-                .replace(/1E3A8A/g, colorHexNoHash)
-                .replace(/#1E40AF/gi, this.adjustBrightness(colorHex, 15));
-
-            // Actualizar gradientes
-            style = style.replace(
-                /linear-gradient\(135deg,\s*#1E3A8A\s+0%,\s*#1E40AF\s+100%\)/gi,
-                this.currentTheme.gradient
-            );
+            // Reemplazar todos los colores antiguos con el nuevo
+            colorsToReplace.forEach(color => {
+                const regex1 = new RegExp(color.old, 'gi');
+                const regex2 = new RegExp(color.oldNoHash, 'g');
+                const regex3 = new RegExp(color.oldDark, 'gi');
+                
+                style = style
+                    .replace(regex1, colorHex)
+                    .replace(regex2, colorHexNoHash)
+                    .replace(regex3, this.adjustBrightness(colorHex, 15));
+                
+                // Actualizar gradientes específicos del color anterior
+                const gradientRegex = new RegExp(
+                    `linear-gradient\\(135deg,\\s*${color.old}\\s+0%,\\s*${color.oldDark}\\s+100%\\)`,
+                    'gi'
+                );
+                style = style.replace(gradientRegex, this.currentTheme.gradient);
+            });
 
             el.setAttribute('style', style);
         });
@@ -120,11 +155,19 @@ export const ThemeCustomizer = {
         // Actualizar elementos de texto que contengan colores CSS
         const styleElements = document.querySelectorAll('style');
         styleElements.forEach(styleEl => {
-            if (styleEl.textContent && (styleEl.textContent.includes('1E3A8A') || styleEl.textContent.includes('1E40AF'))) {
-                styleEl.textContent = styleEl.textContent
-                    .replace(/#1E3A8A/gi, colorHex)
-                    .replace(/#1E40AF/gi, this.adjustBrightness(colorHex, 15));
-            }
+            if (!styleEl.textContent) return;
+            
+            let content = styleEl.textContent;
+            colorsToReplace.forEach(color => {
+                if (content.includes(color.oldNoHash)) {
+                    const regex1 = new RegExp(color.old, 'gi');
+                    const regex3 = new RegExp(color.oldDark, 'gi');
+                    content = content
+                        .replace(regex1, colorHex)
+                        .replace(regex3, this.adjustBrightness(colorHex, 15));
+                }
+            });
+            styleEl.textContent = content;
         });
     },
 
@@ -221,6 +264,11 @@ export const ThemeCustomizer = {
     },
 
     setTheme(index) {
+        // Guardar el tema actual como anterior antes de cambiar
+        if (this.currentTheme) {
+            this.previousTheme = { ...this.currentTheme };
+        }
+        
         this.currentTheme = this.colorPalette[index];
         this.saveTheme();
         this.applyTheme();

@@ -122,22 +122,9 @@
             <ul class="nav-links" id="navLinks">
                 <li><a href="#inicio">Inicio</a></li>
                 <li><a href="#servicios">Servicios</a></li>
-                <li><a href="#campus">Campus</a></li>
                 <li><a href="#sobre-nosotros">Sobre Nosotros</a></li>
-                <li><a href="" onclick="openModal('contactModal'); return false;">Contacto</a></li>
-                <li class="admin-nav-item" style="display:none;">
-                    <button class="login-nav-btn" id="adminPanelBtn" onclick="app.showAdminPanel()">
-                        <span class="login-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="3"></circle>
-                                <path d="M12 1v6m0 6v6m-3.5-15.5L12 7l3.5-3.5M8.5 20.5L12 17l3.5 3.5M1 12h6m6 0h6M4.5 4.5L8 8l-3.5 3.5m15-7L16 8l3.5 3.5M4.5 19.5L8 16l-3.5-3.5m15 7L16 16l3.5-3.5"></path>
-                            </svg>
-                        </span>
-                        <span class="login-text">Admin</span>
-                    </button>
-                </li>
                 <li class="login-nav-item">
-                    <a href="#calendly-section" class="login-nav-btn" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                    <a href="#calendly-section" class="login-nav-btn" style="text-decoration: none; display: flex; align-items: center; gap: 8px; justify-content: center;">
                         <span class="login-icon">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -165,8 +152,10 @@
                     <p class="hero-description">
                         Diseñamos y construimos soluciones digitales desde la estrategia, integrando tecnología, procesos y negocio para crear valor sostenible.
                     </p>
-                    <button class="cta-button" onclick="window.location.href='pages/proyectos.html'">Hablemos de tu proyecto</button>
-                    <p class="cta-microcopy" style="margin-top: 12px; font-size: 14px; color: rgba(255, 255, 255, 0.8); text-align: center;">Llamada exploratoria sin costo</p>
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+                        <button class="cta-button" onclick="window.location.href='pages/proyectos.html'">Hablemos de tu proyecto</button>
+                        <p class="cta-microcopy" style="margin: 0; font-size: 14px; color: rgba(255, 255, 255, 0.8);">Llamada exploratoria sin costo</p>
+                    </div>
                 </div>
 
                 <!-- Terminal Animada -->
@@ -230,7 +219,7 @@
                 <!-- Real Estate -->
                 <div class="service-unit-card">
                     <div class="service-unit-image">
-                        <img src="Static/images/SamuVigano-lifeofpix-369817372412.jpg" alt="Real Estate">
+                        <img src="Static/images/evaluacion.jpg" alt="evaluacion">
                         <div class="service-unit-overlay">
                             <div class="service-unit-icon">
                                 <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -241,12 +230,11 @@
                         </div>
                     </div>
                     <div class="service-unit-content">
-                        <h3>Real Estate</h3>
+                        <h3>Líneas en evaluación</h3>
                         <div style="display: flex; align-items: center; gap: 16px; margin: 24px 0;">
-                            <div style="font-size: 48px;">🏗️</div>
-                            <p style="font-size: 20px; font-weight: 600; color: var(--color-primary); margin: 0;">Construyendo unidad</p>
+                            <p style="font-size: 20px; font-weight: 600; color: var(--color-primary); margin: 0;">Proximamente...</p>
                         </div>
-                        <p style="color: rgba(255, 255, 255, 0.6); font-style: italic;">Próximamente estaremos lanzando nuestra unidad de Real Estate con servicios especializados.</p>
+                        <p style="color: rgba(255, 255, 255, 0.6); font-style: italic;">Estamos trabajando en la adaptación de nuestras soluciones de infraestructura digital a contextos sectoriales específicos.</p>
                         <button class="service-btn" disabled style="opacity: 0.5; cursor: not-allowed;">
                             Próximamente
                         </button>
