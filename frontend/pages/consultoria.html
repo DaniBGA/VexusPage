@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultoría & Desarrollo - Vexus</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="../Static/css/main.css?v=20251207181200">
+    <link rel="stylesheet" href="../Static/css/consultoria.css?v=20251207181200">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="../Static/images/logo.png?v=1">
+    <link rel="icon" type="image/png" sizes="16x16" href="../Static/images/logo.png?v=1">
+    <link rel="shortcut icon" href="../Static/images/logo.png?v=1">
+
+    <!-- Page Loader - Estilos críticos -->
+    <style>
+        #loadingOverlay {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            z-index: 999999 !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+
+        body {
+            overflow: hidden !important;
+        }
+
+        body.loaded {
+            overflow: auto !important;
+        }
+    </style>
+</head>
+<body style="overflow: hidden;">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-logo">
+                <svg width="80" height="80" viewBox="0 0 100 100" fill="none">
+                    <circle cx="50" cy="50" r="45" stroke="url(#gradient)" stroke-width="4"/>
+                    <defs>
+                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#1E3A8A;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#1E40AF;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <div class="loading-progress">
+                <div class="loading-bar"></div>
+            </div>
+            <div class="loading-message" id="loadingMessage">
+                <span>Cargando experiencia</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <nav class="container nav">
+            <a href="../index.html#inicio" class="logo">
+                <img src="../Static/images/logo.png" alt="VEXUS">
+            </a>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menú">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <ul class="nav-links" id="navLinks">
+                <li><a href="../index.html#inicio">Inicio</a></li>
+                <li><a href="../index.html#servicios">Servicios</a></li>
+                <li><a href="../index.html#sobre-nosotros">Sobre Nosotros</a></li>
+                <li><a href="../index.html#contacto">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="consultoria-hero" id="hero">
+        <div class="container">
+            <h1 class="hero-title">
+                Consultoría & <span class="highlight">Desarrollo</span>
+            </h1>
+            <p class="hero-subtitle">
+                Transformamos la complejidad técnica en ventaja competitiva. Nuestro 
+                enfoque integra ingeniería de precisión con estrategia de negocio.
+            </p>
+        </div>
+    </section>
+
+    <!-- Main Services Section -->
+    <section class="main-services" id="servicios-principales">
+        <div class="container">
+            <div class="services-grid">
+                <!-- Web Development Card -->
+                <div class="service-card service-card-primary">
+                    <div class="service-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                    </div>
+                    <h2 class="service-title">
+                        Desarrollo Web de <span class="highlight">Alto Rendimiento</span>
+                    </h2>
+                    <p class="service-description">
+                        No solo escribimos código; construimos activos digitales escalables. 
+                        Desde arquitecturas cloud hasta interfaces ultra-rápidas, nuestra 
+                        ingeniería está diseñada para el crecimiento masivo.
+                    </p>
+                    <div class="service-tech-stack">
+                        <span class="tech-badge">Next.js 15</span>
+                        <span class="tech-badge">Flask</span>
+                        <span class="tech-badge">FastApi</span>
+                        <span class="tech-badge">Node.js</span>
+                        <span class="tech-badge">AWS</span>
+                        <span class="tech-badge">Docker</span>
+                    </div>
+
+                    <!-- Animación de Laptop -->
+                    <div class="laptop-animation-wrapper">
+                        <div class="laptop-container">
+                            <div class="laptop-screen-frame">
+                                <div class="laptop-screen" id="code-screen">
+                                    <div id="code-container">
+                                        <div>
+                                            <span id="code-display"></span><span class="cursor"></span>
+                                        </div>
+                                    </div>
+                                    <div id="success-wrapper">
+                                        <svg class="checkmark-svg" viewBox="0 0 100 100">
+                                            <circle class="checkmark-circle" cx="50" cy="50" r="45"/>
+                                            <path class="checkmark-check" d="M28 50 L43 65 L72 35"/>
+                                        </svg>
+                                        <p id="success-text">Proyecto Desarrollado</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="laptop-base"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategic Services Grid -->
+                <div class="strategic-services">
+                    <!-- Consultoría Estratégica -->
+                    <div class="service-card service-card-secondary">
+                        <div class="service-icon-small">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                        </div>
+                        <h3>Consultoría Estratégica</h3>
+                        <p>
+                            Alineamos tu visión de negocio con soluciones tecnológicas viables. 
+                            Identificamos cuellos de botella y trazamos el roadmap hacia la eficiencia operativa.
+                        </p>
+                    </div>
+
+                    <!-- Data & Analytics -->
+                    <div class="service-card service-card-secondary">
+                        <div class="service-icon-small">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="20" x2="12" y2="10"></line>
+                                <line x1="18" y1="20" x2="18" y2="4"></line>
+                                <line x1="6" y1="20" x2="6" y2="16"></line>
+                            </svg>
+                        </div>
+                        <h3>Data & Analytics</h3>
+                        <p>
+                            Decisiones basadas en evidencia, no en intuición.
+                        </p>
+                    </div>
+
+                    <!-- Optimización UX -->
+                    <div class="service-card service-card-secondary">
+                        <div class="service-icon-small">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </div>
+                        <h3>Optimización UX</h3>
+                        <p>
+                            Elevamos la tasa de conversión mediante diseño emocional.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Auditoría CTA -->
+    <section class="auditoria-cta">
+        <div class="container">
+            <div class="auditoria-content">
+                <h2>¿Necesitas una auditoría técnica?</h2>
+                <p>
+                    Analizamos tu infraestructura actual y detectamos oportunidades de mejora 
+                    inmediata sin costo inicial.
+                </p>
+                <a href="#contacto" class="btn-auditoria">SOLICITAR AUDITORÍA</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- What We Do Section -->
+    <section class="what-we-do" id="lo-que-hacemos">
+        <div class="container">
+            <h2 class="section-title">
+                Lo que <span class="highlight">hacemos</span>
+            </h2>
+            <p class="section-subtitle">
+                Especialidades diseñadas para impactar y perdurar.
+            </p>
+
+            <div class="carousel-container">
+                <button class="carousel-btn carousel-btn-prev" aria-label="Anterior">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+
+                <div class="carousel-track-container">
+                    <div class="carousel-track" id="whatWeDoCarousel">
+                        <!-- Web Apps -->
+                        <div class="carousel-card">
+                            <div class="carousel-card-icon">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="16 18 22 12 16 6"></polyline>
+                                    <polyline points="8 6 2 12 8 18"></polyline>
+                                </svg>
+                            </div>
+                            <h3>Web Apps</h3>
+                            <p>
+                                Aplicaciones robustas y escalables con React y Node.js, 
+                                optimizadas para ofrecer experiencias de usuario fluidas y seguras.
+                            </p>
+                            <a href="#" class="carousel-card-link demo-link">
+                                PROBAR DEMO
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </a>
+                        </div>
+
+                        <!-- Intranets Corporativas -->
+                        <div class="carousel-card">
+                            <div class="carousel-card-icon">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="14" width="7" height="7"></rect>
+                                    <rect x="3" y="14" width="7" height="7"></rect>
+                                </svg>
+                            </div>
+                            <h3>Intranets Corporativas</h3>
+                            <p>
+                                Ecosistemas privados de gestión de datos y procesos, diseñados 
+                                para centralizar la comunicación y elevar la productividad interna.
+                            </p>
+                            <a href="#" class="carousel-card-link demo-link">
+                                PROBAR DEMO
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </a>
+                        </div>
+
+                        <!-- Landing Pages -->
+                        <div class="carousel-card">
+                            <div class="carousel-card-icon">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                                </svg>
+                            </div>
+                            <h3>Landing Pages</h3>
+                            <p>
+                                Páginas de alto impacto con arquitectura de persuasión orientada 
+                                a maximizar la conversión y captación de clientes potenciales.
+                            </p>
+                            <a href="#" class="carousel-card-link demo-link">
+                                PROBAR DEMO
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </a>
+                        </div>
+
+                        <!-- E-commerce -->
+                        <div class="carousel-card">
+                            <div class="carousel-card-icon">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="9" cy="21" r="1"></circle>
+                                    <circle cx="20" cy="21" r="1"></circle>
+                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                </svg>
+                            </div>
+                            <h3>E-commerce</h3>
+                            <p>
+                                Tiendas online completas con gestión de inventario, 
+                                pagos seguros y experiencia de compra optimizada.
+                            </p>
+                            <a href="#" class="carousel-card-link demo-link">
+                                PROBAR DEMO
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="carousel-btn carousel-btn-next" aria-label="Siguiente">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Methodology Section -->
+    <section class="methodology" id="metodologia">
+        <div class="container">
+            <h2 class="section-title">
+                Nuestra <span class="highlight">Metodología</span>
+            </h2>
+
+            <div class="methodology-grid">
+                <!-- Estrategia -->
+                <div class="methodology-step">
+                    <div class="step-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="20" x2="12" y2="10"></line>
+                            <line x1="18" y1="20" x2="18" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="16"></line>
+                        </svg>
+                    </div>
+                    <h3>Estrategia</h3>
+                    <p>
+                        Definimos los objetivos de negocio y la ruta tecnológica a seguir.
+                    </p>
+                    <div class="step-connector"></div>
+                </div>
+
+                <!-- Diseño UX/UI -->
+                <div class="methodology-step">
+                    <div class="step-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="3" y1="9" x2="21" y2="9"></line>
+                            <line x1="9" y1="21" x2="9" y2="9"></line>
+                        </svg>
+                    </div>
+                    <h3>Diseño UX/UI</h3>
+                    <p>
+                        Creamos experiencias intuitivas y estéticas centradas en el usuario.
+                    </p>
+                    <div class="step-connector"></div>
+                </div>
+
+                <!-- Desarrollo -->
+                <div class="methodology-step">
+                    <div class="step-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                    </div>
+                    <h3>Desarrollo</h3>
+                    <p>
+                        Construimos con las mejores prácticas y arquitecturas escalables.
+                    </p>
+                    <div class="step-connector"></div>
+                </div>
+
+                <!-- Soporte -->
+                <div class="methodology-step">
+                    <div class="step-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                    </div>
+                    <h3>Soporte</h3>
+                    <p>
+                        Mantenemos tu solución siempre activa y en constante evolución.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack -->
+    <section class="tech-stack">
+        <div class="container">
+            <div class="stack-label">STACK TECNOLÓGICO</div>
+            <div class="tech-logos">
+                <span class="tech-logo">React</span>
+                <span class="tech-logo">Node.js</span>
+                <span class="tech-logo">PostgreSQL</span>
+                <span class="tech-logo">AWS</span>
+                <span class="tech-logo">Docker</span>
+                <span class="tech-logo">FastApi</span>
+                <span class="tech-logo">Flask</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta" id="contacto">
+        <div class="container">
+            <div class="cta-content">
+                <h2>
+                    ¿Listo para escalar tu <span class="highlight">potencial digital?</span>
+                </h2>
+                <p>
+                    Unamos fuerzas para transformar tus ideas en productos digitales 
+                    robustos, eficientes y centrados en el usuario.
+                </p>
+                <a href="../index.html#calendly-section" class="btn-cta-main">CONTACTAR AHORA</a>
+                <p class="cta-note">
+                    Recibe una auditoría inicial de tu proyecto sin compromiso.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal Demo -->
+    <div id="demoModal" class="demo-modal">
+        <div class="demo-modal-content">
+            <button class="demo-modal-close" id="closeModal">&times;</button>
+            <div class="demo-modal-icon">
+                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+            </div>
+            <h3>Opción disponible próximamente</h3>
+            <p>Estamos trabajando en traerte las mejores demos de nuestros proyectos.</p>
+            <button class="demo-modal-btn" id="closeModalBtn">Entendido</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer" id="contacto">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="../index.html#inicio">Inicio</a>
+                    <a href="../index.html#servicios">Servicios</a>
+                    <a href="../index.html#sobre-nosotros">Sobre Nosotros</a>
+                </div>
+            </div>
+            <div class="copyright">
+                © 2025 Vexus. Todos los derechos reservados.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Page Loader -->
+    <script src="../Static/js/page-loader.js?v=20251212-3"></script>
+    <script src="../Static/js/consultoria.js?v=20251212-3"></script>
+</body>
+</html>
